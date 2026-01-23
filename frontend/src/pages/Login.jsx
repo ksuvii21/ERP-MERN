@@ -13,7 +13,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { toast } from 'react-toastify';
-import { login, reset } from '../features/auth/authSlice';
+import { login, reset } from '../redux/slices/authSlice';
 
 const Login = () => {
   const navigate = useNavigate();
