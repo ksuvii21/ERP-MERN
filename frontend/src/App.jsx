@@ -24,6 +24,7 @@ function App() {
         />
         
         {/* Default Redirect */}
+        <Route path="/" element={<Dashboard />} />
         <Route path="*" element={<Login />} />
       </Routes>
     </Router>
