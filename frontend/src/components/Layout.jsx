@@ -51,7 +51,7 @@ const Layout = () => {
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            ERP System
+            Dextrone
           </Typography>
           <Typography variant="body1" sx={{ mr: 2 }}>
             {user?.name}
