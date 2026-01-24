@@ -1,12 +1,29 @@
 import React from 'react';
+import { Paper, Typography, Box } from '@mui/material';
 
-const KPICard = ({ title, value, icon }) => {
+const KPICard = ({ title, value, icon, color }) => {
   return (
-    <div style={{ border: '1px solid #eee', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', borderRadius: '8px', padding: '20px', margin: '10px', minWidth: '200px', textAlign: 'center', backgroundColor: 'white' }}>
-      <h3 style={{ margin: 0, color: '#555' }}>{title}</h3>
-      <div style={{ fontSize: '2.5rem', fontWeight: 'bold', margin: '10px 0', color: '#333' }}>{value}</div>
-      {icon && <div style={{ fontSize: '2rem' }}>{icon}</div>}
-    </div>
+    <Paper
+      elevation={3}
+      sx={{
+        p: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        height: 160,
+        justifyContent: 'space-between',
+        background: color || 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%)',
+        color: color ? 'white' : 'text.primary',
+        borderRadius: 3,
+        transition: '0.3s',
+        '&:hover': { transform: 'translateY(-5px)', boxShadow: 6 },
+      }}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Typography variant="subtitle1" fontWeight="600" sx={{ opacity: 0.9 }}>{title}</Typography>
+        {icon && <Box sx={{ fontSize: '2rem', opacity: 0.8 }}>{icon}</Box>}
+      </Box>
+      <Typography variant="h3" fontWeight="700">{value}</Typography>
+    </Paper>
   );
 };
 
