@@ -9,7 +9,7 @@ const { ROLES } = require('../config/roles.js');
 // @access  Private (Super Admin, Admin, Finance, Manager, Employee)
 router.get('/', authMiddleware([ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.FINANCE, ROLES.MANAGER, ROLES.EMPLOYEE]), async (req, res) => {
     try {
-        const sales = await Sale.find().populate('products.product', 'name price');
+        const sales = await Sale.find().populate('products.product', 'name price').populate('createdBy', 'name');
         res.json(sales);
     } catch (err) {
         res.status(500).send('Server Error');
