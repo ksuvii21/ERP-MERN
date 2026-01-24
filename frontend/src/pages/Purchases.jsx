@@ -1,47 +1,40 @@
-import React from 'react';
-import { Box, Typography, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip } from '@mui/material';
-import { Add } from '@mui/icons-material';
-
-const samplePurchases = [
-  { id: 'PO-001', supplier: 'Tech Supplies Co', date: '2023-10-20', total: 5000.00, status: 'Received' },
-  { id: 'PO-002', supplier: 'Office Depot', date: '2023-10-22', total: 350.00, status: 'Pending' },
-  { id: 'PO-003', supplier: 'Furniture World', date: '2023-10-24', total: 1200.00, status: 'Ordered' },
-];
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import API from '../utils/api';
 
 const Purchases = () => {
+  const [purchases, setPurchases] = useState([]);
+
+  useEffect(() => {
+    const fetchPurchases = async () => {
+      try {
+        const { data } = await API.get('/purchases');
+        setPurchases(data);
+      } catch (error) {
+        console.error('Failed to fetch purchases', error);
+      }
+    };
+    fetchPurchases();
+  }, []);
+
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4">Purchase Orders</Typography>
-        <Button variant="contained" startIcon={<Add />}>
-          New Purchase
-        </Button>
-      </Box>
+    <Box p={3}>
+      <Typography variant="h4" gutterBottom>Purchase Orders</Typography>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="purchases table">
+        <Table>
           <TableHead>
             <TableRow>
-              <TableCell>PO Number</TableCell>
-              <TableCell>Supplier</TableCell>
               <TableCell>Date</TableCell>
-              <TableCell align="right">Total ($)</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Total Cost</TableCell>
+              <TableCell>Vendor</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {samplePurchases.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell component="th" scope="row">{row.id}</TableCell>
-                <TableCell>{row.supplier}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell align="right">{row.total.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={row.status}
-                    color={row.status === 'Received' ? 'success' : 'warning'}
-                    size="small"
-                  />
-                </TableCell>
+            {purchases.map((purchase) => (
+              <TableRow key={purchase._id}>
+                <TableCell>{new Date(purchase.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell>${purchase.totalAmount}</TableCell>
+                <TableCell>{purchase.vendor || 'N/A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
