@@ -6,6 +6,7 @@ import { CssBaseline } from '@mui/material';
 import { useSelector, Provider } from 'react-redux';
 import { store } from './redux/store';
 
+import { ROLES } from '../../backend/config/roles';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
@@ -17,10 +18,13 @@ import Purchases from './pages/Purchases';
 import Users from './pages/Users';
 
 // Protected Route Wrapper
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useSelector((state) => state.auth);
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/app/dashboard" replace />;
   }
   return children;
 };
@@ -49,10 +53,26 @@ function App() {
           <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/app/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="inventory" element={<Inventory />} />
-            <Route path="sales" element={<Sales />} />
-            <Route path="purchases" element={<Purchases />} />
-            <Route path="users" element={<Users />} />
+            <Route path="inventory" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE]}>
+                <Inventory />
+              </ProtectedRoute>
+            } />
+            <Route path="sales" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.FINANCE]}>
+                <Sales />
+              </ProtectedRoute>
+            } />
+            <Route path="purchases" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE]}>
+                <Purchases />
+              </ProtectedRoute>
+            } />
+            <Route path="users" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER]}>
+                <Users />
+              </ProtectedRoute>
+            } />
           </Route>
         </Routes>
       </Router>
