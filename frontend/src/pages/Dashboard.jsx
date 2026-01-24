@@ -1,8 +1,11 @@
 import React from 'react';
-import { Box, Typography, Grid, Card, CardContent, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Grid, Card, CardContent, Button, AppBar, Toolbar } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   // Sample data for the chart
   const data = [
     { name: 'Jan', sales: 4000 },
@@ -14,11 +17,26 @@ const Dashboard = () => {
   ];
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        ERP Dashboard
-      </Typography>
-      <Grid container spacing={3}>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            ERP System
+          </Typography>
+          <Button color="inherit" onClick={() => navigate('/login')}>
+            Login
+          </Button>
+          <Button color="inherit" onClick={() => navigate('/register')}>
+            Register
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          Public Dashboard Overview
+        </Typography>
+        <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
@@ -81,6 +99,7 @@ const Dashboard = () => {
           </Card>
         </Grid>
       </Grid>
+      </Box>
     </Box>
   );
 };
