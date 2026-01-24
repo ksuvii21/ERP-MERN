@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Purchase = require('../models/Purchase');
 const authMiddleware = require('../middleware/auth');
-const { ROLES } = require('../config/roles');
+const { ROLES } = require('../config/roles.js');
 
 // @route   GET api/purchases
 // @desc    Get all purchases
