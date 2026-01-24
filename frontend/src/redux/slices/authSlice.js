@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import API from '../../services//api';
+import API from '../../utils/api';
 
 // Get user from localStorage
 const user = JSON.parse(localStorage.getItem('user'));
@@ -90,9 +90,25 @@ export const authSlice = createSlice({
         state.user = null;
         state.token = null;
       })
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+        state.token = null;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
       });
   },
 });
