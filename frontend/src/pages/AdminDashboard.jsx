@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Paper, Typography, Box, CircularProgress } from '@mui/material';
 import API from '../utils/api';
-import ChartCard from '../components/ChartCard';
-import AlertsCard from '../components/AlertsCard';
 
 const StatCard = ({ title, value, color }) => (
   <Paper
@@ -33,12 +31,7 @@ const AdminDashboard = () => {
     purchases: 0,
   });
   const [loading, setLoading] = useState(true);
-  
-  // Mock alerts for Admin
-  const systemAlerts = [
-    { message: 'High server load detected (92%).', type: 'error' },
-    { message: '3 failed login attempts from unknown IP.', type: 'warning' },
-  ];
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -59,6 +52,7 @@ const AdminDashboard = () => {
         });
       } catch (error) {
         console.error('Error fetching dashboard data', error);
+        setError('Failed to connect to the server. Please ensure the backend is running.');
       } finally {
         setLoading(false);
       }
@@ -69,6 +63,19 @@ const AdminDashboard = () => {
 
   if (loading) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>;
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 4, textAlign: 'center' }}>
+        <Typography variant="h5" color="error" gutterBottom>
+          Connection Error
+        </Typography>
+        <Typography variant="body1">
+          {error}
+        </Typography>
+      </Box>
+    );
   }
 
   return (
@@ -90,14 +97,6 @@ const AdminDashboard = () => {
           <StatCard title="Users" value={stats.users} color="#9c27b0" />
         </Grid>
       </Grid>
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>Analytics & System Health</Typography>
-        <div style={{ display: 'flex', flexWrap: 'wrap', margin: '0 -10px' }}>
-          <ChartCard title="Revenue Trends (2024)" />
-          <AlertsCard title="System Alerts" alerts={systemAlerts} />
-        </div>
-      </Box>
     </Box>
   );
 };
