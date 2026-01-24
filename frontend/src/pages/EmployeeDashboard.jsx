@@ -1,5 +1,7 @@
 import React from 'react';
 import KPICard from '../components/KPICard';
+import ChartCard from '../components/ChartCard';
+import AlertsCard from '../components/AlertsCard';
 
 const TasksCard = ({ tasks }) => (
     <div style={{ border: '1px solid #eee', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', borderRadius: '8px', padding: '20px', margin: '10px', flex: 2, backgroundColor: 'white' }}>
@@ -26,6 +28,11 @@ const EmployeeDashboard = () => {
         { id: 3, title: 'Team sync meeting', dueDate: '2026-01-26' },
     ];
 
+    const announcements = [
+        { message: 'Office closed this Friday for maintenance.', type: 'warning' },
+        { message: 'New health insurance policy details available.', type: 'warning' },
+    ];
+
     return (
         <div style={{ padding: '20px' }}>
             <h2 style={{ color: '#333' }}>Employee Dashboard</h2>
@@ -36,6 +43,10 @@ const EmployeeDashboard = () => {
             <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px', margin: '0 -10px' }}>
                 <TasksCard tasks={myTasks} />
                 <AssistantPanel />
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px', margin: '0 -10px' }}>
+                <ChartCard title="My Performance Score" />
+                <AlertsCard title="Company Announcements" alerts={announcements} />
             </div>
         </div>
     );
