@@ -22,13 +22,13 @@ const Login = () => {
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
-
+  
   useEffect(() => {
     if (isError) {
       toast.error(message);
     }
     if (isSuccess || user) {
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
