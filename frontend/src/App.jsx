@@ -3,13 +3,18 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CssBaseline } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useSelector, Provider } from 'react-redux';
+import { store } from './redux/store';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
+import Inventory from './pages/Inventory';
+import Sales from './pages/Sales';
+import Purchases from './pages/Purchases';
+import Users from './pages/Users';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -31,7 +36,7 @@ const GuestRoute = ({ children }) => {
 
 function App() {
   return (
-    <>
+    <Provider store={store}>
       <CssBaseline />
       <Router>
         <Routes>
@@ -44,12 +49,15 @@ function App() {
           <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/app/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
-            {/* Add other routes here later, e.g., <Route path="inventory" element={<Inventory />} /> */}
+            <Route path="inventory" element={<Inventory />} />
+            <Route path="sales" element={<Sales />} />
+            <Route path="purchases" element={<Purchases />} />
+            <Route path="users" element={<Users />} />
           </Route>
         </Routes>
       </Router>
       <ToastContainer />
-    </>
+    </Provider>
   );
 }
 
