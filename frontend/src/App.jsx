@@ -6,7 +6,7 @@ import { CssBaseline } from '@mui/material';
 import { useSelector, Provider } from 'react-redux';
 import { store } from './redux/store';
 
-import { ROLES } from '../../backend/config/roles';
+import { ROLES } from './config/roles';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
