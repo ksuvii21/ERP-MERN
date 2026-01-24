@@ -11,7 +11,7 @@ const authMiddleware = require('../middleware/auth');
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select('+password');
         if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     const { name, email, password, role } = req.body;
     try {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email }).select('+password');
         if (user) return res.status(400).json({ message: 'User already exists' });
 
         user = new User({ name, email, password, role });
