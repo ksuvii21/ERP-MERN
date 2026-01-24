@@ -34,7 +34,7 @@ const Purchases = () => {
               <TableRow key={purchase._id}>
                 <TableCell>{new Date(purchase.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell>${purchase.totalAmount}</TableCell>
-                <TableCell>{purchase.vendor || 'N/A'}</TableCell>
+                <TableCell>{purchase.supplierName || 'N/A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
