@@ -56,9 +56,9 @@ const seedData = async () => {
     // Insert Purchases
     const purchases = [
       {
-        products: [{ product: createdProducts[2]._id, quantity: 10 }],
+        products: [{ product: createdProducts[2]._id, quantity: 10, cost: 250 }],
         totalAmount: 2500, // Bulk discount maybe?
-        vendor: 'TechSupplier Inc.',
+        supplierName: 'TechSupplier Inc.',
         createdBy: admin._id,
       },
     ];
