@@ -7,7 +7,7 @@ const AIInsightsPage = () => {
     <Box p={3}>
       <Typography variant="h4" gutterBottom fontWeight="bold">AI Strategic Insights</Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3, height: '100%' }}>
             <Box display="flex" alignItems="center" gap={1} mb={2}>
               <Psychology color="primary" fontSize="large" />
@@ -19,7 +19,7 @@ const AIInsightsPage = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3, height: '100%' }}>
              <Box display="flex" alignItems="center" gap={1} mb={2}>
               <WarningAmber color="error" fontSize="large" />
