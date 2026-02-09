@@ -36,7 +36,7 @@ const KanbanBoard = () => {
 
       <Grid container spacing={3} sx={{ height: 'calc(100% - 80px)' }}>
         {columns.map((col) => (
-          <Grid item xs={12} md={4} key={col}>
+          <Grid size={{ xs: 12, md: 4 }} key={col}>
             <Paper sx={{ p: 2, height: '100%', backgroundColor: '#e2e8f0' }}>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#475569' }}>
                 {col} <Chip label={tasks.filter(t => t.status === col).length} size="small" sx={{ ml: 1 }} />
