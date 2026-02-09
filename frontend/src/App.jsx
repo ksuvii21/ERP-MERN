@@ -19,6 +19,9 @@ import Users from './pages/Users';
 import FinanceDashboard from './pages/FinanceDashboard';
 import ProjectList from './pages/ProjectList';
 import EmployeeManagement from './pages/EmployeeManagement';
+import Payroll from './pages/Payroll';
+import AIInsightsPage from './pages/AIInsightsPage';
+import Settings from './pages/Settings';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -89,6 +92,21 @@ function App() {
             <Route path="hr/employees" element={
               <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR', ROLES.MANAGER]}>
                 <EmployeeManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="hr/payroll" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR']}>
+                <Payroll />
+              </ProtectedRoute>
+            } />
+            <Route path="ai-insights" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER]}>
+                <AIInsightsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="settings" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR']}>
+                <Settings />
               </ProtectedRoute>
             } />
           </Route>
