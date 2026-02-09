@@ -19,7 +19,7 @@ const StockManagement = () => {
 
       <Grid container spacing={3}>
         {/* Action Panel */}
-        <Grid item xs={12} md={5}>
+        <Grid size={{ xs: 12, md: 5 }}>
           <Paper sx={{ p: 3 }}>
             <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 3 }}>
               <Tab icon={<AddCircle />} label="Stock In" />
@@ -45,7 +45,7 @@ const StockManagement = () => {
         </Grid>
 
         {/* Recent Movements Log */}
-        <Grid item xs={12} md={7}>
+        <Grid size={{ xs: 12, md: 7 }}>
           <Paper sx={{ p: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
               <History /> Recent Movements
