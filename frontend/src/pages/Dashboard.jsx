@@ -22,7 +22,7 @@ const Dashboard = () => {
         return <ManagerDashboard />;
       case ROLES.EMPLOYEE:
         return <EmployeeDashboard />;
-      case 'HR':
+      case ROLES.HR:
         return <HRDashboard />;
       default:
         return <div>Welcome to your Dashboard.</div>;
