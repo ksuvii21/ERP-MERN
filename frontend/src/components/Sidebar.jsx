@@ -2,22 +2,27 @@ import React from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box, IconButton, useTheme } from '@mui/material';
 import { Home, People, Receipt, Inventory, AccountBalance, Psychology, Settings, MenuOpen, ChevronLeft, AccountTree } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { ROLES } from '../config/roles';
 
 const Sidebar = ({ open, handleDrawerClose }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useSelector((state) => state.auth);
 
     const menuItems = [
-        { text: 'Dashboard', icon: <Home />, path: '/dashboard' },
-        { text: 'Employees', icon: <People />, path: '/hr/employees' },
-        { text: 'Payroll', icon: <Receipt />, path: '/hr/payroll' },
-        { text: 'Projects', icon: <AccountTree />, path: '/projects' },
-        { text: 'Inventory', icon: <Inventory />, path: '/inventory' },
-        { text: 'Finance', icon: <AccountBalance />, path: '/finance' },
-        { text: 'AI Insights', icon: <Psychology />, path: '/ai-insights' },
-        { text: 'Settings', icon: <Settings />, path: '/settings' },
+        { text: 'Dashboard', icon: <Home />, path: '/dashboard', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, 'HR'] },
+        { text: 'Employees', icon: <People />, path: '/hr/employees', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, 'HR', ROLES.MANAGER] },
+        { text: 'Payroll', icon: <Receipt />, path: '/hr/payroll', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, 'HR'] },
+        { text: 'Projects', icon: <AccountTree />, path: '/projects', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+        { text: 'Inventory', icon: <Inventory />, path: '/inventory', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'Finance', icon: <AccountBalance />, path: '/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'AI Insights', icon: <Psychology />, path: '/ai-insights', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'Settings', icon: <Settings />, path: '/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, 'HR'] },
     ];
+
+    const filteredMenuItems = menuItems.filter((item) => user && item.roles.includes(user.role));
 
     return (
         <Drawer
@@ -46,7 +51,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 </IconButton>
             </Box>
             <List>
-                {menuItems.map((item) => (
+                {filteredMenuItems.map((item) => (
                     <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             sx={{
