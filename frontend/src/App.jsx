@@ -10,6 +10,7 @@ import { ROLES } from './config/roles';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
 import Inventory from './pages/Inventory';
@@ -19,7 +20,7 @@ import Users from './pages/Users';
 import FinanceDashboard from './pages/FinanceDashboard';
 import ProjectList from './pages/ProjectList';
 import EmployeeManagement from './pages/EmployeeManagement';
-import Payroll from './pages/Payroll';
+import Payroll from './pages/Payroll.jsx';
 import AIInsightsPage from './pages/AIInsightsPage';
 import Settings from './pages/Settings';
 
@@ -54,6 +55,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
           <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+          <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
 
           {/* Protected Application Routes */}
           <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>

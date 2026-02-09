@@ -1,107 +1,139 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  CircularProgress,
-} from '@mui/material';
+import { Box, Button, TextField, Typography, Container, Paper, Avatar, Grid, InputAdornment, IconButton, CircularProgress, useTheme } from '@mui/material';
+import { LockOutlined, Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { login, reset } from '../redux/slices/authSlice';
+// import { login, reset } from '../features/auth/authSlice'; // Uncomment when authSlice is ready
 
 const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+    const theme = useTheme();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const { email, password } = formData;
+    const [showPassword, setShowPassword] = useState(false);
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
-  
-  useEffect(() => {
-    if (isError) {
-      toast.error(message);
-    }
-    if (isSuccess || user) {
-      navigate('/app/dashboard');
-    }
-    dispatch(reset());
-  }, [user, isError, isSuccess, message, navigate, dispatch]);
+    const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth || {});
 
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
-      password: Yup.string().required('Required'),
-    }),
-    onSubmit: (values) => {
-      dispatch(login(values));
-    },
-  });
+    useEffect(() => {
+        if (isError) toast.error(message);
+        if (isSuccess || user) navigate('/app/dashboard');
+        // dispatch(reset());
+    }, [user, isError, isSuccess, message, navigate, dispatch]);
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
-            ERP Login
-          </Typography>
-          <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isLoading}
-            >
-              {isLoading ? <CircularProgress size={24} /> : 'Sign In'}
-            </Button>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
-  );
+    const onChange = (e) => setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const userData = { email, password };
+        // dispatch(login(userData));
+        console.log("Login Attempt:", userData);
+    };
+
+    return (
+        <Box 
+            sx={{ 
+                minHeight: '100vh', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                background: theme.palette.mode === 'dark' 
+                    ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' 
+                    : 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)'
+            }}
+        >
+            <Container component="main" maxWidth="xs">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                    <Paper elevation={6} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 3 }}>
+                        <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
+                            <LockOutlined fontSize="large" />
+                        </Avatar>
+                        <Typography component="h1" variant="h5" fontWeight="bold" gutterBottom>
+                            Welcome Back
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" mb={3}>
+                            Sign in to continue to ERP System
+                        </Typography>
+
+                        <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                value={email}
+                                onChange={onChange}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start"><Email color="action" /></InputAdornment>,
+                                }}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type={showPassword ? 'text' : 'password'}
+                                id="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={onChange}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start"><Lock color="action" /></InputAdornment>,
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                            
+                            <Box display="flex" justifyContent="flex-end" mt={1}>
+                                <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
+                                    <Typography variant="body2" color="primary" fontWeight={500}>
+                                        Forgot password?
+                                    </Typography>
+                                </Link>
+                            </Box>
+
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                size="large"
+                                sx={{ mt: 3, mb: 2, py: 1.5, fontWeight: 'bold' }}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
+                            </Button>
+                            
+                            <Grid container justifyContent="center">
+                                <Grid item>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Don't have an account?{' '}
+                                        <Link to="/register" style={{ textDecoration: 'none' }}>
+                                            <Typography component="span" variant="body2" color="primary" fontWeight="bold">
+                                                Sign Up
+                                            </Typography>
+                                        </Link>
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Paper>
+                </motion.div>
+            </Container>
+        </Box>
+    );
 };
 
 export default Login;
