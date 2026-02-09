@@ -72,7 +72,7 @@ const HRDashboard = () => {
         </Grid>
 
         {/* AI Feature: Leave Abuse Detection */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               🚩 Leave Abuse Detection
@@ -92,7 +92,7 @@ const HRDashboard = () => {
         </Grid>
 
         {/* Productivity Trend Analysis */}
-        <Grid size={{ xs: 12 }}>
+        <Grid item xs={12}>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography variant="h6" gutterBottom>Organization Productivity Trends</Typography>
             <ResponsiveContainer width="100%" height={300}>
