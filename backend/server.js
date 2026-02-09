@@ -18,8 +18,9 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use('/api/sales', require('./routes/salesRoutes'));
-// app.use('/api/users', require('./routes/userRoutes')); // Add these next
-// app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/purchases', require('./routes/purchaseRoutes'));
 
 // Error Handler
 app.use((err, req, res, next) => {
