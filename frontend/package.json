@@ -24,6 +24,7 @@
     "chart": "^0.1.2",
     "chart.js": "^4.5.1",
     "formik": "^2.4.9",
+    "framer-motion": "^12.34.0",
     "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.7",
     "react": "^19.2.3",
