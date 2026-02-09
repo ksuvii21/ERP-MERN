@@ -58,7 +58,7 @@ const TeamWorkload = () => {
       )}
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper sx={{ p: 3, height: 400 }}>
             <Typography variant="h6" gutterBottom>Current Task Distribution</Typography>
             <ResponsiveContainer width="100%" height="100%">
@@ -78,7 +78,7 @@ const TeamWorkload = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, height: 400, overflowY: 'auto' }}>
             <Typography variant="h6" gutterBottom>Team Status</Typography>
             {teamData.map((member) => (
