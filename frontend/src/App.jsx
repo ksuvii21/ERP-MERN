@@ -82,7 +82,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="finance" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER]}>
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE]}>
                 <FinanceDashboard />
               </ProtectedRoute>
             } />
