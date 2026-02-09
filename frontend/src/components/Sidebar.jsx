@@ -20,7 +20,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         { text: 'Payroll', icon: <Receipt />, path: '/app/hr/payroll', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR'] },
         { text: 'Projects', icon: <AccountTree />, path: '/app/projects', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
         { text: 'Inventory', icon: <Inventory />, path: '/app/inventory', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
-        { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE] },
         { text: 'AI Insights', icon: <Psychology />, path: '/app/ai-insights', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
         { text: 'Settings', icon: <Settings />, path: '/app/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR'] },
     ];
