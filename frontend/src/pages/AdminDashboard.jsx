@@ -130,16 +130,16 @@ const AdminDashboard = () => {
         Admin Dashboard
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Total Sales" value={stats.sales} icon={<AttachMoney />} color="linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)" />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Products" value={stats.products} icon={<Inventory />} color="linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)" />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Purchases" value={stats.purchases} icon={<ShoppingCart />} color="linear-gradient(135deg, #ed6c02 0%, #e65100 100%)" />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Users" value={stats.users} icon={<People />} color="linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%)" />
         </Grid>
       </Grid>
