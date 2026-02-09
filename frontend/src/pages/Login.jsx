@@ -5,7 +5,7 @@ import { Box, Button, TextField, Typography, Container, Paper, Avatar, Grid, Inp
 import { LockOutlined, Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-// import { login, reset } from '../features/auth/authSlice'; // Uncomment when authSlice is ready
+import { login, reset } from '../redux/slices/authSlice';
 
 const Login = () => {
     const theme = useTheme();
@@ -21,7 +21,7 @@ const Login = () => {
     useEffect(() => {
         if (isError) toast.error(message);
         if (isSuccess || user) navigate('/app/dashboard');
-        // dispatch(reset());
+        dispatch(reset());
     }, [user, isError, isSuccess, message, navigate, dispatch]);
 
     const onChange = (e) => setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -29,8 +29,7 @@ const Login = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         const userData = { email, password };
-        // dispatch(login(userData));
-        console.log("Login Attempt:", userData);
+        dispatch(login(userData));
     };
 
     return (
