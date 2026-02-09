@@ -16,6 +16,9 @@ import Inventory from './pages/Inventory';
 import Sales from './pages/Sales';
 import Purchases from './pages/Purchases';
 import Users from './pages/Users';
+import FinanceDashboard from './pages/FinanceDashboard';
+import ProjectList from './pages/ProjectList';
+import EmployeeManagement from './pages/EmployeeManagement';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -71,6 +74,21 @@ function App() {
             <Route path="users" element={
               <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER]}>
                 <Users />
+              </ProtectedRoute>
+            } />
+            <Route path="finance" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER]}>
+                <FinanceDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="projects" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE]}>
+                <ProjectList />
+              </ProtectedRoute>
+            } />
+            <Route path="hr/employees" element={
+              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR', ROLES.MANAGER]}>
+                <EmployeeManagement />
               </ProtectedRoute>
             } />
           </Route>

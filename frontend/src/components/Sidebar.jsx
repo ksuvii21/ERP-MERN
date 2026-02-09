@@ -11,18 +11,21 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     const location = useLocation();
     const { user } = useSelector((state) => state.auth);
 
+    // Ensure user and role exist before filtering
+    const userRole = user?.role;
+
     const menuItems = [
-        { text: 'Dashboard', icon: <Home />, path: '/dashboard', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, 'HR'] },
-        { text: 'Employees', icon: <People />, path: '/hr/employees', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, 'HR', ROLES.MANAGER] },
-        { text: 'Payroll', icon: <Receipt />, path: '/hr/payroll', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, 'HR'] },
-        { text: 'Projects', icon: <AccountTree />, path: '/projects', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
-        { text: 'Inventory', icon: <Inventory />, path: '/inventory', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
-        { text: 'Finance', icon: <AccountBalance />, path: '/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
-        { text: 'AI Insights', icon: <Psychology />, path: '/ai-insights', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
-        { text: 'Settings', icon: <Settings />, path: '/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, 'HR'] },
+        { text: 'Dashboard', icon: <Home />, path: '/app/dashboard', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR'] },
+        { text: 'Employees', icon: <People />, path: '/app/hr/employees', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR', ROLES.MANAGER] },
+        { text: 'Payroll', icon: <Receipt />, path: '/app/hr/payroll', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR'] },
+        { text: 'Projects', icon: <AccountTree />, path: '/app/projects', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+        { text: 'Inventory', icon: <Inventory />, path: '/app/inventory', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'AI Insights', icon: <Psychology />, path: '/app/ai-insights', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
+        { text: 'Settings', icon: <Settings />, path: '/app/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR'] },
     ];
 
-    const filteredMenuItems = menuItems.filter((item) => user && item.roles.includes(user.role));
+    const filteredMenuItems = menuItems.filter((item) => userRole && item.roles.includes(userRole));
 
     return (
         <Drawer
