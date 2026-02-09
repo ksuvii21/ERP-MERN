@@ -4,6 +4,7 @@ import { ROLES } from '../config/roles';
 import AdminDashboard from './AdminDashboard';
 import ManagerDashboard from './ManagerDashboard';
 import EmployeeDashboard from './EmployeeDashboard';
+import HRDashboard from './HRDashboard';
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -21,6 +22,8 @@ const Dashboard = () => {
         return <ManagerDashboard />;
       case ROLES.EMPLOYEE:
         return <EmployeeDashboard />;
+      case 'HR':
+        return <HRDashboard />;
       default:
         return <div>Welcome to your Dashboard.</div>;
     }
