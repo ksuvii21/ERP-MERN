@@ -1,97 +1,56 @@
-import React from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box,
-  Drawer,
-  AppBar,
-  Toolbar,
-  List,
-  Typography,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-} from '@mui/material';
-import {
-  Dashboard as DashboardIcon,
-  Inventory,
-  ShoppingCart,
-  Receipt,
-  People,
-  Logout,
-} from '@mui/icons-material';
-import { logout, reset } from '../redux/slices/authSlice';
-
-const drawerWidth = 240;
+import React, { useState } from 'react';
+import { Box, CssBaseline, ThemeProvider, Fab, Drawer } from '@mui/material';
+import { SmartToy } from '@mui/icons-material';
+import { ColorModeContext, useMode } from '../theme';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
+import { Outlet } from 'react-router-dom';
+import ERPBrain from '../pages/ERPBrain';
+import { motion } from 'framer-motion';
 
 const Layout = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const { user } = useSelector((state) => state.auth);
+    const [theme, colorMode] = useMode();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [aiOpen, setAiOpen] = useState(false);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    dispatch(reset());
-    navigate('/login');
-  };
+    return (
+        <ColorModeContext.Provider value={colorMode}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Box display="flex" height="100vh">
+                    <Sidebar open={isSidebarOpen} handleDrawerClose={() => setIsSidebarOpen(!isSidebarOpen)} />
+                    <Box flexGrow={1} display="flex" flexDirection="column" height="100%" overflow="hidden">
+                        <Topbar />
+                        <Box flexGrow={1} p={3} overflow="auto" sx={{ backgroundColor: theme.palette.background.default }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <Outlet />
+                            </motion.div>
+                        </Box>
+                    </Box>
 
-  const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/app/dashboard' },
-    { text: 'Inventory', icon: <Inventory />, path: '/app/inventory' },
-    { text: 'Sales', icon: <ShoppingCart />, path: '/app/sales' },
-    { text: 'Purchases', icon: <Receipt />, path: '/app/purchases' },
-    { text: 'Users', icon: <People />, path: '/app/users' },
-  ];
+                    {/* Global AI Assistant */}
+                    <Fab 
+                        color="primary" 
+                        aria-label="ai-brain" 
+                        sx={{ position: 'fixed', bottom: 30, right: 30, zIndex: 1000 }}
+                        onClick={() => setAiOpen(true)}
+                    >
+                        <SmartToy />
+                    </Fab>
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Dextrone
-          </Typography>
-          <Typography variant="body1" sx={{ mr: 2 }}>
-            {user?.name}
-          </Typography>
-          <IconButton color="inherit" onClick={handleLogout}>
-            <Logout />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {menuItems.map((item) => (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton
-                  selected={location.pathname === item.path}
-                  onClick={() => navigate(item.path)}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <Outlet />
-      </Box>
-    </Box>
-  );
+                    <Drawer anchor="right" open={aiOpen} onClose={() => setAiOpen(false)}>
+                        <Box width={400} height="100%">
+                            <ERPBrain onClose={() => setAiOpen(false)} />
+                        </Box>
+                    </Drawer>
+                </Box>
+            </ThemeProvider>
+        </ColorModeContext.Provider>
+    );
 };
 
 export default Layout;
