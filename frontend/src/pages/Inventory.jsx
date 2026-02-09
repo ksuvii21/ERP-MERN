@@ -31,7 +31,7 @@ const Inventory = () => {
 
       <Grid container spacing={3} mb={4}>
         {/* AI Feature: Demand Forecasting */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper sx={{ p: 3, height: 350 }}>
             <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
               <TrendingUp color="primary" /> AI Demand Forecasting
@@ -51,7 +51,7 @@ const Inventory = () => {
         </Grid>
 
         {/* AI Feature: Low Stock Prediction */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, height: 350, overflowY: 'auto' }}>
             <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
               <Warning color="error" /> Low Stock Alerts
