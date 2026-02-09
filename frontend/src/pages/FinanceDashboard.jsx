@@ -35,7 +35,7 @@ const FinanceDashboard = () => {
 
       <Grid container spacing={3}>
         {/* Profit & Loss Chart */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper sx={{ p: 3, height: 400 }}>
             <Typography variant="h6" gutterBottom>Profit & Loss Overview</Typography>
             <ResponsiveContainer width="100%" height="100%">
@@ -53,7 +53,7 @@ const FinanceDashboard = () => {
         </Grid>
 
         {/* Expense Anomalies */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, height: 400, overflowY: 'auto' }}>
             <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
               <Warning color="error" /> Expense Anomalies
@@ -74,7 +74,7 @@ const FinanceDashboard = () => {
         </Grid>
 
         {/* Tax Overview */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
             <Paper sx={{ p: 3 }}>
                 <Typography variant="h6" gutterBottom>Tax Liability Estimation</Typography>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
