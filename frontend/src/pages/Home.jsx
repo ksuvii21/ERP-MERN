@@ -69,7 +69,7 @@ const Home = () => {
         {/* Main Content */}
         <Grid container spacing={4}>
           {/* Sales Overview Chart */}
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Paper elevation={2} sx={{ p: 3 }}>
               <Typography variant="h5" fontWeight="600" gutterBottom>
                 Sales Growth Overview
