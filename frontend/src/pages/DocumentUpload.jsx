@@ -25,7 +25,7 @@ const DocumentUpload = () => {
       <Typography variant="h4" gutterBottom fontWeight="bold">Document Intelligence (AI-OCR)</Typography>
       
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
             <Paper sx={{ p: 4, textAlign: 'center', border: '2px dashed #cbd5e1', backgroundColor: '#f8fafc', cursor: 'pointer' }} onClick={handleUpload}>
                 <CloudUpload sx={{ fontSize: 60, color: '#94a3b8', mb: 2 }} />
                 <Typography variant="h6" color="text.secondary">Drag & Drop or Click to Upload</Typography>
@@ -34,7 +34,7 @@ const DocumentUpload = () => {
             </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
             <Paper sx={{ p: 3, height: '100%' }}>
                 <Typography variant="h6" gutterBottom>Processed Documents</Typography>
                 <List>
