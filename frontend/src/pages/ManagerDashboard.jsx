@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Grid, Box, Typography, Paper, Button, Chip } from '@mui/material';
+import { Speed, BarChart as BarChartIcon, AttachMoney, Warning } from '@mui/icons-material';
+import KPICard from '../components/KPICard';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Legend 
 } from 'recharts';
-
-// --- Sub-Component: Enhanced KPI Card ---
-const KPICard = ({ title, value, icon, trend, color }) => (
-  <div style={{
-    background: '#fff', padding: '20px', borderRadius: '12px', flex: 1,
-    boxShadow: '0 4px 6px rgba(0,0,0,0.05)', borderLeft: `5px solid ${color}`
-  }}>
-    <div style={{ fontSize: '24px', marginBottom: '10px' }}>{icon}</div>
-    <div style={{ color: '#64748b', fontSize: '14px', fontWeight: '600' }}>{title}</div>
-    <div style={{ fontSize: '24px', fontWeight: 'bold', margin: '5px 0' }}>{value}</div>
-    <div style={{ fontSize: '12px', color: trend > 0 ? '#22c55e' : '#ef4444' }}>
-      {trend > 0 ? '▲' : '▼'} {Math.abs(trend)}% from last month
-    </div>
-  </div>
-);
 
 const ManagerDashboard = () => {
   const [data, setData] = useState(null);
@@ -55,69 +43,74 @@ const ManagerDashboard = () => {
   if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Enterprise Data...</div>;
 
   return (
-    <div style={{ backgroundColor: '#f8fafc', padding: '30px', fontFamily: 'Inter, sans-serif' }}>
-      <header style={{ marginBottom: '30px', display: 'flex', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: '24px', color: '#1e293b' }}>Operations Overview</h1>
-        <button style={{ padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>Download Report</button>
-      </header>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+        <Typography variant="h4" fontWeight="bold" color="#1e293b">Operations Overview</Typography>
+        <Button variant="contained" color="primary">Download Report</Button>
+      </Box>
 
       {/* KPI Section */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
-        <KPICard title="Project Velocity" value="4.2 pts/d" icon="⚡" trend={12} color="#3b82f6" />
-        <KPICard title="Resource Load" value="82%" icon="📊" trend={-5} color="#8b5cf6" />
-        <KPICard title="Budget Burn" value="$12,400" icon="💰" trend={8} color="#f59e0b" />
-      </div>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={4}>
+          <KPICard title="Project Velocity" value="4.2 pts/d" icon={<Speed />} trend={12} color="#3b82f6" />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <KPICard title="Resource Load" value="82%" icon={<BarChartIcon />} trend={-5} color="#8b5cf6" />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <KPICard title="Budget Burn" value="$12,400" icon={<AttachMoney />} trend={8} color="#f59e0b" />
+        </Grid>
+      </Grid>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '25px' }}>
+      <Grid container spacing={3}>
         
         {/* Productivity Trends (Real Chart) */}
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-          <h3 style={{ marginBottom: '20px' }}>Productivity Trends</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data.trends}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="week" />
-              <YAxis />
-              <Tooltip stroke="#f8fafc" />
-              <Line type="monotone" dataKey="productivity" stroke="#3b82f6" strokeWidth={3} dot={{ r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>Productivity Trends</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={data.trends}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="week" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="productivity" stroke="#3b82f6" strokeWidth={3} dot={{ r: 6 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
 
         {/* Deadline Risks (Enhanced List) */}
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-          <h3 style={{ marginBottom: '20px' }}>Deadline Risks</h3>
-          {data.risks.map(risk => (
-            <div key={risk.id} style={{ 
-              padding: '12px', borderRadius: '8px', marginBottom: '10px',
-              backgroundColor: risk.level === 'Critical' ? '#fef2f2' : '#fffbeb',
-              border: `1px solid ${risk.level === 'Critical' ? '#fee2e2' : '#fef3c7'}`
-            }}>
-              <span style={{ 
-                fontSize: '10px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px',
-                backgroundColor: risk.level === 'Critical' ? '#ef4444' : '#f59e0b', color: '#fff' 
-              }}>{risk.level}</span>
-              <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#1e293b' }}>{risk.msg}</p>
-            </div>
-          ))}
-        </div>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>Deadline Risks</Typography>
+            {data.risks.map(risk => (
+              <Box key={risk.id} sx={{ p: 2, mb: 2, borderRadius: 1, bgcolor: risk.level === 'Critical' ? '#fef2f2' : '#fffbeb', border: 1, borderColor: risk.level === 'Critical' ? '#fee2e2' : '#fef3c7' }}>
+                <Chip label={risk.level} color={risk.level === 'Critical' ? 'error' : 'warning'} size="small" sx={{ mb: 1 }} />
+                <Typography variant="body2" color="text.primary">{risk.msg}</Typography>
+              </Box>
+            ))}
+          </Paper>
+        </Grid>
 
         {/* Team Performance (Real Bar Chart) */}
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', gridColumn: 'span 2' }}>
-          <h3 style={{ marginBottom: '20px' }}>Team Performance vs. Target</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data.performance}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip cursor={{fill: '#f1f5f9'}} />
-              <Legend />
-              <Bar dataKey="output" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>Team Performance vs. Target</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data.performance}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip cursor={{fill: '#f1f5f9'}} />
+                <Legend />
+                <Bar dataKey="output" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
