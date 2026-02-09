@@ -36,23 +36,23 @@ const HRDashboard = () => {
       
       {/* KPI Section */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Total Employees" value="142" icon={<People />} color="linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)" />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="On Leave Today" value="8" icon={<EventBusy />} color="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Attrition Risk" value="High (3)" icon={<TrendingDown />} color="linear-gradient(135deg, #ef4444 0%, #dc2626 100%)" />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Open Positions" value="12" icon={<Work />} color="linear-gradient(135deg, #10b981 0%, #059669 100%)" />
         </Grid>
       </Grid>
 
       <Grid container spacing={3}>
         {/* AI Feature: Attrition Prediction */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               🤖 AI Attrition Prediction
@@ -72,7 +72,7 @@ const HRDashboard = () => {
         </Grid>
 
         {/* AI Feature: Leave Abuse Detection */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               🚩 Leave Abuse Detection
@@ -92,7 +92,7 @@ const HRDashboard = () => {
         </Grid>
 
         {/* Productivity Trend Analysis */}
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography variant="h6" gutterBottom>Organization Productivity Trends</Typography>
             <ResponsiveContainer width="100%" height={300}>
