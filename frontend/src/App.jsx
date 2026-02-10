@@ -29,6 +29,7 @@ import Invoices from './pages/Invoices.jsx';
 import StockManagement from './pages/StockManagement.jsx';
 import TeamWorkload from './pages/TeamWorkload.jsx';
 import DocumentUpload from './pages/DocumentUpload.jsx';
+import InvoiceDesign from './pages/InvoiceDesign.jsx';
 
 // Components
 import Layout from './components/Layout.jsx';
@@ -65,6 +66,7 @@ function App() {
               <Route path="stock" element={<StockManagement />} />
               <Route path="team-workload" element={<TeamWorkload />} />
               <Route path="document-upload" element={<DocumentUpload />} />
+              <Route path="invoice-design" element={<InvoiceDesign />} />
             </Route>
 
             {/* Fallback */}

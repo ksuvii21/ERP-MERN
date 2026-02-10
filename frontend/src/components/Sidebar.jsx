@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box, IconButton, useTheme } from '@mui/material';
-import { Home, People, Receipt, Inventory, AccountBalance, Psychology, Settings, MenuOpen, ChevronLeft, AccountTree, PointOfSale, Assessment, Summarize } from '@mui/icons-material';
+import { Home, People, Receipt, Inventory, AccountBalance, Psychology, Settings, MenuOpen, ChevronLeft, AccountTree, PointOfSale, Assessment, Summarize, DesignServices } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ROLES } from '../config/roles';
@@ -23,6 +23,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         { text: 'POS & Billing', icon: <PointOfSale />, path: '/app/pos', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
         { text: 'GST Reports', icon: <Assessment />, path: '/app/gst-reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.FINANCE, ROLES.MANAGER] },
         { text: 'Reports & MIS', icon: <Summarize />, path: '/app/reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE] },
+        { text: 'Invoice Design', icon: <DesignServices />, path: '/app/invoice-design', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
         { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE] },
         { text: 'AI Insights', icon: <Psychology />, path: '/app/ai-insights', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
         { text: 'Settings', icon: <Settings />, path: '/app/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR'] },
