@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography, Paper, Grid, Tabs, Tab, Button, Switch, FormControlLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Chip } from '@mui/material';
-import { Assessment, AutoMode, Download, Add, Summarize } from '@mui/icons-material';
+import { Box, Typography, Paper, Grid, Tabs, Tab, Button, Switch, FormControlLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Chip, Checkbox, FormGroup, Divider } from '@mui/material';
+import { Assessment, AutoMode, Download, Add, Summarize, TableChart, PictureAsPdf, GridOn } from '@mui/icons-material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const Reports = () => {
@@ -28,6 +28,45 @@ const Reports = () => {
     setAutomations(automations.map(a => a.id === id ? { ...a, active: !a.active } : a));
   };
 
+  // Report Builder State
+  const [builderConfig, setBuilderConfig] = useState({
+    module: 'Sales',
+    startDate: '2026-02-01',
+    endDate: '2026-02-28',
+    selectedColumns: ['Date', 'Invoice No', 'Customer', 'Amount', 'Status']
+  });
+
+  const availableColumns = {
+    Sales: ['Date', 'Invoice No', 'Customer', 'Amount', 'Tax', 'Status', 'Salesperson'],
+    Inventory: ['Product Name', 'SKU', 'Category', 'Stock Level', 'Unit Price', 'Total Value', 'Location'],
+    Outstanding: ['Customer Name', 'Pending Amount', 'Due Date', 'Days Overdue', 'Last Payment Date']
+  };
+
+  const [reportData, setReportData] = useState([]);
+
+  const handleColumnToggle = (col) => {
+    setBuilderConfig(prev => ({
+        ...prev,
+        selectedColumns: prev.selectedColumns.includes(col) 
+            ? prev.selectedColumns.filter(c => c !== col)
+            : [...prev.selectedColumns, col]
+    }));
+  };
+
+  const handleGenerate = () => {
+    // Simulate API Call based on builderConfig
+    const mockData = [
+        { Date: '2026-02-01', 'Invoice No': 'INV-1001', Customer: 'Acme Corp', Amount: 1200, Status: 'Paid', 'Product Name': 'Laptop', 'Stock Level': 50 },
+        { Date: '2026-02-05', 'Invoice No': 'INV-1002', Customer: 'Globex Inc', Amount: 3400, Status: 'Pending', 'Product Name': 'Mouse', 'Stock Level': 200 },
+        { Date: '2026-02-10', 'Invoice No': 'INV-1003', Customer: 'Stark Ind', Amount: 8500, Status: 'Overdue', 'Product Name': 'Monitor', 'Stock Level': 15 },
+    ];
+    setReportData(mockData);
+  };
+
+  const handleExport = (format) => {
+    alert(`Exporting ${builderConfig.module} report as ${format}...`);
+  };
+
   return (
     <Box p={3}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>Reports, MIS & Automation</Typography>
@@ -35,7 +74,7 @@ const Reports = () => {
       <Paper sx={{ mb: 3 }}>
         <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} variant="fullWidth">
           <Tab icon={<Assessment />} label="MIS Dashboard" />
-          <Tab icon={<Summarize />} label="Custom Reports" />
+          <Tab icon={<TableChart />} label="Dynamic Report Builder" />
           <Tab icon={<AutoMode />} label="Automation Center" />
         </Tabs>
       </Paper>
@@ -83,56 +122,71 @@ const Reports = () => {
       {/* Tab 1: Custom Reports */}
       {tabValue === 1 && (
         <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>Generate Custom Report</Typography>
-          <Grid container spacing={2} alignItems="center" mb={3}>
+          <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
+            <Summarize /> Dynamic Report Builder
+          </Typography>
+          <Divider sx={{ mb: 3 }} />
+
+          <Grid container spacing={3} mb={3}>
             <Grid item xs={12} md={3}>
-              <TextField select fullWidth label="Report Type" defaultValue="Sales">
-                <MenuItem value="Sales">Sales Summary</MenuItem>
-                <MenuItem value="Inventory">Inventory Valuation</MenuItem>
-                <MenuItem value="Payroll">Payroll Register</MenuItem>
-                <MenuItem value="Tax">GST/Tax Report</MenuItem>
+              <TextField select fullWidth label="Select Module" value={builderConfig.module} onChange={(e) => setBuilderConfig({...builderConfig, module: e.target.value})}>
+                <MenuItem value="Sales">Sales Analysis</MenuItem>
+                <MenuItem value="Inventory">Stock Reports</MenuItem>
+                <MenuItem value="Outstanding">Outstanding Reports</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} md={3}>
-              <TextField type="date" fullWidth label="Start Date" InputLabelProps={{ shrink: true }} />
+              <TextField type="date" fullWidth label="Start Date" InputLabelProps={{ shrink: true }} value={builderConfig.startDate} onChange={(e) => setBuilderConfig({...builderConfig, startDate: e.target.value})} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <TextField type="date" fullWidth label="End Date" InputLabelProps={{ shrink: true }} />
+              <TextField type="date" fullWidth label="End Date" InputLabelProps={{ shrink: true }} value={builderConfig.endDate} onChange={(e) => setBuilderConfig({...builderConfig, endDate: e.target.value})} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <Button variant="contained" fullWidth size="large" startIcon={<Assessment />}>Generate</Button>
+              <Button variant="contained" fullWidth size="large" startIcon={<GridOn />} onClick={handleGenerate}>Generate Report</Button>
             </Grid>
           </Grid>
+
+          <Box mb={3} p={2} bgcolor="#f8fafc" borderRadius={2} border="1px solid #e2e8f0">
+            <Typography variant="subtitle2" gutterBottom>Select Columns:</Typography>
+            <FormGroup row>
+                {availableColumns[builderConfig.module].map(col => (
+                    <FormControlLabel 
+                        key={col}
+                        control={<Checkbox checked={builderConfig.selectedColumns.includes(col)} onChange={() => handleColumnToggle(col)} size="small" />}
+                        label={col}
+                    />
+                ))}
+            </FormGroup>
+          </Box>
           
-          <TableContainer sx={{ border: '1px solid #e2e8f0', borderRadius: 2 }}>
-            <Table>
-              <TableHead sx={{ bgcolor: '#f8fafc' }}>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Report Name</TableCell>
-                  <TableCell>Generated By</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>2026-02-10</TableCell>
-                  <TableCell>Q1 Sales Summary</TableCell>
-                  <TableCell>Admin</TableCell>
-                  <TableCell><Chip label="Ready" color="success" size="small" /></TableCell>
-                  <TableCell><Button size="small" startIcon={<Download />}>Download</Button></TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>2026-02-08</TableCell>
-                  <TableCell>Inventory Audit</TableCell>
-                  <TableCell>Manager</TableCell>
-                  <TableCell><Chip label="Ready" color="success" size="small" /></TableCell>
-                  <TableCell><Button size="small" startIcon={<Download />}>Download</Button></TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {reportData.length > 0 && (
+            <>
+                <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
+                    <Button variant="outlined" startIcon={<TableChart />} onClick={() => handleExport('CSV')}>Export CSV</Button>
+                    <Button variant="outlined" color="error" startIcon={<PictureAsPdf />} onClick={() => handleExport('PDF')}>Export PDF</Button>
+                </Box>
+                <TableContainer sx={{ border: '1px solid #e2e8f0', borderRadius: 2, maxHeight: 400 }}>
+                    <Table stickyHeader size="small">
+                    <TableHead>
+                        <TableRow>
+                        {builderConfig.selectedColumns.map(col => (
+                            <TableCell key={col} sx={{ bgcolor: '#f1f5f9', fontWeight: 'bold' }}>{col}</TableCell>
+                        ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {reportData.map((row, idx) => (
+                        <TableRow key={idx} hover>
+                            {builderConfig.selectedColumns.map(col => (
+                                <TableCell key={col}>{row[col] !== undefined ? row[col] : '-'}</TableCell>
+                            ))}
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                    </Table>
+                </TableContainer>
+            </>
+          )}
         </Paper>
       )}
 
