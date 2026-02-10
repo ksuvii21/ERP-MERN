@@ -126,6 +126,13 @@ const Login = () => {
                                         </Link>
                                     </Typography>
                                 </Grid>
+                                <Grid item xs={12} sx={{ mt: 2, textAlign: 'center' }}>
+                                    <Link to="/" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Back to Home
+                                        </Typography>
+                                    </Link>
+                                </Grid>
                             </Grid>
                         </Box>
                     </Paper>
