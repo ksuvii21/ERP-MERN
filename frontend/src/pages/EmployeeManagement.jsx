@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Chip } from '@mui/material';
-import { AutoAwesome } from '@mui/icons-material';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Chip, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText } from '@mui/material';
+import { AutoAwesome, EventAvailable } from '@mui/icons-material';
 
 const EmployeeManagement = () => {
   // Mock Data
@@ -9,6 +9,14 @@ const EmployeeManagement = () => {
     { id: 2, name: 'Bob Smith', role: 'Backend Dev', skills: ['Node.js', 'SQL'], matchScore: 88 },
     { id: 3, name: 'Charlie Brown', role: 'Designer', skills: ['Figma', 'Sketch'], matchScore: 75 },
   ]);
+
+  const [openAttendance, setOpenAttendance] = useState(false);
+  const [selectedEmp, setSelectedEmp] = useState(null);
+
+  const handleViewAttendance = (emp) => {
+    setSelectedEmp(emp);
+    setOpenAttendance(true);
+  };
 
   return (
     <Box p={3}>
@@ -52,12 +60,36 @@ const EmployeeManagement = () => {
                 </TableCell>
                 <TableCell>
                   <Button size="small" color="primary">Edit</Button>
+                  <Button size="small" color="secondary" startIcon={<EventAvailable />} onClick={() => handleViewAttendance(emp)}>Attendance</Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Attendance Log Dialog */}
+      <Dialog open={openAttendance} onClose={() => setOpenAttendance(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Attendance Log: {selectedEmp?.name}</DialogTitle>
+        <DialogContent>
+            <List>
+                {[
+                    { date: '2026-02-10', status: 'Present', in: '09:00 AM', out: '06:00 PM' },
+                    { date: '2026-02-09', status: 'Present', in: '09:15 AM', out: '06:10 PM' },
+                    { date: '2026-02-08', status: 'Absent', in: '-', out: '-' },
+                    { date: '2026-02-07', status: 'Present', in: '08:55 AM', out: '05:55 PM' },
+                ].map((log, index) => (
+                    <ListItem key={index} divider>
+                        <ListItemText 
+                            primary={log.date} 
+                            secondary={`In: ${log.in} | Out: ${log.out}`} 
+                        />
+                        <Chip label={log.status} color={log.status === 'Present' ? 'success' : 'error'} size="small" />
+                    </ListItem>
+                ))}
+            </List>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
