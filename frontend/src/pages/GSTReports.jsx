@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Tabs, Tab, Chip } from '@mui/material';
-import { Download, Description, ReceiptLong } from '@mui/icons-material';
+import { Download, Description, ReceiptLong, Gavel } from '@mui/icons-material';
 
 const GSTReports = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -16,17 +16,35 @@ const GSTReports = () => {
     { category: 'Net Tax Liability', taxable: 2300, igst: 300, cgst: 60, sgst: 60, cess: 0 },
   ];
 
+  const taxRules = [
+    { hsn: '8471', desc: 'Laptops & Computers', rate: 18 },
+    { hsn: '8517', desc: 'Telephones & Mobiles', rate: 18 },
+    { hsn: '9403', desc: 'Furniture', rate: 12 },
+    { hsn: '3004', desc: 'Pharmaceuticals', rate: 12 },
+  ];
+
+  const handleExportJSON = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ gstr1: gstr1Data, summary: gstr3bData }, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "GST_Return_Feb2026.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
   return (
     <Box p={3}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" fontWeight="bold">GST Compliance & Reports</Typography>
-        <Button variant="outlined" startIcon={<Download />}>Export JSON (Govt Portal)</Button>
+        <Button variant="outlined" startIcon={<Download />} onClick={handleExportJSON}>Export JSON (Govt Portal)</Button>
       </Box>
 
       <Paper sx={{ mb: 3 }}>
         <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} variant="fullWidth">
           <Tab icon={<Description />} label="GSTR-1 (Sales)" />
           <Tab icon={<ReceiptLong />} label="GSTR-3B (Summary)" />
+          <Tab icon={<Gavel />} label="Tax Rule Engine" />
         </Tabs>
       </Paper>
 
@@ -84,6 +102,34 @@ const GSTReports = () => {
                     <TableCell align="right">${row.igst}</TableCell>
                     <TableCell align="right">${row.cgst}</TableCell>
                     <TableCell align="right">${row.sgst}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
+
+      {tabValue === 2 && (
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h6" gutterBottom>Tax Rate Rules (HSN/SAC)</Typography>
+          <TableContainer>
+            <Table>
+              <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                <TableRow>
+                  <TableCell>HSN Code</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell>GST Rate (%)</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {taxRules.map((rule) => (
+                  <TableRow key={rule.hsn}>
+                    <TableCell>{rule.hsn}</TableCell>
+                    <TableCell>{rule.desc}</TableCell>
+                    <TableCell>{rule.rate}%</TableCell>
+                    <TableCell><Chip label="Active" color="success" size="small" /></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
