@@ -6,10 +6,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 const Inventory = () => {
   // Mock Data for Products & AI Predictions
   const [products] = useState([
-    { id: 1, name: 'Dell XPS 15', category: 'Laptop', price: 1500, stock: 5, minStock: 10, predictedDemand: 'High' },
-    { id: 2, name: 'Logitech MX Master', category: 'Accessories', price: 100, stock: 45, minStock: 20, predictedDemand: 'Stable' },
-    { id: 3, name: 'Samsung 27" Monitor', category: 'Monitor', price: 350, stock: 2, minStock: 5, predictedDemand: 'Very High' },
-    { id: 4, name: 'Ergo Chair', category: 'Furniture', price: 500, stock: 12, minStock: 10, predictedDemand: 'Low' },
+    { id: 1, name: 'Dell XPS 15', category: 'Laptop', price: 1500, stock: 5, minStock: 10, predictedDemand: 'High', hsn: '8471', gst: 18 },
+    { id: 2, name: 'Logitech MX Master', category: 'Accessories', price: 100, stock: 45, minStock: 20, predictedDemand: 'Stable', hsn: '8471', gst: 18 },
+    { id: 3, name: 'Samsung 27" Monitor', category: 'Monitor', price: 350, stock: 2, minStock: 5, predictedDemand: 'Very High', hsn: '8528', gst: 18 },
+    { id: 4, name: 'Ergo Chair', category: 'Furniture', price: 500, stock: 12, minStock: 10, predictedDemand: 'Low', hsn: '9403', gst: 12 },
   ]);
 
   // Mock Data for AI Demand Forecasting
@@ -82,6 +82,8 @@ const Inventory = () => {
                 <TableCell><strong>Category</strong></TableCell>
                 <TableCell><strong>Price</strong></TableCell>
                 <TableCell><strong>Stock Level</strong></TableCell>
+                <TableCell><strong>HSN Code</strong></TableCell>
+                <TableCell><strong>GST %</strong></TableCell>
                 <TableCell><strong>AI Demand</strong></TableCell>
                 <TableCell><strong>Status</strong></TableCell>
               </TableRow>
@@ -97,6 +99,8 @@ const Inventory = () => {
                       {product.stock}
                     </Typography>
                   </TableCell>
+                  <TableCell>{product.hsn}</TableCell>
+                  <TableCell>{product.gst}%</TableCell>
                   <TableCell>
                     <Chip 
                       label={product.predictedDemand} 

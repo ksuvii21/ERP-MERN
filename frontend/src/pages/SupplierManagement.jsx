@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Rating, Chip, Button, LinearProgress } from '@mui/material';
-import { LocalShipping, Star } from '@mui/icons-material';
+import { LocalShipping, Star, AddShoppingCart } from '@mui/icons-material';
 
 const SupplierManagement = () => {
   // Mock Data with AI Scores
@@ -63,6 +63,7 @@ const SupplierManagement = () => {
                 </TableCell>
                 <TableCell>
                   <Button size="small" color="primary">Details</Button>
+                  <Button size="small" color="secondary" startIcon={<AddShoppingCart />}>Order</Button>
                 </TableCell>
               </TableRow>
             ))}
