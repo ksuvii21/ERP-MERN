@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, Paper, Button, Chip, Divider, List, ListItem, ListItemText } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Warning, Psychology } from '@mui/icons-material';
 
 const FinanceDashboard = () => {
@@ -35,7 +35,7 @@ const FinanceDashboard = () => {
 
       <Grid container spacing={3}>
         {/* Profit & Loss Chart */}
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, height: 400 }}>
             <Typography variant="h6" gutterBottom>Profit & Loss Overview</Typography>
             <ResponsiveContainer width="100%" height="100%">
@@ -53,7 +53,7 @@ const FinanceDashboard = () => {
         </Grid>
 
         {/* Expense Anomalies */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3, height: 400, overflowY: 'auto' }}>
             <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
               <Warning color="error" /> Expense Anomalies
@@ -74,7 +74,7 @@ const FinanceDashboard = () => {
         </Grid>
 
         {/* Tax Overview */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={4}>
             <Paper sx={{ p: 3 }}>
                 <Typography variant="h6" gutterBottom>Tax Liability Estimation</Typography>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -91,6 +91,22 @@ const FinanceDashboard = () => {
                     <Typography fontWeight="bold" color="error">$18,060</Typography>
                 </Box>
             </Paper>
+        </Grid>
+
+        {/* Cash Flow Forecast */}
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>Cash Flow Forecast (AI Projected)</Typography>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={financialData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="profit" stroke="#8b5cf6" strokeWidth={3} name="Net Cash Flow" />
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
         </Grid>
       </Grid>
     </Box>

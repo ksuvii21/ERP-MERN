@@ -4,7 +4,7 @@ import { Speed, BarChart as BarChartIcon, AttachMoney, Warning } from '@mui/icon
 import KPICard from '../components/KPICard';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, Legend 
+  Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell
 } from 'recharts';
 
 const ManagerDashboard = () => {
@@ -94,7 +94,7 @@ const ManagerDashboard = () => {
         </Grid>
 
         {/* Team Performance (Real Bar Chart) */}
-        <Grid item xs={12}>
+        <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>Team Performance vs. Target</Typography>
             <ResponsiveContainer width="100%" height={300}>
@@ -106,6 +106,28 @@ const ManagerDashboard = () => {
                 <Bar dataKey="output" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
               </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Task Status Distribution */}
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>Task Status</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[{name: 'Done', value: 45}, {name: 'In Progress', value: 30}, {name: 'Todo', value: 25}]}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {['#10b981', '#3b82f6', '#cbd5e1'].map((color, index) => <Cell key={index} fill={color} />)}
+                </Pie>
+                <Tooltip />
+                <Legend verticalAlign="bottom" height={36}/>
+              </PieChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>

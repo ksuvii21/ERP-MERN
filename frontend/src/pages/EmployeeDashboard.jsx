@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Box, Grid, Paper, Typography, TextField, Button, List, ListItem, ListItemText, Chip, Divider, Avatar, IconButton } from '@mui/material';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell 
 } from 'recharts';
+import { Send, SmartToy, Assignment, TrendingUp, EventAvailable, AttachMoney } from '@mui/icons-material';
+import KPICard from '../components/KPICard';
 
 // --- Sub-Component: Real-time AI Assistant ---
 const AIAssistant = () => {
@@ -21,29 +24,38 @@ const AIAssistant = () => {
   };
 
   return (
-    <div style={{ background: '#fff', padding: '20px', borderRadius: '15px', flex: 1, boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-      <h3 style={{ color: '#1e293b', marginBottom: '15px', display: 'flex', alignItems: 'center' }}>
-        <span style={{ marginRight: '10px' }}>🤖</span> AI Business Assistant
-      </h3>
-      <div style={{ height: '200px', overflowY: 'auto', backgroundColor: '#f8fafc', padding: '10px', borderRadius: '8px', marginBottom: '10px', fontSize: '14px' }}>
+    <Paper sx={{ p: 3, borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <SmartToy color="primary" /> AI Business Assistant
+      </Typography>
+      <Box sx={{ flexGrow: 1, height: '200px', overflowY: 'auto', bgcolor: '#f8fafc', p: 2, borderRadius: 2, mb: 2 }}>
         {chat.map((msg, i) => (
-          <div key={i} style={{ marginBottom: '10px', textAlign: msg.role === 'user' ? 'right' : 'left' }}>
-            <span style={{ background: msg.role === 'user' ? '#3b82f6' : '#e2e8f0', color: msg.role === 'user' ? '#fff' : '#1e293b', padding: '6px 12px', borderRadius: '12px', display: 'inline-block' }}>
+          <Box key={i} sx={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', mb: 1 }}>
+            <Paper 
+              sx={{ 
+                p: 1.5, 
+                bgcolor: msg.role === 'user' ? 'primary.main' : 'grey.200', 
+                color: msg.role === 'user' ? 'white' : 'text.primary',
+                borderRadius: 2,
+                maxWidth: '80%'
+              }}
+            >
+              <Typography variant="body2">
               {msg.text}
-            </span>
-          </div>
+              </Typography>
+            </Paper>
+          </Box>
         ))}
-      </div>
-      <div style={{ display: 'flex', gap: '5px' }}>
-        <input 
-          value={input} onChange={(e) => setInput(e.target.value)}
+      </Box>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <TextField 
+          fullWidth size="small" placeholder="Ask about payroll..." 
+          value={input} onChange={(e) => setInput(e.target.value)} 
           onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Ask about payroll..." 
-          style={{ flex: 1, padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px' }} 
         />
-        <button onClick={handleSend} style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '0 15px', borderRadius: '8px', cursor: 'pointer' }}>Send</button>
-      </div>
-    </div>
+        <IconButton color="primary" onClick={handleSend}><Send /></IconButton>
+      </Box>
+    </Paper>
   );
 };
 
@@ -64,60 +76,60 @@ const EmployeeDashboard = () => {
   const COLORS = ['#22c55e', '#ef4444'];
 
   return (
-    <div style={{ padding: '30px', backgroundColor: '#f1f5f9', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-        <h2 style={{ color: '#0f172a', margin: 0 }}>Welcome Back, Alex</h2>
-        <span style={{ color: '#64748b' }}>Jan 29, 2026</span>
-      </div>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" fontWeight="bold" color="#1e293b">Welcome Back, Alex</Typography>
+        <Typography variant="body1" color="text.secondary">{new Date().toDateString()}</Typography>
+      </Box>
 
       {/* Top Section: KPIs & Attendance */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '20px' }}>
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div style={{ width: '80px', height: '80px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie data={attendance} innerRadius={25} outerRadius={35} paddingAngle={5} dataKey="value">
-                            {attendance.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
-                        </Pie>
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
-            <div>
-                <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>Attendance Rate</p>
-                <h3 style={{ margin: 0 }}>95.4%</h3>
-            </div>
-        </div>
-
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '15px' }}>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>Net Salary (Pending)</p>
-            <h3 style={{ margin: '5px 0', color: '#22c55e' }}>$4,800.00</h3>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>Next Pay: Feb 01</span>
-        </div>
-      </div>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={4}>
+          <KPICard title="Attendance Rate" value="95.4%" icon={<EventAvailable />} trend={1.2} color="#10b981" />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <KPICard title="Net Salary (Pending)" value="$4,800" icon={<AttachMoney />} color="#3b82f6" />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <KPICard title="Active Tasks" value="3" icon={<Assignment />} color="#f59e0b" />
+        </Grid>
+      </Grid>
 
       {/* Middle Section: Tasks & AI */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <div style={{ flex: 2, background: '#fff', padding: '20px', borderRadius: '15px', minWidth: '300px' }}>
-            <h3 style={{ marginTop: 0 }}>Active Tasks</h3>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={7}>
+          <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>Active Tasks</Typography>
+            <List>
             {[
                 { t: 'Q4 Financial Audit', d: 'High', c: '#ef4444' },
                 { t: 'Update Security Protocols', d: 'Med', c: '#f59e0b' },
                 { t: 'Onboard New Intern', d: 'Low', c: '#3b82f6' }
             ].map((task, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span>{task.t}</span>
-                    <span style={{ color: task.c, fontSize: '12px', fontWeight: 'bold' }}>{task.d} Priority</span>
-                </div>
+                <React.Fragment key={i}>
+                  <ListItem>
+                    <ListItemText primary={task.t} />
+                    <Chip label={`${task.d} Priority`} size="small" sx={{ bgcolor: task.c, color: '#fff' }} />
+                  </ListItem>
+                  {i < 2 && <Divider />}
+                </React.Fragment>
             ))}
-        </div>
-        <AIAssistant />
-      </div>
+            </List>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <AIAssistant />
+        </Grid>
+      </Grid>
 
       {/* Bottom Section: Performance Chart */}
-      <div style={{ background: '#fff', padding: '25px', borderRadius: '15px' }}>
-        <h3 style={{ marginTop: 0 }}>Salary Growth & Performance</h3>
-        <div style={{ height: '250px' }}>
-            <ResponsiveContainer width="100%" height="100%">
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
+              <TrendingUp color="primary" /> Salary Growth & Performance
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={[
                     { name: 'Oct', val: 3000 }, { name: 'Nov', val: 3200 }, 
                     { name: 'Dec', val: 4500 }, { name: 'Jan', val: 4800 }
@@ -129,9 +141,10 @@ const EmployeeDashboard = () => {
                     <Area type="monotone" dataKey="val" stroke="#3b82f6" fill="#dbeafe" />
                 </AreaChart>
             </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

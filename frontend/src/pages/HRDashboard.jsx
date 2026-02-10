@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Box, Typography, Paper, List, ListItem, ListItemText, Chip } from '@mui/material';
 import { People, EventBusy, TrendingDown, Work } from '@mui/icons-material';
 import KPICard from '../components/KPICard';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const HRDashboard = () => {
   // Mock Data for AI Features
@@ -36,23 +36,23 @@ const HRDashboard = () => {
       
       {/* KPI Section */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <KPICard title="Total Employees" value="142" icon={<People />} color="linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <KPICard title="On Leave Today" value="8" icon={<EventBusy />} color="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <KPICard title="Attrition Risk" value="High (3)" icon={<TrendingDown />} color="linear-gradient(135deg, #ef4444 0%, #dc2626 100%)" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <KPICard title="Open Positions" value="12" icon={<Work />} color="linear-gradient(135deg, #10b981 0%, #059669 100%)" />
         </Grid>
       </Grid>
 
       <Grid container spacing={3}>
         {/* AI Feature: Attrition Prediction */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               🤖 AI Attrition Prediction
@@ -92,7 +92,7 @@ const HRDashboard = () => {
         </Grid>
 
         {/* Productivity Trend Analysis */}
-        <Grid item xs={12}>
+        <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography variant="h6" gutterBottom>Organization Productivity Trends</Typography>
             <ResponsiveContainer width="100%" height={300}>
@@ -104,6 +104,26 @@ const HRDashboard = () => {
                 <Legend />
                 <Line type="monotone" dataKey="score" stroke="#8b5cf6" strokeWidth={3} name="Productivity Index" />
               </LineChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Recruitment Funnel */}
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, borderRadius: 3, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>Recruitment Funnel</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart layout="vertical" data={[
+                { stage: 'Applied', count: 120 },
+                { stage: 'Screened', count: 45 },
+                { stage: 'Interview', count: 18 },
+                { stage: 'Offer', count: 5 },
+              ]}>
+                <XAxis type="number" hide />
+                <YAxis dataKey="stage" type="category" width={80} />
+                <Tooltip />
+                <Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={30} />
+              </BarChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
