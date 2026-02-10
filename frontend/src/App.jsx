@@ -1,120 +1,76 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { CssBaseline } from '@mui/material';
-import { useSelector, Provider } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from './redux/store';
 
-import { ROLES } from './config/roles';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Home from './pages/Home';
-import ForgotPassword from './pages/ForgotPassword';
-import Dashboard from './pages/Dashboard';
-import Layout from './components/Layout';
-import Inventory from './pages/Inventory';
-import Sales from './pages/Sales';
-import Purchases from './pages/Purchases';
-import Users from './pages/Users';
-import FinanceDashboard from './pages/FinanceDashboard';
-import ProjectList from './pages/ProjectList';
-import EmployeeManagement from './pages/EmployeeManagement';
+// Pages
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import ProjectList from './pages/ProjectList.jsx';
+import KanbanBoard from './pages/KanbanBoard.jsx';
+import Inventory from './pages/Inventory.jsx';
+import EmployeeManagement from './pages/EmployeeManagement.jsx';
 import Payroll from './pages/Payroll.jsx';
-import AIInsightsPage from './pages/AIInsightsPage';
-import Settings from './pages/Settings';
+import FinanceDashboard from './pages/FinanceDashboard.jsx';
+import AIInsightsPage from './pages/AIInsightsPage.jsx';
+import Settings from './pages/Settings.jsx';
+import POS from './pages/POS.jsx';
+import GSTReports from './pages/GSTReports.jsx';
+import Reports from './pages/Reports.jsx';
+import Users from './pages/Users.jsx';
+import Sales from './pages/Sales.jsx';
+import Purchases from './pages/Purchases.jsx';
+import Invoices from './pages/Invoices.jsx';
+import StockManagement from './pages/StockManagement.jsx';
+import TeamWorkload from './pages/TeamWorkload.jsx';
+import DocumentUpload from './pages/DocumentUpload.jsx';
 
-// Protected Route Wrapper
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user } = useSelector((state) => state.auth);
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/app/dashboard" replace />;
-  }
-  return children;
-};
-
-// Guest Route Wrapper (for Login/Register)
-const GuestRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
-  if (user) {
-    return <Navigate to="/app/dashboard" replace />;
-  }
-  return children;
-};
+// Components
+import Layout from './components/Layout.jsx';
 
 function App() {
   return (
     <Provider store={store}>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
-          <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
-          <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+      <BrowserRouter>
+          <ToastContainer position="top-right" autoClose={3000} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            
+            {/* Protected Routes wrapped in Layout */}
+            <Route path="/app" element={<Layout />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="projects" element={<ProjectList />} />
+              <Route path="kanban" element={<KanbanBoard />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="hr/employees" element={<EmployeeManagement />} />
+              <Route path="hr/payroll" element={<Payroll />} />
+              <Route path="finance" element={<FinanceDashboard />} />
+              <Route path="ai-insights" element={<AIInsightsPage />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="pos" element={<POS />} />
+              <Route path="gst-reports" element={<GSTReports />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="users" element={<Users />} />
+              <Route path="sales" element={<Sales />} />
+              <Route path="purchases" element={<Purchases />} />
+              <Route path="invoices" element={<Invoices />} />
+              <Route path="stock" element={<StockManagement />} />
+              <Route path="team-workload" element={<TeamWorkload />} />
+              <Route path="document-upload" element={<DocumentUpload />} />
+            </Route>
 
-          {/* Protected Application Routes */}
-          <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/app/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="inventory" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE]}>
-                <Inventory />
-              </ProtectedRoute>
-            } />
-            <Route path="sales" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.FINANCE]}>
-                <Sales />
-              </ProtectedRoute>
-            } />
-            <Route path="purchases" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE]}>
-                <Purchases />
-              </ProtectedRoute>
-            } />
-            <Route path="users" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR, ROLES.MANAGER]}>
-                <Users />
-              </ProtectedRoute>
-            } />
-            <Route path="finance" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE]}>
-                <FinanceDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="projects" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE]}>
-                <ProjectList />
-              </ProtectedRoute>
-            } />
-            <Route path="hr/employees" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR', ROLES.MANAGER]}>
-                <EmployeeManagement />
-              </ProtectedRoute>
-            } />
-            <Route path="hr/payroll" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR']}>
-                <Payroll />
-              </ProtectedRoute>
-            } />
-            <Route path="ai-insights" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER]}>
-                <AIInsightsPage />
-              </ProtectedRoute>
-            } />
-            <Route path="settings" element={
-              <ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR']}>
-                <Settings />
-              </ProtectedRoute>
-            } />
-          </Route>
-        </Routes>
-      </Router>
-      <ToastContainer />
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+      </BrowserRouter>
     </Provider>
   );
 }
