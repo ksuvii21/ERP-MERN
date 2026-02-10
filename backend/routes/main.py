@@ -28,6 +28,10 @@ class Transaction(BaseModel):
     category: str
     date: str
 
+class CashflowInput(BaseModel):
+    history: List[float]
+    months_to_predict: int = 1
+
 # --- Endpoints ---
 
 @app.get("/")
@@ -81,4 +85,22 @@ def detect_anomalies(transactions: List[Transaction]):
         "anomalies": anomalies,
         "count": len(anomalies),
         "threshold_used": f"Mean: {mean:.2f}, Std: {std:.2f}"
+    }
+
+@app.post("/predict/cashflow")
+def predict_cashflow(data: CashflowInput):
+    # Simulation: Linear Trend Projection
+    history = np.array(data.history)
+    if len(history) < 2:
+        return {"prediction": history[-1] if len(history) > 0 else 0}
+    
+    x = np.arange(len(history))
+    z = np.polyfit(x, history, 1)
+    p = np.poly1d(z)
+    
+    next_val = p(len(history))
+    return {
+        "prediction": round(next_val, 2),
+        "trend": "Positive" if z[0] > 0 else "Negative",
+        "confidence": 0.80
     }
