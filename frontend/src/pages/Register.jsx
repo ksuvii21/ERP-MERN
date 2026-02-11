@@ -59,7 +59,7 @@ const Register = () => {
                             Create Account
                         </Typography>
                         <Typography variant="body2" color="text.secondary" mb={3}>
-                            Join the ERP System today
+                            Join KNexis today
                         </Typography>
 
                         <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1, width: '100%' }}>

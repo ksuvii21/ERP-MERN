@@ -54,7 +54,7 @@ const Login = () => {
                             Welcome Back
                         </Typography>
                         <Typography variant="body2" color="text.secondary" mb={3}>
-                            Sign in to continue to ERP System
+                            Sign in to continue to KNexis
                         </Typography>
 
                         <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1, width: '100%' }}>

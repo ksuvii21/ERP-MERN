@@ -41,7 +41,7 @@ const Home = () => {
         <Toolbar>
           <TrendingUp sx={{ mr: 1, color: 'primary.main' }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-            Nexus ERP
+            KNexis
           </Typography>
           <Button variant="outlined" sx={{ mr: 2 }} onClick={() => navigate('/login')}>
             Login
@@ -90,7 +90,7 @@ const Home = () => {
 
       {/* Footer */}
       <Box component="footer" sx={{ backgroundColor: 'white', p: 4, mt: 6, textAlign: 'center' }}>
-        <Typography variant="body1">&copy; {new Date().getFullYear()} Nexus ERP. All rights reserved.</Typography>
+        <Typography variant="body1">&copy; {new Date().getFullYear()} KNexis. All rights reserved.</Typography>
       </Box>
     </Box>
   );
