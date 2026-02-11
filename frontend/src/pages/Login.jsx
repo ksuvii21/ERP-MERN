@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, TextField, Typography, Container, Paper, Avatar, Grid, InputAdornment, IconButton, CircularProgress, useTheme } from '@mui/material';
-import { LockOutlined, Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { login, reset } from '../redux/slices/authSlice';
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowLeft, TrendingUp } from 'lucide-react';
 
 const Login = () => {
-    const theme = useTheme();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     
@@ -33,112 +31,98 @@ const Login = () => {
     };
 
     return (
-        <Box 
-            sx={{ 
-                minHeight: '100vh', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                background: theme.palette.mode === 'dark' 
-                    ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' 
-                    : 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)'
-            }}
-        >
-            <Container component="main" maxWidth="xs">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                    <Paper elevation={6} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 3 }}>
-                        <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
-                            <LockOutlined fontSize="large" />
-                        </Avatar>
-                        <Typography component="h1" variant="h5" fontWeight="bold" gutterBottom>
-                            Welcome Back
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={3}>
-                            Sign in to continue to KNexis
-                        </Typography>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            >
+                <div className="p-8">
+                    <div className="text-center mb-8">
+                        <Link to="/" className="inline-flex items-center justify-center mb-4">
+                            <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600">
+                                <TrendingUp className="w-8 h-8" />
+                            </div>
+                        </Link>
+                        <h2 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h2>
+                        <p className="text-slate-600">Sign in to continue to KNexis</p>
+                    </div>
 
-                        <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                                value={email}
-                                onChange={onChange}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start"><Email color="action" /></InputAdornment>,
-                                }}
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type={showPassword ? 'text' : 'password'}
-                                id="password"
-                                autoComplete="current-password"
-                                value={password}
-                                onChange={onChange}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start"><Lock color="action" /></InputAdornment>,
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    )
-                                }}
-                            />
-                            
-                            <Box display="flex" justifyContent="flex-end" mt={1}>
-                                <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
-                                    <Typography variant="body2" color="primary" fontWeight={500}>
-                                        Forgot password?
-                                    </Typography>
-                                </Link>
-                            </Box>
+                    <form onSubmit={onSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Mail className="h-5 w-5 text-slate-400" />
+                                </div>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={email}
+                                    onChange={onChange}
+                                    className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 transition-all"
+                                    placeholder="you@example.com"
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                size="large"
-                                sx={{ mt: 3, mb: 2, py: 1.5, fontWeight: 'bold' }}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
-                            </Button>
-                            
-                            <Grid container justifyContent="center">
-                                <Grid item>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Don't have an account?{' '}
-                                        <Link to="/register" style={{ textDecoration: 'none' }}>
-                                            <Typography component="span" variant="body2" color="primary" fontWeight="bold">
-                                                Sign Up
-                                            </Typography>
-                                        </Link>
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sx={{ mt: 2, textAlign: 'center' }}>
-                                    <Link to="/" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Back to Home
-                                        </Typography>
-                                    </Link>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Paper>
-                </motion.div>
-            </Container>
-        </Box>
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="block text-sm font-medium text-slate-700">Password</label>
+                                <Link to="/forgot-password" class="text-sm font-medium text-teal-600 hover:text-teal-700">Forgot password?</Link>
+                            </div>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Lock className="h-5 w-5 text-slate-400" />
+                                </div>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={password}
+                                    onChange={onChange}
+                                    className="block w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 transition-all"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                                >
+                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : 'Sign In'}
+                        </button>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-slate-600">
+                            Don't have an account?{' '}
+                            <Link to="/register" className="font-medium text-teal-600 hover:text-teal-700">
+                                Sign up
+                            </Link>
+                        </p>
+                    </div>
+                    
+                    <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                        <Link to="/" className="inline-flex items-center text-sm text-slate-500 hover:text-slate-700 transition-colors">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Back to Home
+                        </Link>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
     );
 };
 
