@@ -5,7 +5,8 @@ const Purchase = require('../models/Purchase');
 // @route   GET /api/purchases
 // @access  Private
 const getPurchases = asyncHandler(async (req, res) => {
-  const purchases = await Purchase.find({});
+  // req.company is attached by the 'protect' middleware
+  const purchases = await Purchase.find({ companyId: req.company._id });
   res.json(purchases);
 });
 
