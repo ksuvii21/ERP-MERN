@@ -85,8 +85,18 @@ const loginCompany = asyncHandler(async (req, res) => {
   // 2. Check if company exists and get password
   const company = await Company.findOne({ email }).select('+password');
 
-  // 3. Check if company exists and password matches
-  if (company && (await bcrypt.compare(password, company.password))) {
+  if (!company) {
+    // For security, we send a generic message to the client.
+    // The console log is for server-side debugging.
+    console.log(`Auth-Debug: Login failed. Company not found for email: ${email}`);
+    res.status(401);
+    throw new Error('Invalid credentials');
+  }
+
+  const isMatch = await bcrypt.compare(password, company.password);
+
+  if (isMatch) {
+    // 3. If password matches, send back data and token
     res.json({
       _id: company._id,
       name: company.name,
@@ -95,6 +105,7 @@ const loginCompany = asyncHandler(async (req, res) => {
       token: generateToken(company._id, ROLES.ADMIN),
     });
   } else {
+    console.log(`Auth-Debug: Login failed. Incorrect password for email: ${email}`);
     res.status(401);
     throw new Error('Invalid credentials');
   }
