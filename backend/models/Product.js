@@ -2,18 +2,12 @@ const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  sku: { type: String, unique: true, required: true },
-  category: { type: String, required: true },
+  sku: { type: String, unique: true },
+  category: String,
   price: { type: Number, required: true },
-  gstRate: { type: Number, default: 0 },
-  hsnCode: { type: String },
-  description: String,
-  // AI Fields (Cached from analysis)
-  aiInsights: {
-    demandLevel: { type: String, enum: ['Low', 'Stable', 'High', 'Very High'], default: 'Stable' },
-    deadStockRisk: { type: Boolean, default: false },
-    lastAnalyzed: Date
-  }
+  stock: { type: Number, default: 0 },
+  minStockLevel: { type: Number, default: 10 },
+  predictedDemand: { type: String } // AI Field: 'High', 'Medium', 'Low'
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);
