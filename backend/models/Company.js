@@ -53,11 +53,7 @@ const CompanySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Timezone is required'],
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+}, { timestamps: true });
 
 // Encrypt password using bcrypt before saving
 CompanySchema.pre('save', async function () {
