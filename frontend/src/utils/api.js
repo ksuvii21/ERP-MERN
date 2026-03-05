@@ -1,21 +1,22 @@
 import axios from 'axios';
 
-const API = axios.create({
-  baseURL: 'http://localhost:5000/api', // Adjust port if your backend runs elsewhere
+const api = axios.create({
+  baseURL: '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Add a request interceptor to attach the token
-API.interceptors.request.use(
+// Add a request interceptor to include the token in headers for every request
+api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      config.headers['Authorization'] = `Bearer ${user.token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-export default API;
+export default api;
