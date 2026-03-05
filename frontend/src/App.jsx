@@ -6,9 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 // Pages
 import Home from './pages/Landing/Home.jsx';
 import Login from './pages/Auth/Login.jsx';
-import Register from './pages/Auth/Register.jsx';
+// The Register.jsx file exports the CreateCompany component, which is our main registration flow.
+import CreateCompany from './pages/Auth/Register.jsx';
 import ForgotPassword from './pages/Auth/ForgotPassword.jsx';
-import CreateCompany from './pages/Auth/CreateCompany.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import ProjectList from './pages/Projects/ProjectList.jsx';
 import KanbanBoard from './pages/Projects/KanbanBoard.jsx';
@@ -40,9 +40,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<CreateCompany />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/create-company" element={<CreateCompany />} />
           
           {/* Protected Routes wrapped in Layout */}
           <Route path="/app" element={<Layout />}>
