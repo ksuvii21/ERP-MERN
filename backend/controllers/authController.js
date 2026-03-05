@@ -2,20 +2,10 @@ const Company = require('../models/Company');
 const User = require('../models/User');
 const asyncHandler = require('express-async-handler'); // npm i express-async-handler
 const jwt = require('jsonwebtoken'); // npm i jsonwebtoken
-const { ROLES } = require('../config/roles');
+const { ROLES } = require('../config/roles'); 
 const bcrypt = require('bcryptjs');
 
-// Generate JWT
-const generateToken = (id, role) => {
-  if (!process.env.JWT_SECRET) {
-    // This is a critical server configuration error.
-    console.error('FATAL ERROR: JWT_SECRET is not defined in .env file.');
-    throw new Error('Server configuration error, cannot sign authentication tokens.');
-  }
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { // id will be user id
-    expiresIn: '30d',
-  });
-};
+const generateToken = require('../utils/generateToken');
 
 /**
  * @desc    Register a new company

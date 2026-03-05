@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, inviteUser, deleteUser } = require('../controllers/userController');
+const { getUsers, inviteUser, deleteUser, acceptInvitation } = require('../controllers/userController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const { ROLES } = require('../config/roles');
 
@@ -8,5 +8,6 @@ const { ROLES } = require('../config/roles');
 router.get('/', protect, authorize(ROLES.ADMIN, ROLES.HR, ROLES.MANAGER), getUsers);
 router.post('/invite', protect, authorize(ROLES.ADMIN), inviteUser);
 router.delete('/:id', protect, authorize(ROLES.ADMIN), deleteUser);
+router.post('/accept-invitation', acceptInvitation);
 
 module.exports = router;

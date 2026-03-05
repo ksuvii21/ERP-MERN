@@ -26,13 +26,20 @@ const Layout = () => {
     navigate('/login');
   };
 
-  const navItems = [
+  let navItems = [
     { name: 'Dashboard', path: '/app/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'Projects', path: '/app/projects', icon: <Briefcase size={20} /> },
     { name: 'Inventory', path: '/app/inventory', icon: <ShoppingCart size={20} /> },
     { name: 'HR', path: '/app/hr/employees', icon: <Users size={20} /> },
     { name: 'Finance', path: '/app/finance', icon: <FileText size={20} /> },
   ];
+
+  // Conditionally add User Management link for Admins
+  if (user && user.role === 'admin') {
+    navItems.push({ 
+      name: 'User Management', path: '/app/users', icon: <Users size={20} /> 
+    });
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
