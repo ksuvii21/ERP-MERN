@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../../utils/api';
 import { 
   Building2, 
   Mail, 
@@ -62,7 +62,7 @@ const CreateCompany = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('/api/auth/register-company', submissionData);
+      const response = await api.post('/auth/register-company', submissionData);
       
       // On success, you can automatically log the user in by saving their data
       localStorage.setItem('user', JSON.stringify(response.data));
