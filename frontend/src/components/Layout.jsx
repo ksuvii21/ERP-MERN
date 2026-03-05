@@ -1,56 +1,102 @@
 import React, { useState } from 'react';
-import { Box, CssBaseline, ThemeProvider, Fab, Drawer } from '@mui/material';
-import { SmartToy } from '@mui/icons-material';
-import { ColorModeContext, useMode } from '../theme';
-import Sidebar from './Sidebar';
-import Topbar from './Topbar';
-import { Outlet } from 'react-router-dom';
-import ERPBrain from '../pages/AI/ERPBrain';
-import { motion } from 'framer-motion';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { 
+  LayoutDashboard, 
+  LogOut, 
+  Menu, 
+  X, 
+  Briefcase,
+  ShoppingCart,
+  Users,
+  FileText
+} from 'lucide-react';
+import { logout, reset } from '../features/auth/authSlice';
 
 const Layout = () => {
-    const [theme, colorMode] = useMode();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [aiOpen, setAiOpen] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-    return (
-        <ColorModeContext.Provider value={colorMode}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Box display="flex" height="100vh">
-                    <Sidebar open={isSidebarOpen} handleDrawerClose={() => setIsSidebarOpen(!isSidebarOpen)} />
-                    <Box flexGrow={1} display="flex" flexDirection="column" height="100%" overflow="hidden">
-                        <Topbar />
-                        <Box flexGrow={1} p={3} overflow="auto" sx={{ backgroundColor: theme.palette.background.default }}>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5 }}
-                            >
-                                <Outlet />
-                            </motion.div>
-                        </Box>
-                    </Box>
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/login');
+  };
 
-                    {/* Global AI Assistant */}
-                    <Fab 
-                        color="primary" 
-                        aria-label="ai-brain" 
-                        sx={{ position: 'fixed', bottom: 30, right: 30, zIndex: 1000 }}
-                        onClick={() => setAiOpen(true)}
-                    >
-                        <SmartToy />
-                    </Fab>
+  const navItems = [
+    { name: 'Dashboard', path: '/app/dashboard', icon: <LayoutDashboard size={20} /> },
+    { name: 'Projects', path: '/app/projects', icon: <Briefcase size={20} /> },
+    { name: 'Inventory', path: '/app/inventory', icon: <ShoppingCart size={20} /> },
+    { name: 'HR', path: '/app/hr/employees', icon: <Users size={20} /> },
+    { name: 'Finance', path: '/app/finance', icon: <FileText size={20} /> },
+  ];
 
-                    <Drawer anchor="right" open={aiOpen} onClose={() => setAiOpen(false)}>
-                        <Box width={400} height="100%">
-                            <ERPBrain onClose={() => setAiOpen(false)} />
-                        </Box>
-                    </Drawer>
-                </Box>
-            </ThemeProvider>
-        </ColorModeContext.Provider>
-    );
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <aside className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-slate-900 text-white transition-all duration-300 flex flex-col`}>
+        <div className="p-4 flex items-center justify-between border-b border-slate-800">
+          <span className={`font-bold text-xl ${!isSidebarOpen && 'hidden'}`}>ERP System</span>
+          <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-1 hover:bg-slate-800 rounded">
+            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+        
+        <nav className="flex-1 overflow-y-auto py-4">
+          <ul className="space-y-1 px-2">
+            {navItems.map((item) => (
+              <li key={item.path}>
+                <Link 
+                  to={item.path}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                    location.pathname.startsWith(item.path)
+                      ? 'bg-teal-600 text-white' 
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  {item.icon}
+                  <span className={`${!isSidebarOpen && 'hidden'}`}>{item.name}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="p-4 border-t border-slate-800">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 text-slate-400 hover:text-white w-full px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            <LogOut size={20} />
+            <span className={`${!isSidebarOpen && 'hidden'}`}>Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
+          <h1 className="text-xl font-semibold text-gray-800">
+            {navItems.find(i => location.pathname.startsWith(i.path))?.name || 'Dashboard'}
+          </h1>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">Welcome, {user?.name || 'User'}</span>
+            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-700 font-bold">
+              {user?.name?.charAt(0) || 'U'}
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+          {/* This Outlet is where the nested routes render */}
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default Layout;
