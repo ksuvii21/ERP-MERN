@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 /**
  * Represents a company within the multi-tenant system.
@@ -11,21 +10,6 @@ const CompanySchema = new mongoose.Schema({
     required: [true, 'Company name is required'],
     trim: true,
     unique: true,
-  },
-  email: {
-    type: String,
-    required: [true, 'Please add an email'],
-    unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email',
-    ],
-  },
-  password: {
-    type: String,
-    required: [true, 'Please add a password'],
-    minlength: 6,
-    select: false, // Don't return password by default
   },
   industry: {
     type: String,
@@ -53,15 +37,11 @@ const CompanySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Timezone is required'],
   },
-}, { timestamps: true });
-
-// Encrypt password using bcrypt before saving
-CompanySchema.pre('save', async function () {
-  if (!this.isModified('password')) {
-    return;
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Company', CompanySchema);

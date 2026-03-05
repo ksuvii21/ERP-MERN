@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const Company = require('../models/Company');
+const User = require('../models/User');
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -16,15 +17,20 @@ const protect = asyncHandler(async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get company from the token's ID and attach to request
-      req.company = await Company.findById(decoded.id).select('-password');
+      // Get user from the token and attach to request
+      req.user = await User.findById(decoded.id).select('-password');
 
-      // Attach user role from token to the request for authorization
-      req.user = { role: decoded.role };
+      if (!req.user) {
+        res.status(401);
+        throw new Error('Not authorized, user not found');
+      }
+
+      // Get the user's company and attach to request
+      req.company = await Company.findById(req.user.company);
 
       if (!req.company) {
         res.status(401);
-        throw new Error('Not authorized, company not found');
+        throw new Error('Not authorized, company not found for user');
       }
 
       next();
