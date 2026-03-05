@@ -5,9 +5,12 @@ const Transaction = require('../models/Transaction'); // Ensure Transaction.js i
 // @route   GET /api/sales
 // @access  Private
 const getSales = asyncHandler(async (req, res) => {
-  // Fetch transactions where type is 'Income' and category is 'Sales'
-  const sales = await Transaction.find({ type: 'Income', category: 'Sales' })
-    .sort({ date: -1 });
+  // Fetch transactions for the logged-in company where type is 'Income' and category is 'Sales'
+  const sales = await Transaction.find({ 
+    company: req.company._id, // Ensures data isolation for the current company
+    type: 'Income', 
+    category: 'Sales' 
+  }).sort({ date: -1 });
   
   res.status(200).json(sales);
 });
