@@ -5,7 +5,8 @@ const Product = require('../models/Product');
 // @route   GET /api/products
 // @access  Private
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  // req.company is attached by the 'protect' middleware
+  const products = await Product.find({ companyId: req.company._id });
   res.json(products);
 });
 
