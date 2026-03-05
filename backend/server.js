@@ -24,13 +24,13 @@ app.use(cors());
 app.use('/api/auth', require('./routes/authRoutes')); 
 
 // Registering other existing routes to prevent future 404s
-app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/purchases', require('./routes/purchaseRoutes'));
+app.use('/api/employees', require('./routes/employeeRoutes'));
 app.use('/api/sales', require('./routes/salesRoutes'));
 // Add other routes like 'invoices', 'grn', etc. here as you build them
-// app.use('/api/invoices', require('./routes/invoiceRoutes'));
-// app.use('/api/grn', require('./routes/grnRoutes'));
+app.use('/api/invoices', require('./routes/invoiceRoutes'));
+app.use('/api/grn', require('./routes/grnRoutes'));
 
 
 // --- Deployment ---
