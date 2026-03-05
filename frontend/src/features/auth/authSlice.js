@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../utils/api'; // Import the configured axios instance
 
 // Get user from localStorage
 const user = JSON.parse(localStorage.getItem('user'));
@@ -15,8 +15,7 @@ const initialState = {
 // Login user/company
 export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
   try {
-    // This is the corrected API endpoint
-    const response = await axios.post('/api/auth/login', userData);
+    const response = await api.post('/auth/login', userData);
 
     if (response.data) {
       localStorage.setItem('user', JSON.stringify(response.data));
