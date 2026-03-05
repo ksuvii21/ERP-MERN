@@ -5,7 +5,7 @@ import { ColorModeContext, useMode } from '../theme';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import { Outlet } from 'react-router-dom';
-import ERPBrain from '../pages/ERPBrain';
+import ERPBrain from '../pages/AI/ERPBrain';
 import { motion } from 'framer-motion';
 
 const Layout = () => {
