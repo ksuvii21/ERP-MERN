@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const Company = require('../models/Company');
 const User = require('../models/User');
+const { ROLES } = require('../config/roles');
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -25,12 +26,20 @@ const protect = asyncHandler(async (req, res, next) => {
         throw new Error('Not authorized, user not found');
       }
 
-      // Get the user's company and attach to request
-      req.company = await Company.findById(req.user.company);
+      // For regular users, enforce company association.
+      // Super Admin can operate without being tied to a single company.
+      if (req.user.role !== ROLES.SUPER_ADMIN) {
+        if (!req.user.company) {
+          res.status(401);
+          throw new Error('Not authorized, user is not associated with a company');
+        }
+        // Get the user's company and attach to request
+        req.company = await Company.findById(req.user.company);
 
-      if (!req.company) {
-        res.status(401);
-        throw new Error('Not authorized, company not found for user');
+        if (!req.company) {
+          res.status(401);
+          throw new Error('Not authorized, company not found for user');
+        }
       }
 
       next();
