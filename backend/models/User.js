@@ -27,6 +27,11 @@ const UserSchema = new mongoose.Schema({
     enum: ALL_ROLES,
     default: ROLES.EMPLOYEE,
   },
+  status: {
+    type: String,
+    enum: ['pending', 'active'],
+    default: 'pending',
+  },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',

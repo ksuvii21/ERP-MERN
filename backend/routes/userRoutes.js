@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers } = require('../controllers/userController');
-const { protect } = require('../middleware/authMiddleware');
+const { getUsers, inviteUser, deleteUser } = require('../controllers/userController');
+const { protect, authorize } = require('../middleware/authMiddleware');
+const { ROLES } = require('../config/roles');
 
 // This route will now securely get all users associated with the logged-in company.
-router.get('/', protect, getUsers);
+router.get('/', protect, authorize(ROLES.ADMIN, ROLES.HR, ROLES.MANAGER), getUsers);
+router.post('/invite', protect, authorize(ROLES.ADMIN), inviteUser);
+router.delete('/:id', protect, authorize(ROLES.ADMIN), deleteUser);
 
 module.exports = router;
