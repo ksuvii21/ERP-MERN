@@ -139,7 +139,7 @@ const CompanyOnboarding = () => {
     setTimeout(() => {
       setIsLoading(false);
       toast.success('Company created successfully!');
-      // navigate('/app/dashboard'); // Uncomment when ready
+      navigate('/create-company');
     }, 1500);
   };
 
