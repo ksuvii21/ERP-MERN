@@ -5,13 +5,13 @@ const { ROLES } = require('../config/roles');
 const bcrypt = require('bcryptjs');
 
 // Generate JWT
-const generateToken = (id) => {
+const generateToken = (id, role) => {
   if (!process.env.JWT_SECRET) {
     // This is a critical server configuration error.
     console.error('FATAL ERROR: JWT_SECRET is not defined in .env file.');
     throw new Error('Server configuration error, cannot sign authentication tokens.');
   }
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
@@ -60,7 +60,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       name: newCompany.name,
       email: newCompany.email,
       role: ROLES.ADMIN,
-      token: generateToken(newCompany._id),
+      token: generateToken(newCompany._id, ROLES.ADMIN),
     });
   } else {
     res.status(400);
@@ -92,7 +92,7 @@ const loginCompany = asyncHandler(async (req, res) => {
       name: company.name,
       email: company.email,
       role: ROLES.ADMIN, // Assign admin role on login
-      token: generateToken(company._id),
+      token: generateToken(company._id, ROLES.ADMIN),
     });
   } else {
     res.status(401);
