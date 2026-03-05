@@ -24,7 +24,7 @@ const createSale = asyncHandler(async (req, res) => {
   }
 
   const sale = await Transaction.create({
-    company: req.user.company, // Assuming auth middleware sets req.user
+    company: req.company._id, // company is attached by the 'protect' middleware
     type: 'Income',
     category: 'Sales',
     amount,
