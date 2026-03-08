@@ -34,8 +34,8 @@ const Layout = () => {
     { name: 'Finance', path: '/app/finance', icon: <FileText size={20} /> },
   ];
 
-  // Conditionally add User Management link for Admins
-  if (user && user.role === 'admin') {
+  // Conditionally add User Management link for Admins, HR, and Managers
+  if (user && ['admin', 'hr', 'manager'].includes(user.role)) {
     navItems.push({ 
       name: 'User Management', path: '/app/users', icon: <Users size={20} /> 
     });
