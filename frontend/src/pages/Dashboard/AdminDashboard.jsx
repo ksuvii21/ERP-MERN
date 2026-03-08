@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Paper, Typography, Box, CircularProgress } from '@mui/material';
-import API from '../../utils/api';
+import api from '../../utils/api';
 import ChartCard from '../../components/ChartCard';
 import AlertsCard from '../../components/AlertsCard';
 import KPICard from '../../components/KPICard';
@@ -81,14 +81,13 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      try {
-        // Fetch data from your existing API endpoints
-        const [salesRes, productsRes, usersRes, purchasesRes] = await Promise.all([
-          API.get('/sales'),
-          API.get('/products'),
-          API.get('/users'),
-          API.get('/purchases'),
-        ]);
+  try {
+    const [usersRes, salesRes, productsRes, purchasesRes] = await Promise.all([
+      api.get('/users'),
+      api.get('/sales'),
+      api.get('/products'),
+      api.get('/purchases')
+    ]);
 
         setStats({
           sales: salesRes.data.length,
@@ -98,7 +97,11 @@ const AdminDashboard = () => {
         });
       } catch (error) {
         console.error('Error fetching dashboard data', error);
-        setError('Failed to connect to the server. Please ensure the backend is running.');
+        if (error.response && error.response.status === 401) {
+          setError('Session expired. Please login again.');
+        } else {
+          setError('Failed to connect to the server. Please ensure the backend is running.');
+        }
       } finally {
         setLoading(false);
       }
