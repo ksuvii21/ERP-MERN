@@ -9,9 +9,9 @@ const checkPermission = (requiredPermission) => {
       return res.status(401).json({ message: 'Not authorized, no user found' });
     }
 
-    // The 'admin' role is assigned all permissions upon creation,
-    // so we can rely on the permissions array for all roles.
-    if (user.permissions && user.permissions.includes(requiredPermission)) {
+    // Allow if user is admin OR has the specific permission
+    // This ensures existing Admins don't get locked out when new permissions are added
+    if (user.role === 'admin' || (user.permissions && user.permissions.includes(requiredPermission))) {
       next();
     } else {
       res.status(403).json({ message: `Access denied. Requires permission: ${requiredPermission}` });
