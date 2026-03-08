@@ -17,12 +17,15 @@ const getUsers = asyncHandler(async (req, res) => {
 // @route   POST /api/users/invite
 // @access  Private (Admin)
 const inviteUser = asyncHandler(async (req, res) => {
-  const { email, role } = req.body;
+  let { email, role } = req.body;
 
   if (!email || !role) {
     res.status(400);
     throw new Error('Please provide an email and a role.');
   }
+
+  // Normalize role to lowercase to ensure consistency
+  role = role.toLowerCase();
 
   // Ensure the role is a valid, non-admin role
   if (![ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.FINANCE, ROLES.HR].includes(role)) {
