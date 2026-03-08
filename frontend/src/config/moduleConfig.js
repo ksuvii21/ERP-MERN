@@ -80,7 +80,7 @@ export const MODULES = {
     { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
   ],
   
-  Business: [
+  'General Business': [
     { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
     { name: 'Sales', path: '/app/sales', icon: ShoppingBag, roles: ['admin', 'manager', 'sales'] },    
     { name: 'Customers', path: '/app/customers', icon: Users, roles: ['admin', 'manager', 'sales'] },        

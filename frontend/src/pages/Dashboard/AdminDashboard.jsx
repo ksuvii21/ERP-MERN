@@ -88,12 +88,12 @@ const AdminDashboard = () => {
     const [usersRes, salesRes, productsRes, purchasesRes] = await Promise.all([
       api.get('/users'), // Common for all
       // Only fetch these if industry is Retail/Wholesale/General
-      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry) ? api.get('/sales') : Promise.resolve({ data: [] }),
-      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry) ? api.get('/products') : Promise.resolve({ data: [] }),
-      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry) ? api.get('/purchases') : Promise.resolve({ data: [] }),
+      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType) ? api.get('/sales') : Promise.resolve({ data: [] }),
+      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType) ? api.get('/products') : Promise.resolve({ data: [] }),
+      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType) ? api.get('/purchases') : Promise.resolve({ data: [] }),
       
       // Add Healthcare specific fetches here in the future
-      // user?.company?.industry === 'Healthcare' ? api.get('/patients') : Promise.resolve({ data: [] })
+      // user?.company?.industryType === 'Healthcare' ? api.get('/patients') : Promise.resolve({ data: [] })
     ]);
 
         setStats({
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
         </Grid>
 
         {/* Retail / Wholesale / General KPIs */}
-        {(!user?.company?.industry || ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry)) && (
+        {(!user?.company?.industryType || ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType)) && (
         <>
         <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Total Sales" value={stats.sales} icon={<AttachMoney />} color="linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)" />
@@ -167,7 +167,7 @@ const AdminDashboard = () => {
         )}
 
         {/* Healthcare KPIs Example */}
-        {user?.company?.industry === 'Healthcare' && (
+        {user?.company?.industryType === 'Healthcare' && (
         <>
           <Grid size={{ xs: 12, md: 3 }}>
             <KPICard title="Active Patients" value={124} icon={<LocalHospital />} color="linear-gradient(135deg, #e91e63 0%, #c2185b 100%)" />
@@ -182,8 +182,8 @@ const AdminDashboard = () => {
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>Analytics & System Health</Typography>
         <div style={{ display: 'flex', flexWrap: 'wrap', margin: '0 -10px' }}>
-          {/* Only show Sales charts for Retail */}
-          {(!user?.company?.industry || ['Retail', 'Wholesale'].includes(user?.company?.industry)) && (
+          {/* Only show Sales charts for relevant industries */}
+          {(!user?.company?.industryType || ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType)) && (
           <>
           <ChartCard title="Revenue Trends (2024)">
             <Bar options={{ responsive: true, maintainAspectRatio: false }} data={revenueData} />

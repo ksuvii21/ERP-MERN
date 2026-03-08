@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
+import { hasPermission, PERMISSIONS } from '../../utils/permissions';
 import { Plus, Trash2, Users as UsersIcon, Loader2 } from 'lucide-react';
 
 // A simple modal component
@@ -74,7 +75,7 @@ const Users = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
-        {user && user.role === 'admin' && (
+        {hasPermission(user, PERMISSIONS.EMPLOYEES_WRITE) && (
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-teal-700"
@@ -115,9 +116,11 @@ const Users = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button onClick={() => handleDeleteUser(user._id)} className="text-red-600 hover:text-red-900">
-                      <Trash2 size={18} />
-                    </button>
+                    {hasPermission(user, PERMISSIONS.EMPLOYEES_WRITE) && (
+                      <button onClick={() => handleDeleteUser(user._id)} className="text-red-600 hover:text-red-900">
+                        <Trash2 size={18} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

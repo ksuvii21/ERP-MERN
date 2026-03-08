@@ -28,7 +28,7 @@ const Layout = () => {
   };
 
   // Generate dynamic navigation based on Industry and Role
-  const industry = user?.company?.industry;
+  const industry = user?.company?.industryType;
   const navItems = getNavItems(industry, user?.role);
 
   return (
