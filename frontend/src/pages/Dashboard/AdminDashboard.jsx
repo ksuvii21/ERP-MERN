@@ -5,7 +5,7 @@ import api from '../../utils/api';
 import ChartCard from '../../components/ChartCard';
 import AlertsCard from '../../components/AlertsCard';
 import KPICard from '../../components/KPICard';
-import { AttachMoney, Inventory, ShoppingCart, People, PersonAdd } from '@mui/icons-material';
+import { AttachMoney, Inventory, ShoppingCart, People, PersonAdd, LocalHospital, EventAvailable } from '@mui/icons-material';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,6 +31,7 @@ ChartJS.register(
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
   const [stats, setStats] = useState({
     sales: 0,
     products: 0,
@@ -85,17 +86,21 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
   try {
     const [usersRes, salesRes, productsRes, purchasesRes] = await Promise.all([
-      api.get('/users'),
-      api.get('/sales'),
-      api.get('/products'),
-      api.get('/purchases')
+      api.get('/users'), // Common for all
+      // Only fetch these if industry is Retail/Wholesale/General
+      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry) ? api.get('/sales') : Promise.resolve({ data: [] }),
+      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry) ? api.get('/products') : Promise.resolve({ data: [] }),
+      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry) ? api.get('/purchases') : Promise.resolve({ data: [] }),
+      
+      // Add Healthcare specific fetches here in the future
+      // user?.company?.industry === 'Healthcare' ? api.get('/patients') : Promise.resolve({ data: [] })
     ]);
 
         setStats({
-          sales: salesRes.data.length,
-          products: productsRes.data.length,
+          sales: salesRes.data?.length || 0,
+          products: productsRes.data?.length || 0,
           users: usersRes.data.length,
-          purchases: purchasesRes.data.length,
+          purchases: purchasesRes.data?.length || 0,
         });
       } catch (error) {
         console.error('Error fetching dashboard data', error);
@@ -141,6 +146,14 @@ const AdminDashboard = () => {
       ) : (
       <>
       <Grid container spacing={3}>
+        {/* Common KPI for everyone */}
+        <Grid size={{ xs: 12, md: 3 }}>
+          <KPICard title="Total Users" value={stats.users} icon={<People />} color="linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%)" />
+        </Grid>
+
+        {/* Retail / Wholesale / General KPIs */}
+        {(!user?.company?.industry || ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industry)) && (
+        <>
         <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Total Sales" value={stats.sales} icon={<AttachMoney />} color="linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)" />
         </Grid>
@@ -150,20 +163,36 @@ const AdminDashboard = () => {
         <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Purchases" value={stats.purchases} icon={<ShoppingCart />} color="linear-gradient(135deg, #ed6c02 0%, #e65100 100%)" />
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <KPICard title="Users" value={stats.users} icon={<People />} color="linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%)" />
-        </Grid>
+        </>
+        )}
+
+        {/* Healthcare KPIs Example */}
+        {user?.company?.industry === 'Healthcare' && (
+        <>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <KPICard title="Active Patients" value={124} icon={<LocalHospital />} color="linear-gradient(135deg, #e91e63 0%, #c2185b 100%)" />
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <KPICard title="Appointments" value={15} icon={<EventAvailable />} color="linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)" />
+          </Grid>
+        </>
+        )}
       </Grid>
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>Analytics & System Health</Typography>
         <div style={{ display: 'flex', flexWrap: 'wrap', margin: '0 -10px' }}>
+          {/* Only show Sales charts for Retail */}
+          {(!user?.company?.industry || ['Retail', 'Wholesale'].includes(user?.company?.industry)) && (
+          <>
           <ChartCard title="Revenue Trends (2024)">
             <Bar options={{ responsive: true, maintainAspectRatio: false }} data={revenueData} />
           </ChartCard>
           <ChartCard title="Product Categories">
             <Pie options={{ responsive: true, maintainAspectRatio: false }} data={categoryData} />
           </ChartCard>
+          </>
+          )}
           <AlertsCard title="System Alerts" alerts={systemAlerts} />
         </div>
       </Box>

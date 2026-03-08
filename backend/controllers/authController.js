@@ -56,6 +56,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       name: adminUser.name,
       email: adminUser.email,
       role: adminUser.role,
+      company: newCompany,
       token: generateToken(adminUser._id, adminUser.role),
     });
   } catch (error) {
@@ -79,7 +80,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   // 2. Check if user exists and get password
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select('+password').populate('company');
 
   if (!user) {
     // For security, we send a generic message to the client.
@@ -98,6 +99,7 @@ const loginUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      company: user.company,
       token: generateToken(user._id, user.role),
     });
   } else {
