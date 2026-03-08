@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
-import { hasPermission, PERMISSIONS } from '../Dashboard/permissions';
-import { Plus, Trash2, Loader2, Phone, Mail, MapPin, User } from 'lucide-react';
+import { hasPermission, PERMISSIONS } from '../../utils/permissions';
+import { Plus, Trash2, Loader2, Phone, Mail, MapPin, User, Search } from 'lucide-react';
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', contactPerson: '', email: '', phone: '', address: '' });
+  const [searchTerm, setSearchTerm] = useState('');
   const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchSuppliers = async () => {
@@ -52,10 +53,23 @@ const Suppliers = () => {
     }
   };
 
+  const filteredSuppliers = suppliers.filter(supplier => 
+    supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (supplier.contactPerson && supplier.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-gray-800">Suppliers</h1>
+
+        <div className="relative w-full md:w-64">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search size={18} className="text-gray-400" />
+          </div>
+          <input type="text" placeholder="Search suppliers..." className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-teal-500 focus:border-transparent" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        </div>
+
         {hasPermission(user, PERMISSIONS.SUPPLIERS_WRITE) && (
           <button onClick={() => setIsModalOpen(true)} className="bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-teal-700">
             <Plus size={18} /> Add Supplier
@@ -77,7 +91,7 @@ const Suppliers = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {suppliers.map((supplier) => (
+              {filteredSuppliers.map((supplier) => (
                 <tr key={supplier._id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{supplier.name}</div>
@@ -99,7 +113,7 @@ const Suppliers = () => {
               ))}
             </tbody>
           </table>
-          {suppliers.length === 0 && <div className="p-4 text-center text-gray-500">No suppliers found.</div>}
+          {filteredSuppliers.length === 0 && <div className="p-4 text-center text-gray-500">No suppliers found.</div>}
         </div>
       )}
 
