@@ -106,11 +106,15 @@ const acceptInvitation = asyncHandler(async (req, res) => {
 
   await user.save();
 
+  // Fix: Populate company so frontend gets industryType immediately
+  await user.populate('company');
+
   res.status(200).json({
     _id: user._id,
     name: user.name,
     email: user.email,
     role: user.role,
+    company: user.company, // Fix: Send company data
     token: generateToken(user._id, user.role),
   });
 });
