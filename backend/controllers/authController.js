@@ -4,6 +4,7 @@ const asyncHandler = require('express-async-handler'); // npm i express-async-ha
 const jwt = require('jsonwebtoken'); // npm i jsonwebtoken
 const { ROLES } = require('../config/roles'); 
 const bcrypt = require('bcryptjs');
+const { ROLE_PERMISSIONS } = require('../config/permissions');
 
 const generateToken = require('../utils/generateToken');
 
@@ -39,6 +40,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       email: admin.email,
       password: admin.password,
       role: ROLES.ADMIN,
+      permissions: ROLE_PERMISSIONS[ROLES.ADMIN] || [], // Assign Admin permissions
       // Company will be set after company is created
     });
 
@@ -58,6 +60,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       email: adminUser.email,
       role: adminUser.role,
       company: newCompany,
+      permissions: adminUser.permissions,
       token: generateToken(adminUser._id, adminUser.role),
     });
   } catch (error) {
@@ -101,6 +104,7 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       company: user.company,
+      permissions: user.permissions,
       token: generateToken(user._id, user.role),
     });
   } else {
