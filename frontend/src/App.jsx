@@ -30,6 +30,9 @@ import StockManagement from './pages/Inventory/StockManagement.jsx';
 import TeamWorkload from './pages/HR/TeamWorkload.jsx';
 import DocumentUpload from './pages/AI/DocumentUpload.jsx';
 import InvoiceDesign from './pages/Finance/InvoiceDesign.jsx';
+import Customers from './pages/Retail/Customers.jsx';
+import Suppliers from './pages/Retail/Suppliers.jsx';
+import Orders from './pages/Retail/Orders.jsx';
 
 // Components
 import Layout from './components/Layout.jsx';
@@ -68,6 +71,9 @@ function App() {
             <Route path="team-workload" element={<TeamWorkload />} />
             <Route path="document-upload" element={<DocumentUpload />} />
             <Route path="invoice-design" element={<InvoiceDesign />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="suppliers" element={<Suppliers />} />
+            <Route path="orders" element={<Orders />} />
           </Route>
 
           {/* Fallback */}
