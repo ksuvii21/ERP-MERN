@@ -23,6 +23,7 @@ const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inviteData, setInviteData] = useState({ email: '', role: 'employee' });
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchUsers = async () => {
     try {
@@ -73,13 +74,15 @@ const Users = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-teal-700"
-        >
-          <Plus size={18} />
-          Invite User
-        </button>
+        {user && user.role === 'admin' && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-teal-700"
+          >
+            <Plus size={18} />
+            Invite User
+          </button>
+        )}
       </div>
 
       {isLoading ? (
