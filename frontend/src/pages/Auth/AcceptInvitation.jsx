@@ -45,7 +45,7 @@ const AcceptInvitation = () => {
       // Automatically log the user in
       localStorage.setItem('user', JSON.stringify(response.data));
       toast.success('Registration complete! Welcome.');
-      window.location.href = '/app/dashboard';
+      navigate('/app/dashboard');
     } catch (error) {
       const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
       toast.error(message);
