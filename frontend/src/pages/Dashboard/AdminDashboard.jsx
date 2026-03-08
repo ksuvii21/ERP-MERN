@@ -118,6 +118,9 @@ const AdminDashboard = () => {
   ];
 
   useEffect(() => {
+    // Debugging: Check what industry is detected from localStorage
+    console.log('Detected Industry:', user?.company?.industryType);
+
     const fetchStats = async () => {
   try {
     const [usersRes, salesRes, productsRes, purchasesRes] = await Promise.all([
