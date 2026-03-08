@@ -15,9 +15,9 @@ const generateToken = require('../utils/generateToken');
 const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
   const { company, admin } = req.body;
 
-  if (!company || !admin || !admin.email || !admin.password || !company.name) {
+  if (!company || !admin || !admin.name || !admin.email || !admin.password || !company.name) {
     res.status(400);
-    throw new Error('Please provide all required fields for company and admin');
+    throw new Error('Please provide company name, admin name, email, and password.');
   }
 
   // 1. Check if user or company already exist
@@ -33,34 +33,24 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
     throw new Error('A company with this name already exists.');
   }
 
-  // Use a session for transaction-like behavior
-  const session = await Company.startSession();
-  session.startTransaction();
-
   try {
-    // 2. Create the admin user
     const adminUser = new User({
-      name: 'Admin', // Or get from form
+      name: admin.name,
       email: admin.email,
       password: admin.password,
       role: ROLES.ADMIN,
       // Company will be set after company is created
     });
 
-    // 3. Create the company
     const newCompany = new Company({
       ...company,
       owner: adminUser._id,
     });
 
-    // 4. Link user to company and save both
     adminUser.company = newCompany._id;
-    await newCompany.save({ session });
-    await adminUser.save({ session });
+    await newCompany.save();
+    await adminUser.save();
 
-    await session.commitTransaction();
-
-    // 5. Respond with a token for the new admin user
     res.status(201).json({
       _id: adminUser._id,
       name: adminUser.name,
@@ -69,11 +59,8 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       token: generateToken(adminUser._id, adminUser.role),
     });
   } catch (error) {
-    await session.abortTransaction();
     res.status(400);
     throw new Error('User registration failed. ' + error.message);
-  } finally {
-    session.endSession();
   }
 });
 

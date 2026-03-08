@@ -10,6 +10,7 @@ import {
   Globe, 
   Clock, 
   Users, 
+  User,
   ChevronRight, 
   Loader2,
   TrendingUp,
@@ -28,6 +29,7 @@ const CreateCompany = () => {
     companySize: '',
     country: '',
     timezone: '',
+    adminName: '',
     adminEmail: '',
     password: '',
     confirmPassword: ''
@@ -55,6 +57,7 @@ const CreateCompany = () => {
         timezone: formData.timezone
       },
       admin: {
+        name: formData.adminName,
         email: formData.adminEmail,
         password: formData.password
       }
@@ -151,6 +154,14 @@ const CreateCompany = () => {
             {/* --- Admin Section --- */}
             <div className="md:col-span-2 pt-4">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4 border-t border-slate-100 pt-6">Administrator Account</h3>
+            </div>
+
+            <div className="md:col-span-2 space-y-1">
+              <label className="text-sm font-medium text-slate-700">Admin Name</label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-slate-400" size={18} />
+                <input type="text" name="adminName" required value={formData.adminName} onChange={handleChange} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="John Doe" />
+              </div>
             </div>
 
             <div className="md:col-span-2 space-y-1">
