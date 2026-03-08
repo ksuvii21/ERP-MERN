@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   LayoutDashboard, 
   ShoppingCart, 
@@ -16,32 +15,32 @@ import {
 export const MODULES = {
   // Modules available to everyone regardless of industry
   Common: [
-    { name: 'Dashboard', path: '/app/dashboard', icon: <LayoutDashboard size={20} />, roles: ['admin', 'manager', 'hr', 'employee', 'finance'] },
-    { name: 'HR', path: '/app/hr/employees', icon: <Users size={20} />, roles: ['admin', 'hr'] },
-    { name: 'Finance', path: '/app/finance', icon: <FileText size={20} />, roles: ['admin', 'manager', 'finance'] },
-    { name: 'User Management', path: '/app/users', icon: <Users size={20} />, roles: ['admin', 'manager', 'hr'] },
+    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'hr', 'employee', 'finance'] },
+    { name: 'HR', path: '/app/hr/employees', icon: Users, roles: ['admin', 'hr'] },
+    { name: 'Finance', path: '/app/finance', icon: FileText, roles: ['admin', 'manager', 'finance'] },
+    { name: 'User Management', path: '/app/users', icon: Users, roles: ['admin', 'manager', 'hr'] },
   ],
   
   // Industry Specific Modules
   Healthcare: [
-    { name: 'Patients', path: '/app/patients', icon: <Users size={20} />, roles: ['admin', 'doctor', 'nurse'] },
-    { name: 'Appointments', path: '/app/appointments', icon: <Calendar size={20} />, roles: ['admin', 'doctor', 'receptionist'] },
-    { name: 'Medical Records', path: '/app/records', icon: <Activity size={20} />, roles: ['admin', 'doctor'] },
+    { name: 'Patients', path: '/app/patients', icon: Users, roles: ['admin', 'doctor', 'nurse'] },
+    { name: 'Appointments', path: '/app/appointments', icon: Calendar, roles: ['admin', 'doctor', 'receptionist'] },
+    { name: 'Medical Records', path: '/app/records', icon: Activity, roles: ['admin', 'doctor'] },
   ],
   
   Retail: [
-    { name: 'Inventory', path: '/app/inventory', icon: <ShoppingCart size={20} />, roles: ['admin', 'manager', 'employee'] },
-    { name: 'Sales', path: '/app/sales', icon: <ShoppingBag size={20} />, roles: ['admin', 'manager', 'sales'] },
+    { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
+    { name: 'Sales', path: '/app/sales', icon: ShoppingBag, roles: ['admin', 'manager', 'sales'] },
   ],
 
   Wholesale: [
-    { name: 'Inventory', path: '/app/inventory', icon: <ShoppingCart size={20} />, roles: ['admin', 'manager', 'employee'] },
-    { name: 'Shipments', path: '/app/shipments', icon: <Truck size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
+    { name: 'Shipments', path: '/app/shipments', icon: Truck, roles: ['admin', 'manager'] },
   ],
 
   Construction: [
-    { name: 'Projects', path: '/app/projects', icon: <Briefcase size={20} />, roles: ['admin', 'manager'] },
-    { name: 'Site Safety', path: '/app/safety', icon: <Hammer size={20} />, roles: ['admin', 'manager', 'safety_officer'] },
+    { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: ['admin', 'manager'] },
+    { name: 'Site Safety', path: '/app/safety', icon: Hammer, roles: ['admin', 'manager', 'safety_officer'] },
   ]
 };
 

@@ -54,7 +54,7 @@ const Layout = () => {
                       : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                   }`}
                 >
-                  {item.icon}
+                  <item.icon size={20} />
                   <span className={`${!isSidebarOpen && 'hidden'}`}>{item.name}</span>
                 </Link>
               </li>
