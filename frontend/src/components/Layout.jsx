@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
@@ -21,6 +21,15 @@ const Layout = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
+  useEffect(() => {
+    // Check if user data is stale (company is an ID string instead of an object)
+    // This happens if the user logged in before the backend update.
+    if (user && user.company && typeof user.company === 'string') {
+      console.warn('User data is stale. Logging out to refresh permissions.');
+      handleLogout();
+    }
+  }, [user]);
+
   const handleLogout = () => {
     dispatch(logout());
     dispatch(reset());
@@ -30,6 +39,13 @@ const Layout = () => {
   // Generate dynamic navigation based on Industry and Role
   const industry = user?.company?.industryType;
   const navItems = getNavItems(industry, user?.role);
+
+  // Debugging: See exactly what the system detects
+  console.log('Layout Debug:', { 
+    industry, 
+    role: user?.role, 
+    companyType: typeof user?.company 
+  });
 
   return (
     <div className="flex h-screen bg-gray-100">
