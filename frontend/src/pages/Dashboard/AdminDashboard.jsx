@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Paper, Typography, Box, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Grid, Paper, Typography, Box, CircularProgress, Button } from '@mui/material';
 import api from '../../utils/api';
 import ChartCard from '../../components/ChartCard';
 import AlertsCard from '../../components/AlertsCard';
 import KPICard from '../../components/KPICard';
-import { AttachMoney, Inventory, ShoppingCart, People } from '@mui/icons-material';
+import { AttachMoney, Inventory, ShoppingCart, People, PersonAdd } from '@mui/icons-material';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,6 +30,7 @@ ChartJS.register(
 
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     sales: 0,
     products: 0,
@@ -110,28 +112,34 @@ const AdminDashboard = () => {
     fetchStats();
   }, []);
 
-  if (loading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>;
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h5" color="error" gutterBottom>
-          Connection Error
-        </Typography>
-        <Typography variant="body1">
-          {error}
-        </Typography>
-      </Box>
-    );
-  }
-
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
-        Admin Dashboard
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          Admin Dashboard
+        </Typography>
+        <Button 
+          variant="contained" 
+          startIcon={<PersonAdd />} 
+          onClick={() => navigate('/app/users')}
+        >
+          Invite User
+        </Button>
+      </Box>
+
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>
+      ) : error ? (
+        <Box sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h5" color="error" gutterBottom>
+            Connection Error
+          </Typography>
+          <Typography variant="body1">
+            {error}
+          </Typography>
+        </Box>
+      ) : (
+      <>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 3 }}>
           <KPICard title="Total Sales" value={stats.sales} icon={<AttachMoney />} color="linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)" />
@@ -159,6 +167,8 @@ const AdminDashboard = () => {
           <AlertsCard title="System Alerts" alerts={systemAlerts} />
         </div>
       </Box>
+      </>
+      )}
     </Box>
   );
 };
