@@ -40,6 +40,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       email: admin.email,
       password: admin.password,
       role: ROLES.ADMIN,
+      status: 'active', // Fix: Admin should be active immediately
       permissions: ROLE_PERMISSIONS[ROLES.ADMIN] || [], // Assign Admin permissions
       // Company will be set after company is created
     });
