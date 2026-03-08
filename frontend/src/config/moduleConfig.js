@@ -17,7 +17,9 @@ import {
   GraduationCap,// Students
   BookOpen,     // Courses
   UserCheck,    // Attendance
-  BarChart3     // Reports
+  BarChart3,    // Reports
+  Utensils,     // Hospitality
+  BedDouble     // Hospitality
 } from 'lucide-react';
 
 // Define modules available for each industry
@@ -25,7 +27,7 @@ export const MODULES = {
   // Modules available to everyone regardless of industry
   Common: [
     { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'hr', 'employee', 'finance'] },
-    { name: 'HR', path: '/app/hr/employees', icon: Users, roles: ['admin', 'hr'] },
+    { name: 'Employees', path: '/app/hr/employees', icon: Users, roles: ['admin', 'hr'] },
     { name: 'Finance', path: '/app/finance', icon: FileText, roles: ['admin', 'manager', 'finance'] },
     { name: 'User Management', path: '/app/users', icon: Users, roles: ['admin', 'manager', 'hr'] },
     { name: 'Reports', path: '/app/reports', icon: BarChart3, roles: ['admin', 'manager'] },
@@ -47,7 +49,6 @@ export const MODULES = {
     { name: 'Customers', path: '/app/customers', icon: Users, roles: ['admin', 'manager', 'sales'] },
     { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
     { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
-    { name: 'POS', path: '/app/pos', icon: ShoppingBag, roles: ['admin', 'manager', 'employee'] },
   ],
 
   Wholesale: [
@@ -55,7 +56,6 @@ export const MODULES = {
     { name: 'Shipments', path: '/app/shipments', icon: Truck, roles: ['admin', 'manager'] },
     { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
     { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
-    { name: 'POS', path: '/app/pos', icon: ShoppingBag, roles: ['admin', 'manager', 'employee'] },
     { name: 'Warehouse', path: '/app/warehouse', icon: Factory, roles: ['admin', 'manager'] },
   ],
 
@@ -80,18 +80,18 @@ export const MODULES = {
     { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
   ],
   
-  GeneralBusiness: [
+  Business: [
     { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
     { name: 'Sales', path: '/app/sales', icon: ShoppingBag, roles: ['admin', 'manager', 'sales'] },    
     { name: 'Customers', path: '/app/customers', icon: Users, roles: ['admin', 'manager', 'sales'] },        
     { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
     { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
-    { name: 'POS', path: '/app/pos', icon: ShoppingBag, roles: ['admin', 'manager', 'employee'] },
   ],
 
   Hospitality: [
     { name: 'Reservations', path: '/app/reservations', icon: Calendar, roles: ['admin', 'manager', 'receptionist'] },
     { name: 'Rooms', path: '/app/rooms', icon: Briefcase, roles: ['admin', 'manager'] },
+    { name: 'Restaurant', path: '/app/restaurant', icon: Utensils, roles: ['admin', 'manager'] },
     { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
   ],
 };
