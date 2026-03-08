@@ -13,16 +13,19 @@ const AcceptInvitation = () => {
     name: '',
     password: '',
     confirmPassword: '',
+    token: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const emailFromQuery = searchParams.get('email');
-    if (emailFromQuery) {
-      setFormData((prev) => ({ ...prev, email: emailFromQuery }));
+    const tokenFromQuery = searchParams.get('token');
+
+    if (emailFromQuery && tokenFromQuery) {
+      setFormData((prev) => ({ ...prev, email: emailFromQuery, token: tokenFromQuery }));
     } else {
-      toast.error('Invitation link is invalid or missing email.');
+      toast.error('Invitation link is invalid or has expired.');
       navigate('/login');
     }
   }, [searchParams, navigate]);
@@ -39,8 +42,8 @@ const AcceptInvitation = () => {
 
     setIsLoading(true);
     try {
-      const { email, name, password } = formData;
-      const response = await api.post('/users/accept-invitation', { email, name, password });
+      const { email, name, password, token } = formData;
+      const response = await api.post('/users/accept-invitation', { email, name, password, token });
 
       // Automatically log the user in
       localStorage.setItem('user', JSON.stringify(response.data));

@@ -32,6 +32,9 @@ const UserSchema = new mongoose.Schema({
     enum: ['pending', 'active'],
     default: 'pending',
   },
+  invitationToken: {
+    type: String,
+  },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',

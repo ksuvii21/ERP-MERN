@@ -1,17 +1,9 @@
 const asyncHandler = require('express-async-handler');
+const crypto = require('crypto');
 const User = require('../models/User');
 const { ROLES } = require('../config/roles');
 const generateToken = require('../utils/generateToken');
-
-// @desc    Get all users for the logged-in company
-// @route   GET /api/users
-// @access  Private
-const getUsers = asyncHandler(async (req, res) => {
-  // req.company is attached by the 'protect' middleware.
-  // We fetch users associated with the logged-in company.
-  const users = await User.find({ company: req.company._id });
-  res.status(200).json(users);
-});
+const sendEmail = require('../utils/sendEmail'); // You'll need to create this utility
 
 // @desc    Invite a new user to the company
 // @route   POST /api/users/invite
@@ -24,10 +16,8 @@ const inviteUser = asyncHandler(async (req, res) => {
     throw new Error('Please provide an email and a role.');
   }
 
-  // Normalize role to lowercase to ensure consistency
   role = role.toLowerCase();
 
-  // Ensure the role is a valid, non-admin role
   if (![ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.FINANCE, ROLES.HR].includes(role)) {
     res.status(400);
     throw new Error('Invalid role specified.');
@@ -39,26 +29,96 @@ const inviteUser = asyncHandler(async (req, res) => {
     throw new Error('A user with this email already exists.');
   }
 
-  // Create a pending user. They will complete registration via an email link.
+  // Generate a secure one-time invitation token
+  const invitationToken = crypto.randomBytes(32).toString('hex');
+
   const user = await User.create({
-    name: 'Invited User', // Placeholder name
+    name: 'Invited User',
     email,
     role,
     company: req.company._id,
     status: 'pending',
-    password: 'temporary-password-placeholder-' + Date.now(), // Placeholder password
+    invitationToken, // Ensure this field exists in your User Schema
+    password: crypto.randomBytes(16).toString('hex'), // Temporary random password
   });
 
-  // In a real application, you would generate a unique token and email it.
-  // For now, we will just confirm the user was created.
-  const invitationLink = `${req.protocol}://${req.get('host').replace('5000', '5173')}/accept-invitation?email=${encodeURIComponent(email)}`;
-  // e.g., sendInvitationEmail(user.email, invitationToken);
+  // Construct the URL for your React Frontend (Vite uses 5173 by default)
+  const inviteUrl = `${req.protocol}://${req.get('host').replace('5000', '5173')}/accept-invitation?email=${encodeURIComponent(email)}&token=${invitationToken}`;
 
-  res.status(201).json({
-    message: `Invitation sent to ${email}. The user has been created with a pending status.`,
-    user,
-    invitationLink, // For testing purposes, we return the link in the response.
+  const message = `
+    <h1>Welcome to KNexis ERP</h1>
+    <p>You have been invited to join <strong>${req.company.name}</strong> as a <strong>${role}</strong>.</p>
+    <p>Please click the link below to set your password and activate your account:</p>
+    <a href="${inviteUrl}" style="background: #0d9488; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Set Up Account</a>
+    <p>If the button doesn't work, copy and paste this link:</p>
+    <p>${inviteUrl}</p>
+  `;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Invitation to join KNexis',
+      message,
+    });
+
+    res.status(201).json({
+      message: `Invitation email sent to ${email}.`,
+      user: { email: user.email, role: user.role, status: user.status }
+    });
+  } catch (error) {
+    // If email fails, remove the pending user so the admin can try again
+    await User.findByIdAndDelete(user._id);
+    res.status(500);
+    throw new Error('Email could not be sent. Please check your SMTP settings.');
+  }
+});
+
+// @desc    Accept an invitation and complete registration
+// @route   POST /api/users/accept-invitation
+// @access  Public
+const acceptInvitation = asyncHandler(async (req, res) => {
+  const { email, name, password, token } = req.body;
+
+  if (!email || !name || !password || !token) {
+    res.status(400);
+    throw new Error('All fields are required.');
+  }
+
+  // Find user by email, token, and ensure they are still pending
+  const user = await User.findOne({ 
+    email, 
+    invitationToken: token, 
+    status: 'pending' 
   });
+
+  if (!user) {
+    res.status(404);
+    throw new Error('Invalid or expired invitation link.');
+  }
+
+  // Update user details
+  user.name = name;
+  user.password = password; // Your pre-save hook in the User model should hash this
+  user.status = 'active';
+  user.invitationToken = undefined; // Clear the token so it can't be reused
+
+  await user.save();
+
+  res.status(200).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    token: generateToken(user._id, user.role),
+  });
+});
+
+// @desc    Get all users for the logged-in company
+// @route   GET /api/users
+// @access  Private
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({ company: req.company._id }).select('-password');
+  res.status(200).json(users);
 });
 
 // @desc    Delete a user from the company
@@ -67,49 +127,13 @@ const inviteUser = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
-  // Check if user exists and belongs to the admin's company
   if (user && user.company.toString() === req.company._id.toString()) {
     await user.deleteOne();
     res.status(200).json({ message: 'User removed successfully.' });
   } else {
     res.status(404);
-    throw new Error('User not found or you do not have permission to remove them.');
+    throw new Error('User not found or unauthorized.');
   }
-});
-
-// @desc    Accept an invitation and complete registration
-// @route   POST /api/users/accept-invitation
-// @access  Public
-const acceptInvitation = asyncHandler(async (req, res) => {
-  // In a real app, a unique one-time token would be used instead of email.
-  const { email, name, password } = req.body;
-
-  if (!email || !name || !password) {
-    res.status(400);
-    throw new Error('Please provide email, name, and password.');
-  }
-
-  const user = await User.findOne({ email, status: 'pending' });
-
-  if (!user) {
-    res.status(404);
-    throw new Error('Invitation not found, is invalid, or has already been accepted.');
-  }
-
-  user.name = name;
-  user.password = password; // The pre-save hook will hash this
-  user.status = 'active';
-
-  await user.save();
-
-  // Log the user in by sending back their data and a new token
-  res.status(200).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    token: generateToken(user._id, user.role),
-  });
 });
 
 module.exports = { getUsers, inviteUser, deleteUser, acceptInvitation };
