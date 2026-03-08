@@ -33,6 +33,12 @@ import InvoiceDesign from './pages/Finance/InvoiceDesign.jsx';
 import Customers from './pages/Retail/Customers.jsx';
 import Suppliers from './pages/Retail/Suppliers.jsx';
 import Orders from './pages/Retail/Orders.jsx';
+import Patients from './pages/Healthcare/Patients.jsx';
+import Doctors from './pages/Healthcare/Doctors.jsx';
+import Appointments from './pages/Healthcare/Appointments.jsx';
+import Billing from './pages/Healthcare/Billing.jsx';
+import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
+import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
 
 // Components
 import Layout from './components/Layout.jsx';
@@ -74,6 +80,12 @@ function App() {
             <Route path="customers" element={<Customers />} />
             <Route path="suppliers" element={<Suppliers />} />
             <Route path="orders" element={<Orders />} />
+            <Route path="patients" element={<Patients />} />
+            <Route path="doctors" element={<Doctors />} />
+            <Route path="appointments" element={<Appointments />} />
+            <Route path="billing" element={<Billing />} />
+            <Route path="pharmacy" element={<Pharmacy />} />
+            <Route path="records" element={<MedicalRecords />} />
           </Route>
 
           {/* Fallback */}
