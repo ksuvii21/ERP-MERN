@@ -16,6 +16,18 @@ export const PERMISSIONS = {
   
   // Reports
   REPORTS_READ: 'reports.read',
+
+  // Customers
+  CUSTOMERS_READ: 'customers.read',
+  CUSTOMERS_WRITE: 'customers.write',
+
+  // Suppliers
+  SUPPLIERS_READ: 'suppliers.read',
+  SUPPLIERS_WRITE: 'suppliers.write',
+
+  // Orders
+  ORDERS_READ: 'orders.read',
+  ORDERS_WRITE: 'orders.write',
 };
 
 /**
@@ -25,9 +37,9 @@ export const PERMISSIONS = {
  * @returns {boolean} - True if the user has the permission, false otherwise.
  */
 export const hasPermission = (user, permission) => {
-  if (!user || !user.permissions) {
+  if (!user) {
     return false;
   }
-  // The permissions array from the backend is the source of truth.
-  return user.permissions.includes(permission);
+  // Allow if user is admin OR has the specific permission
+  return user.role === 'admin' || (user.permissions && user.permissions.includes(permission));
 };
