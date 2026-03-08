@@ -1,47 +1,34 @@
 const mongoose = require('mongoose');
 
-/**
- * Represents a company within the multi-tenant system.
- * Each company has its own isolated data, linked to an owner.
- */
 const CompanySchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Company name is required'],
-    trim: true,
+    required: [true, 'Please add a company name'],
     unique: true,
   },
-  industry: {
+  industryType: {
     type: String,
-    required: [true, 'Industry is required'],
-    enum: [
-      'Healthcare',
-      'Retail',
-      'Wholesale',
-      'Manufacturing',
-      'General Business',
-      'Construction',
-      'Hospitality',
-      'Education',
-    ],
+    required: [true, 'Please add an industry type'],
+    enum: ['Retail', 'Healthcare', 'Manufacturing', 'Wholesale', 'General Business', 'Construction', 'Hospitality', 'Education'],
+  },
+  subscriptionPlan: {
+    type: String,
+    enum: ['Basic', 'Pro', 'Enterprise'],
+    default: 'Basic',
   },
   companySize: {
     type: String,
-    required: [true, 'Company size is required'],
   },
   country: {
     type: String,
-    required: [true, 'Country is required'],
   },
   timezone: {
     type: String,
-    required: [true, 'Timezone is required'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-  }
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Company', CompanySchema);

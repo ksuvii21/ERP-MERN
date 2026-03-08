@@ -35,6 +35,12 @@ const UserSchema = new mongoose.Schema({
   invitationToken: {
     type: String,
   },
+  permissions: [{
+    type: String,
+  }],
+  department: {
+    type: String,
+  },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',

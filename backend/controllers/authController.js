@@ -44,6 +44,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
 
     const newCompany = new Company({
       ...company,
+      industryType: company.industry, // Map frontend 'industry' to DB 'industryType'
       owner: adminUser._id,
     });
 
