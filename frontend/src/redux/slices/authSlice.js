@@ -1,10 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/users/';
+const API_URL = 'http://localhost:5000/api/auth/';
 
 // This is a simplified service. In a real app, this would make API calls.
 const authService = {
+    register: async (data) => {
+        const response = await axios.post(API_URL + 'register-company', data);
+        if (response.data) {
+            localStorage.setItem('user', JSON.stringify(response.data));
+        }
+        return response.data;
+    },
     logout: () => {
         localStorage.removeItem('user');
     },
@@ -38,6 +45,17 @@ export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   }
 });
 
+// Register user and company
+export const register = createAsyncThunk('auth/register', async (data, thunkAPI) => {
+  try {
+    // The data should be { company: { ... }, admin: { ... } }
+    return await authService.register(data);
+  } catch (error) {
+    const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 // Login user
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   try {
@@ -64,6 +82,20 @@ export const authSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
       })
+      .addCase(register.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+      })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
       })
@@ -81,5 +113,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset } = authSlice.actions; // register will be exported from here too
 export default authSlice.reducer;

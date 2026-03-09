@@ -179,10 +179,10 @@ export const getNavItems = (industry, role) => {
     else if (['Students', 'Courses', 'Attendance', 'Library'].includes(item.name)) groupName = 'Academics';
     else if (['Users & Roles', 'Settings', 'Reports'].includes(item.name)) groupName = 'Admin';
     
-    if (!acc[group]) {
-      acc[group] = [];
+    if (!acc[groupName]) {
+      acc[groupName] = [];
     }
-    acc[group].push(item);
+    acc[groupName].push(item);
     return acc;
   }, {});
 
