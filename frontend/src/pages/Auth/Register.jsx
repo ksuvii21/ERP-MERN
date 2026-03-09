@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import api from '../../utils/api';
+import { register, reset } from '../../redux/slices/authSlice';
 import { 
   Building2, 
   Mail, 
@@ -20,7 +21,12 @@ import {
 
 const CreateCompany = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -41,7 +47,20 @@ const CreateCompany = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    // Redirect when registered and logged in
+    if (isSuccess || user) {
+      navigate('/app/dashboard');
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -51,7 +70,7 @@ const CreateCompany = () => {
     const submissionData = {
       company: {
         name: formData.companyName,
-        industry: formData.industry,
+        industryType: formData.industry, // Corrected key to match backend model
         companySize: formData.companySize,
         country: formData.country,
         timezone: formData.timezone
@@ -63,21 +82,7 @@ const CreateCompany = () => {
       }
     };
 
-    setIsLoading(true);
-    try {
-      const response = await api.post('/auth/register-company', submissionData);
-      
-      // On success, you can automatically log the user in by saving their data
-      localStorage.setItem('user', JSON.stringify(response.data));
-
-      toast.success('Company and Admin created successfully!');
-      window.location.href = '/app/dashboard';
-    } catch (error) {
-      const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
+    dispatch(register(submissionData));
   };
 
   return (

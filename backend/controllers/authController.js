@@ -16,16 +16,27 @@ const generateToken = require('../utils/generateToken');
 const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
   const { company, admin } = req.body;
 
-  if (!company || !admin || !admin.name || !admin.email || !admin.password || !company.name) {
+  // --- Comprehensive Validation ---
+  const requiredCompanyFields = ['name', 'industryType', 'companySize', 'country', 'timezone'];
+  const requiredAdminFields = ['name', 'email', 'password'];
+
+  const missingCompanyFields = requiredCompanyFields.filter(field => !company?.[field]);
+  const missingAdminFields = requiredAdminFields.filter(field => !admin?.[field]);
+
+  if (missingCompanyFields.length > 0 || missingAdminFields.length > 0) {
+    const missingFields = [
+      ...missingCompanyFields.map(f => `company.${f}`),
+      ...missingAdminFields.map(f => `admin.${f}`)
+    ];
     res.status(400);
-    throw new Error('Please provide company name, admin name, email, and password.');
+    throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
   }
 
   // 1. Check if user or company already exist
   const userExists = await User.findOne({ email: admin.email });
   if (userExists) {
     res.status(400);
-    throw new Error('A company with this email already exists.');
+    throw new Error('A user with this email already exists.');
   }
 
   const companyExists = await Company.findOne({ name: company.name });
@@ -34,39 +45,77 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
     throw new Error('A company with this name already exists.');
   }
 
+  // Create the user instance first
+  const adminUser = new User({
+    name: admin.name,
+    email: admin.email,
+    password: admin.password,
+    role: ROLES.ADMIN,
+    status: 'active',
+    permissions: ROLE_PERMISSIONS[ROLES.ADMIN] || [],
+  });
+
   try {
-    const adminUser = new User({
-      name: admin.name,
-      email: admin.email,
-      password: admin.password,
-      role: ROLES.ADMIN,
-      status: 'active', // Fix: Admin should be active immediately
-      permissions: ROLE_PERMISSIONS[ROLES.ADMIN] || [], // Assign Admin permissions
-      // Company will be set after company is created
-    });
+    // --- Step 1: Save the Admin User ---
+    const savedAdmin = await adminUser.save();
 
-    const newCompany = new Company({
-      ...company,
-      industryType: company.industry, // Map frontend 'industry' to DB 'industryType'
-      owner: adminUser._id,
-    });
+    try {
+      // --- Step 2: If user is saved, create and save the Company ---
+      const newCompany = new Company({
+        ...company,
+        owner: savedAdmin._id,
+      });
+      const savedCompany = await newCompany.save();
 
-    adminUser.company = newCompany._id;
-    await newCompany.save();
-    await adminUser.save();
+      // --- Step 3: Link the company back to the user and save again ---
+      savedAdmin.company = savedCompany._id;
+      await savedAdmin.save();
 
-    res.status(201).json({
-      _id: adminUser._id,
-      name: adminUser.name,
-      email: adminUser.email,
-      role: adminUser.role,
-      company: newCompany,
-      permissions: adminUser.permissions,
-      token: generateToken(adminUser._id, adminUser.role),
-    });
-  } catch (error) {
-    res.status(400);
-    throw new Error('User registration failed. ' + error.message);
+      // --- Step 4: All successful, send response ---
+      res.status(201).json({
+        _id: savedAdmin._id,
+        name: savedAdmin.name,
+        email: savedAdmin.email,
+        role: savedAdmin.role,
+        company: savedCompany,
+        permissions: savedAdmin.permissions,
+        token: generateToken(savedAdmin._id, savedAdmin.role),
+      });
+
+    } catch (companyError) {
+      // --- Rollback: If company creation fails, delete the admin user ---
+      await User.findByIdAndDelete(savedAdmin._id);
+
+      // --- Enhanced Error Logging & Response ---
+      console.error('--- COMPANY CREATION FAILED ---');
+      console.error('Timestamp:', new Date().toISOString());
+      console.error('Error Details:', companyError);
+      console.error('--- END OF ERROR ---');
+
+      if (companyError.name === 'ValidationError') {
+        const messages = Object.values(companyError.errors).map(val => val.message);
+        // Directly send the detailed validation response
+        return res.status(400).json({ message: `Company validation failed: ${messages.join(', ')}` });
+      }
+      
+      // For other unexpected errors during company creation
+      return res.status(400).json({ message: 'Failed to create company profile. Please check server logs for details.' });
+    }
+  } catch (userError) {
+    // --- Enhanced Error Logging & Response ---
+    console.error('--- USER CREATION FAILED ---');
+    console.error('Timestamp:', new Date().toISOString());
+    console.error('Error Details:', userError);
+    console.error('--- END OF ERROR ---');
+
+    if (userError.name === 'ValidationError') {
+        const messages = Object.values(userError.errors).map(val => val.message);
+        // Directly send the detailed validation response
+        return res.status(400).json({ message: `User validation failed: ${messages.join(', ')}` });
+    }
+
+    // For other errors (like duplicate key on user), send a specific message
+    return res.status(400).json({ message: userError.message || 'User registration failed. An unexpected error occurred.' });
   }
 });
 
