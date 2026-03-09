@@ -3,16 +3,12 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   LayoutDashboard, 
-  LogOut, 
-  Menu, 
-  X, 
-  Briefcase,
-  ShoppingCart,
-  Users,
-  FileText
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 import { logout, reset } from '../features/auth/authSlice';
-import { getNavItems } from '../config/moduleConfig';
+import { getNavItems } from './moduleConfig';
 
 const Layout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -38,7 +34,7 @@ const Layout = () => {
 
   // Generate dynamic navigation based on Industry and Role
   const industry = user?.company?.industryType;
-  const navItems = getNavItems(industry, user?.role);
+  const groupedNavItems = getNavItems(industry, user?.role);
 
   // Debugging: See exactly what the system detects
   console.log('Layout Debug:', { 
@@ -59,23 +55,31 @@ const Layout = () => {
         </div>
         
         <nav className="flex-1 overflow-y-auto py-4">
-          <ul className="space-y-1 px-2">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <Link 
-                  to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    location.pathname.startsWith(item.path)
-                      ? 'bg-teal-600 text-white' 
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                  }`}
-                >
-                  <item.icon size={20} />
-                  <span className={`${!isSidebarOpen && 'hidden'}`}>{item.name}</span>
-                </Link>
-              </li>
+          {Object.entries(groupedNavItems).map(([groupName, items]) => (
+            <div key={groupName} className="px-2 mb-4">
+              <h3 className={`px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'text-center'}`}>
+                {isSidebarOpen ? groupName : '•'}
+              </h3>
+              <ul className="space-y-1">
+                {items.map((item) => (
+                  <li key={item.path}>
+                    <Link 
+                      to={item.path}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                        location.pathname.startsWith(item.path)
+                          ? 'bg-teal-600 text-white' 
+                          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                      }`}
+                      title={isSidebarOpen ? '' : item.name}
+                    >
+                      <item.icon size={20} />
+                      <span className={`${!isSidebarOpen && 'hidden'}`}>{item.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
             ))}
-          </ul>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -93,7 +97,7 @@ const Layout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold text-gray-800">
-            {navItems.find(i => location.pathname.startsWith(i.path))?.name || 'Dashboard'}
+            {Object.values(groupedNavItems).flat().find(i => location.pathname.startsWith(i.path))?.name || 'Dashboard'}
           </h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">Welcome, {user?.name || 'User'}</span>
