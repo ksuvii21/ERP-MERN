@@ -19,7 +19,8 @@ const inviteUser = asyncHandler(async (req, res) => {
 
   role = role.toLowerCase();
 
-  if (![ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.FINANCE, ROLES.HR].includes(role)) {
+  // Validate against all possible roles
+  if (!Object.values(ROLES).includes(role)) {
     res.status(400);
     throw new Error('Invalid role specified.');
   }
