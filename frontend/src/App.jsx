@@ -39,6 +39,7 @@ import Appointments from './pages/Healthcare/Appointments.jsx';
 import Billing from './pages/Healthcare/Billing.jsx';
 import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
+import ProfilePage from './pages/General/Profile.jsx';
 
 // Components
 import Layout from './components/Layout.jsx';
@@ -86,6 +87,7 @@ function App() {
             <Route path="billing" element={<Billing />} />
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
 
           {/* Fallback */}

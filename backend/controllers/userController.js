@@ -76,6 +76,30 @@ const inviteUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get user profile
+// @route   GET /api/users/me
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  // req.user is already populated by the 'protect' middleware
+  // We just need to send it back with full company details.
+  const user = await User.findById(req.user._id).populate('company', 'name industryType');
+  
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      company: user.company,
+      permissions: user.permissions,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 // @desc    Accept an invitation and complete registration
 // @route   POST /api/users/accept-invitation
 // @access  Public
@@ -143,4 +167,4 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getUsers, inviteUser, deleteUser, acceptInvitation };
+module.exports = { getUsers, inviteUser, deleteUser, acceptInvitation, getUserProfile };

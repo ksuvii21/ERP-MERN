@@ -5,7 +5,8 @@ import {
   LayoutDashboard, 
   LogOut,
   Menu,
-  X
+  X,
+  UserCircle
 } from 'lucide-react';
 import { logout, reset } from '../features/auth/authSlice';
 import { getNavItems } from './moduleConfig';
@@ -83,6 +84,14 @@ const Layout = () => {
         </nav>
 
         <div className="p-4 border-t border-slate-800">
+          <Link
+            to="/app/profile"
+            className="flex items-center gap-3 text-slate-400 hover:text-white w-full px-3 py-2 mb-2 rounded-lg hover:bg-slate-800 transition-colors"
+            title={isSidebarOpen ? '' : 'Profile'}
+          >
+            <UserCircle size={20} />
+            <span className={`${!isSidebarOpen && 'hidden'}`}>Profile</span>
+          </Link>
           <button 
             onClick={handleLogout}
             className="flex items-center gap-3 text-slate-400 hover:text-white w-full px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors"
