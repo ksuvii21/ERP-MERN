@@ -8,7 +8,7 @@ import {
   X,
   UserCircle
 } from 'lucide-react';
-import { logout, reset } from '../features/auth/authSlice';
+import { logout, reset } from '../redux/slices/authSlice';
 import { getNavItems } from './moduleConfig';
 
 const Layout = () => {
@@ -18,6 +18,12 @@ const Layout = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/login');
+  };
+
   useEffect(() => {
     // Check if user data is stale (company is an ID string instead of an object)
     // This happens if the user logged in before the backend update.
@@ -25,13 +31,8 @@ const Layout = () => {
       console.warn('User data is stale. Logging out to refresh permissions.');
       handleLogout();
     }
-  }, [user]);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    dispatch(reset());
-    navigate('/login');
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, dispatch, navigate]);
 
   // Generate dynamic navigation based on Industry and Role
   const industry = user?.company?.industryType;
