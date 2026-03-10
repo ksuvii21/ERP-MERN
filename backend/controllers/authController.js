@@ -25,19 +25,23 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
 
   if (missingFields.length > 0) {
     res.status(400);
-    throw new Error(`Missing fields: ${missingFields.join(', ')}`);
+    const message = `Missing fields: ${missingFields.join(', ')}`;
+    console.error(message);
+    throw new Error(message);
   }
 
   // 2. Prevent Duplicate Key Errors (Pre-check)
   const userExists = await User.findOne({ email: admin.email });
   if (userExists) {
     res.status(400);
+    console.error(`Registration failed: User with email ${admin.email} already exists.`);
     throw new Error('A user with this email already exists.');
   }
 
   const companyExists = await Company.findOne({ name: company.name });
   if (companyExists) {
     res.status(400);
+    console.error(`Registration failed: Company with name ${company.name} already exists.`);
     throw new Error('A company with this name already exists.');
   }
 
