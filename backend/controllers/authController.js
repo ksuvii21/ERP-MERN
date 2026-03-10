@@ -86,8 +86,15 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
     if (createdCompany) await Company.findByIdAndDelete(createdCompany._id);
 
     console.error('Registration Failure:', error);
-    res.status(400);
-    throw new Error(error.message || 'Registration failed');
+    res.status(400); // Bad Request
+
+    // Provide a cleaner error for Mongoose validation issues
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      throw new Error(messages.join('. '));
+    }
+
+    throw new Error(error.message || 'User registration failed. Please try again.');
   }
 });
 
