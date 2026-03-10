@@ -50,14 +50,15 @@ const CreateCompany = () => {
   useEffect(() => {
     if (isError) {
       toast.error(message);
+      dispatch(reset());
     }
 
     // Redirect when registered and logged in
     if (isSuccess || user) {
       navigate('/app/dashboard');
+      dispatch(reset());
     }
 
-    dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const handleSubmit = (e) => {
