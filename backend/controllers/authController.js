@@ -25,10 +25,10 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
 
   if (missingFields.length > 0) {
     res.status(400);
-    throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    throw new Error(`Missing fields: ${missingFields.join(', ')}`);
   }
 
-  // 2. Pre-check duplicates (Critical to avoid E11000 errors)
+  // 2. Prevent Duplicate Key Errors (Pre-check)
   const userExists = await User.findOne({ email: admin.email });
   if (userExists) {
     res.status(400);
@@ -45,32 +45,31 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
   let createdAdmin = null;
 
   try {
-    // STEP 1: Create the Company first
-    // We create the company without an 'owner' initially
+    // STEP 1: Create Company first
+    // We create the company first so we have the ID ready for the User
     createdCompany = await Company.create({
       ...company,
-      email: admin.email
+      email: admin.email 
     });
 
-    // STEP 2: Create the Admin User
-    // We pass the company ID IMMEDIATELY. This is the "Single Save" fix.
+    // STEP 2: Create Admin (Linking the Company ID immediately)
+    // This avoids calling .save() twice on the User object, preventing versioning errors.
     createdAdmin = await User.create({
       name: admin.name,
       email: admin.email,
       password: admin.password,
       role: ROLES.ADMIN,
-      company: createdCompany._id, // LINKED ON INITIAL SAVE
+      company: createdCompany._id, // LINKED HERE
       status: 'active',
       permissions: ROLE_PERMISSIONS[ROLES.ADMIN] || [],
     });
 
-    // STEP 3: Update the Company with the Owner ID
-    // Updating the company is safer than updating the user because
-    // the company doesn't have password-hashing middleware.
+    // STEP 3: Link Owner to Company
+    // Updating the company is safe as it doesn't have password-hashing hooks.
     createdCompany.owner = createdAdmin._id;
     await createdCompany.save();
 
-    // STEP 4: Success Response
+    // SUCCESS: Send response. Redux will see 201 and set isSuccess: true
     res.status(201).json({
       _id: createdAdmin._id,
       name: createdAdmin.name,
@@ -82,7 +81,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
     });
 
   } catch (error) {
-    // ROLLBACK: Cleanup partial data
+    // ROLLBACK: Cleanup if anything failed mid-process
     if (createdAdmin) await User.findByIdAndDelete(createdAdmin._id);
     if (createdCompany) await Company.findByIdAndDelete(createdCompany._id);
 
@@ -94,9 +93,12 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
 
 /**
  * @desc    Authenticate a user & get token
+ * @route   POST /api/auth/login
+ * @access  Public
  */
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     res.status(400);
     throw new Error('Please provide an email and password');
