@@ -45,6 +45,7 @@ const UserSchema = new mongoose.Schema({
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
+    unique: false,
     // Not required, to allow for a global Super Admin
   },
 }, { timestamps: true });
