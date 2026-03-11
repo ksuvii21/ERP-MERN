@@ -14,8 +14,8 @@ const Profile = () => {
       try {
         setLoading(true);
         setError('');
-        // The request URL must be relative to the Axios base URL.
-        // Using a full path like '/api/users/me' would cause a duplicate '/api' segment.
+        // The path must be relative to the Axios base URL. An incorrect path like 'api/users/me'
+        // would cause the duplicate '/api/api/' segment, leading to a 404 error.
         const { data } = await API.get('users/me');
         setProfile(data);
       } catch (err) {
