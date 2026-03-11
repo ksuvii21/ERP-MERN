@@ -71,10 +71,21 @@ exports.createOne = (Model, requiredFields = []) =>
 
 exports.getAll = (Model, popOptions) =>
   asyncHandler(async (req, res, next) => {
-    let query = Model.find({ company: req.company._id });
+    // Build query
+    const queryObj = { ...req.query };
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'populate'];
+    excludedFields.forEach(el => delete queryObj[el]);
 
-    if (popOptions) {
-      query = query.populate(popOptions);
+    // Advanced filtering for gte, gt, lte, lt
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+    let query = Model.find({ ...JSON.parse(queryStr), company: req.company._id });
+
+    // Populate
+    const populateBy = req.query.populate || popOptions;
+    if (populateBy) {
+      query = query.populate(populateBy);
     }
 
     const docs = await query.sort({ createdAt: -1 });
