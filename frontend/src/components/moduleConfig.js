@@ -20,13 +20,13 @@ import { ROLES } from '../config/roles';
 
 const ALL_MODULES = {
   GENERAL: [
-    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER] },
+    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Reports & MIS', path: '/app/reports', icon: BarChart2, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
   FINANCE: [
     { name: 'Finance', path: '/app/finance', icon: Landmark, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Sales', path: '/app/sales', icon: DollarSign, roles: [ROLES.ADMIN, ROLES.MANAGER] },
-    { name: 'POS & Billing', path: '/app/pos', icon: Store, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER] },
+    { name: 'POS & Billing', path: '/app/pos', icon: Store, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Purchases', path: '/app/purchases', icon: ShoppingCart, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'GST Reports', path: '/app/gst-reports', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Invoice Design', path: '/app/invoice-design', icon: Paintbrush, roles: [ROLES.ADMIN] },
@@ -40,13 +40,13 @@ const ALL_MODULES = {
     { name: 'Stock Management', path: '/app/stock', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
   PROJECTS: [
-    { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER] },
+    { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
   MANUFACTURING: [
-    { name: 'Products', path: '/app/products', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER] },
-    { name: 'Bill of Materials', path: '/app/bom', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER] },
-    { name: 'Production', path: '/app/production', icon: Factory, roles: [ROLES.ADMIN, ROLES.MANAGER] },
-    { name: 'Quality', path: '/app/quality', icon: ShieldCheck, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Products', path: '/app/manufacturing/products', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Bill of Materials', path: '/app/manufacturing/boms', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Production', path: '/app/manufacturing/production', icon: Factory, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Quality', path: '/app/manufacturing/quality', icon: ShieldCheck, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
   ],
   ADMIN: [
     { name: 'Settings', path: '/app/settings', icon: Settings, roles: [ROLES.ADMIN] },
