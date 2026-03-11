@@ -39,6 +39,11 @@ app.use('/api/customers', require('./routes/customerRoutes'));
 app.use('/api/suppliers', require('./routes/supplierRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
+// Register Manufacturing Routes
+app.use('/api/boms', require('./routes/bomRoutes'));
+app.use('/api/production', require('./routes/productionRoutes'));
+app.use('/api/quality', require('./routes/qualityRoutes'));
+
 // Error Handler Middleware (Must be after routes)
 app.use(errorHandler);
 
