@@ -178,7 +178,11 @@ const ProductionOrders = () => {
             <form onSubmit={handleSubmit}>
               <Autocomplete options={boms} getOptionLabel={(option) => `${option.name} (for ${option.product?.name || '...'})` || ''} value={newOrder.bom} onChange={handleBomSelect} isOptionEqualToValue={(option, value) => option._id === value._id} renderInput={(params) => <TextField {...params} label="Select Bill of Materials" required />} sx={{ mb: 2 }} />
               <TextField label="Quantity to Produce" name="quantityToProduce" type="number" value={newOrder.quantityToProduce} onChange={handleOrderChange} fullWidth required inputProps={{ min: 1 }} sx={{ mb: 2 }} />
-              <DatePicker label="Scheduled Date" value={newOrder.scheduledDate} onChange={handleDateChange} renderInput={(params) => <TextField {...params} fullWidth required sx={{ mb: 2 }} />} />
+              <DatePicker 
+                label="Scheduled Date" 
+                value={newOrder.scheduledDate} 
+                onChange={handleDateChange} 
+                slotProps={{ textField: { fullWidth: true, required: true, sx: { mb: 2 } } }} />
               <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
                 <Button onClick={handleClose} color="secondary">Cancel</Button>
                 <Button type="submit" variant="contained">Create</Button>
