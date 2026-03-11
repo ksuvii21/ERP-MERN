@@ -43,6 +43,7 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/boms', require('./routes/bomRoutes'));
 app.use('/api/production', require('./routes/productionRoutes'));
 app.use('/api/quality', require('./routes/qualityRoutes'));
+app.use('/api/machines', require('./routes/machineRoutes'));
 
 // Error Handler Middleware (Must be after routes)
 app.use(errorHandler);
