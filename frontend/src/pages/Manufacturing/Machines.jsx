@@ -5,9 +5,9 @@ const Machines = () => {
   return (
     <Container>
       <Typography variant="h4" component="h1" gutterBottom>
-        Machine Maintenance & Status
+        Machine Management
       </Typography>
-      {/* TODO: Add machine list, maintenance schedules, and status monitoring */}
+      {/* TODO: Display list of machines, their locations, status, and maintenance schedules */}
     </Container>
   );
 };
