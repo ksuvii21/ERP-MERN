@@ -15,19 +15,19 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     const userRole = user?.role;
 
     const menuItems = [
-        { text: 'Dashboard', icon: <Home />, path: '/app/dashboard', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR'] },
-        { text: 'Employees', icon: <People />, path: '/app/hr/employees', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR', ROLES.MANAGER] },
-        { text: 'Payroll', icon: <Receipt />, path: '/app/hr/payroll', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'HR'] },
+        { text: 'Dashboard', icon: <Home />, path: '/app/dashboard', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'hr'] },
+        { text: 'Employees', icon: <People />, path: '/app/hr/employees', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'hr', ROLES.MANAGER] },
+        { text: 'Payroll', icon: <Receipt />, path: '/app/hr/payroll', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.HR || 'hr'] },
         { text: 'Projects', icon: <AccountTree />, path: '/app/projects', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
         { text: 'Inventory', icon: <Inventory />, path: '/app/inventory', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
         { text: 'Purchases', icon: <LocalShipping />, path: '/app/purchases', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
         { text: 'POS & Billing', icon: <PointOfSale />, path: '/app/pos', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
-        { text: 'GST Reports', icon: <Assessment />, path: '/app/gst-reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.FINANCE, ROLES.MANAGER] },
-        { text: 'Reports & MIS', icon: <Summarize />, path: '/app/reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE] },
+        { text: 'GST Reports', icon: <Assessment />, path: '/app/gst-reports', roles: [ROLS.SUPER_ADMIN, ROLES.ADMIN, ROLES.FINANCE || 'finance', ROLES.MANAGER] },
+        { text: 'Reports & MIS', icon: <Summarize />, path: '/app/reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE || 'finance'] },
         { text: 'Invoice Design', icon: <DesignServices />, path: '/app/invoice-design', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
-        { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE] },
+        { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE || 'finance'] },
         { text: 'AI Insights', icon: <Psychology />, path: '/app/ai-insights', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
-        { text: 'Settings', icon: <Settings />, path: '/app/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'HR'] },
+        { text: 'Settings', icon: <Settings />, path: '/app/settings', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE, ROLES.HR || 'hr'] },
     ];
 
     const filteredMenuItems = menuItems.filter((item) => userRole && item.roles.includes(userRole));
