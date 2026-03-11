@@ -62,8 +62,8 @@ const BillOfMaterials = () => {
           api.get('/boms?populate=product'),
           api.get('/products'),
         ]);
-        setBoms(bomsRes.data.data);
-        setProducts(productsRes.data.data);
+        setBoms(bomsRes.data);
+        setProducts(productsRes.data);
       } catch (err) {
         setError(
           err.response?.data?.message ||
@@ -132,8 +132,8 @@ const BillOfMaterials = () => {
       }
 
       const res = await api.post('/boms', payload);
-      // To show the populated product name immediately, we can merge data
-      const createdBom = { ...res.data.data, product: newBom.product };
+      // To show the populated product name immediately, we can merge data. The createOne factory returns the created doc.
+      const createdBom = { ...res.data, product: newBom.product };
       setBoms([...boms, createdBom]);
       handleClose();
     } catch (err) {
