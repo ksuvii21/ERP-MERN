@@ -67,8 +67,8 @@ const ProductionOrders = () => {
           api.get('/production?populate=product'),
           api.get('/boms?populate=product'), // populate product to show in dropdown
         ]);
-        setOrders(ordersRes.data.data);
-        setBoms(bomsRes.data.data);
+        setOrders(ordersRes.data);
+        setBoms(bomsRes.data);
       } catch (err) {
         setError(
           err.response?.data?.message ||
@@ -120,7 +120,7 @@ const ProductionOrders = () => {
       }
 
       const res = await api.post('/production', payload);
-      const createdOrder = { ...res.data.data, product: newOrder.bom.product };
+      const createdOrder = { ...res.data, product: newOrder.bom.product };
       setOrders([...orders, createdOrder]);
       handleClose();
     } catch (err) {
