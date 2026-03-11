@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const Company = require('../models/Company');
 const User = require('../models/User');
-const { ROLES } = require('../config/roles');
+const { ROLES, PERMISSIONS } = require('../config/roles');
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -65,4 +65,33 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { protect, authorize };
+const hasPermission = (...requiredPermissions) => {
+  return (req, res, next) => {
+    // This middleware should run after the 'protect' middleware,
+    // so req.user should be available.
+    if (!req.user || !req.user.role) {
+      res.status(403);
+      throw new Error('Not authorized, user role is missing.');
+    }
+
+    const userPermissions = PERMISSIONS[req.user.role] || [];
+
+    // Admins with 'all' permission can access anything
+    if (userPermissions.includes('all')) {
+      return next();
+    }
+
+    // Check if the user has at least one of the required permissions
+    const hasRequiredPermission = requiredPermissions.some(permission =>
+      userPermissions.includes(permission)
+    );
+
+    if (!hasRequiredPermission) {
+      res.status(403);
+      throw new Error('Not authorized, you do not have the required permissions.');
+    }
+    next();
+  };
+};
+
+module.exports = { protect, authorize, hasPermission };
