@@ -28,7 +28,7 @@ const RawMaterials = () => {
         // This assumes your API can filter products by a 'productType' field.
         // If not, you might need to adjust the backend or filter on the client side.
         const res = await api.get('/products?productType=raw_material');
-        setMaterials(res.data.data);
+        setMaterials(res.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch raw materials.');
         console.error(err);
