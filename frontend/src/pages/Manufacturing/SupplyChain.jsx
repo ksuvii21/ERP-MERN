@@ -5,9 +5,9 @@ const SupplyChain = () => {
   return (
     <Container>
       <Typography variant="h4" component="h1" gutterBottom>
-        Supply Chain Management
+        Supply Chain Overview
       </Typography>
-      {/* TODO: Add logistics, supplier coordination, and shipment tracking */}
+      {/* TODO: Display supply chain visualization, from suppliers to production to customers */}
     </Container>
   );
 };
