@@ -2,9 +2,9 @@ const asyncHandler = require('express-async-handler');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { ROLES } = require('../config/roles');
+const { PERMISSIONS } = require('../config/roles');
 const generateToken = require('../utils/generateToken');
 const sendEmail = require('../utils/sendEmail'); // You'll need to create this utility
-const { ROLE_PERMISSIONS } = require('../config/permissions');
 
 // @desc    Invite a new user to the company
 // @route   POST /api/users/invite
@@ -40,7 +40,7 @@ const inviteUser = asyncHandler(async (req, res) => {
     role,
     company: req.company._id,
     status: 'pending',
-    permissions: ROLE_PERMISSIONS[role] || [], // Assign default permissions for the role
+    permissions: PERMISSIONS[role] || [], // Assign default permissions for the role
     invitationToken, // Ensure this field exists in your User Schema
     password: crypto.randomBytes(16).toString('hex'), // Temporary random password
   });
