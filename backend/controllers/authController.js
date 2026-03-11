@@ -2,7 +2,7 @@ const Company = require('../models/Company');
 const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
 const { ROLES } = require('../config/roles'); 
-const { ROLE_PERMISSIONS } = require('../config/permissions');
+const { PERMISSIONS } = require('../config/roles');
 const generateToken = require('../utils/generateToken');
 const bcrypt = require('bcryptjs');
 
@@ -65,7 +65,7 @@ const registerCompanyAndAdmin = asyncHandler(async (req, res) => {
       role: ROLES.ADMIN,
       company: createdCompany._id, // LINKED HERE
       status: 'active',
-      permissions: ROLE_PERMISSIONS[ROLES.ADMIN] || [],
+      permissions: PERMISSIONS[ROLES.ADMIN] || [],
     });
 
     // STEP 3: Link Owner to Company
