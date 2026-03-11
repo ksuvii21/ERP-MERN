@@ -63,8 +63,8 @@ const QualityManagement = () => {
           api.get('/quality?populate=product,productionOrder,inspectedBy'),
           api.get('/production?populate=product'),
         ]);
-        setChecks(checksRes.data.data);
-        setProductionOrders(ordersRes.data.data);
+        setChecks(checksRes.data);
+        setProductionOrders(ordersRes.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch quality data.');
         console.error(err);
@@ -107,7 +107,7 @@ const QualityManagement = () => {
       const res = await api.post('/quality', payload);
       // Refetch to get populated data from server
       const checksRes = await api.get('/quality?populate=product,productionOrder,inspectedBy');
-      setChecks(checksRes.data.data);
+      setChecks(checksRes.data);
       handleClose();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create quality check.');
