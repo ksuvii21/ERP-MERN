@@ -36,7 +36,7 @@ import Orders from './pages/Retail/Orders.jsx';
 import Patients from './pages/Healthcare/Patients.jsx';
 import Doctors from './pages/Healthcare/Doctors.jsx';
 import Appointments from './pages/Healthcare/Appointments.jsx';
-import Billing from './pages/Healthcare/Billing.jsx';
+import Billing from './pages/Business/Billing.jsx';
 import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
 import ProfilePage from './pages/General/Profile.jsx';
