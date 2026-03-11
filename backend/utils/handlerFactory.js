@@ -15,6 +15,43 @@ exports.deleteOne = (Model) =>
     res.status(200).json({ id: req.params.id });
   });
 
+exports.updateOne = (Model) =>
+  asyncHandler(async (req, res, next) => {
+    const doc = await Model.findOneAndUpdate(
+      { _id: req.params.id, company: req.company._id },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!doc) {
+      res.status(404);
+      throw new Error(`${Model.modelName} not found or not part of your company`);
+    }
+
+    res.status(200).json(doc);
+  });
+
+exports.getOne = (Model, popOptions) =>
+  asyncHandler(async (req, res, next) => {
+    let query = Model.findOne({ _id: req.params.id, company: req.company._id });
+
+    if (popOptions) {
+      query = query.populate(popOptions);
+    }
+
+    const doc = await query;
+
+    if (!doc) {
+      res.status(404);
+      throw new Error(`${Model.modelName} not found or not part of your company`);
+    }
+
+    res.status(200).json(doc);
+  });
+
 exports.createOne = (Model, requiredFields = []) =>
   asyncHandler(async (req, res, next) => {
     for (const field of requiredFields) {
