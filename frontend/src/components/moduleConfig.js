@@ -1,23 +1,46 @@
 import {
   LayoutDashboard,
   DollarSign,
-  CreditCard,
   Users,
   Package,
   ClipboardList,
   Factory,
   ShieldCheck,
   Settings,
+  ShoppingCart,
+  Store,
+  BarChart2,
+  Receipt,
+  Briefcase,
+  Landmark,
+  FileText,
+  Paintbrush,
 } from 'lucide-react';
 import { ROLES } from '../config/roles';
 
 const ALL_MODULES = {
   GENERAL: [
     { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER] },
+    { name: 'Reports & MIS', path: '/app/reports', icon: BarChart2, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
   FINANCE: [
+    { name: 'Finance', path: '/app/finance', icon: Landmark, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Sales', path: '/app/sales', icon: DollarSign, roles: [ROLES.ADMIN, ROLES.MANAGER] },
-    { name: 'Billing', path: '/app/billing', icon: CreditCard, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'POS & Billing', path: '/app/pos', icon: Store, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER] },
+    { name: 'Purchases', path: '/app/purchases', icon: ShoppingCart, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'GST Reports', path: '/app/gst-reports', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Invoice Design', path: '/app/invoice-design', icon: Paintbrush, roles: [ROLES.ADMIN] },
+  ],
+  HR: [
+    { name: 'Employees', path: '/app/hr/employees', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Payroll', path: '/app/hr/payroll', icon: Receipt, roles: [ROLES.ADMIN] },
+  ],
+  INVENTORY: [
+    { name: 'Inventory', path: '/app/inventory', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Stock Management', path: '/app/stock', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+  ],
+  PROJECTS: [
+    { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MEMBER] },
   ],
   MANUFACTURING: [
     { name: 'Products', path: '/app/products', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER] },
@@ -25,25 +48,23 @@ const ALL_MODULES = {
     { name: 'Production', path: '/app/production', icon: Factory, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Quality', path: '/app/quality', icon: ShieldCheck, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
-  OPERATIONS: [
-    { name: 'Employees', path: '/app/employees', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER] },
-  ],
   ADMIN: [
     { name: 'Settings', path: '/app/settings', icon: Settings, roles: [ROLES.ADMIN] },
+    { name: 'Users', path: '/app/users', icon: Users, roles: [ROLES.ADMIN] },
   ]
 };
 
 const INDUSTRY_CONFIG = {
-  'Manufacturing': ['GENERAL', 'FINANCE', 'MANUFACTURING', 'OPERATIONS', 'ADMIN'],
-  'Retail': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
-  'Wholesale': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
-  'Healthcare': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
-  'Construction': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
-  'Hospitality': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
-  'Education': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
-  'General Business': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN'],
+  'Manufacturing': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
+  'Retail': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Wholesale': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Healthcare': ['GENERAL', 'FINANCE', 'HR', 'ADMIN'], // TODO: Add healthcare-specific modules
+  'Construction': ['GENERAL', 'FINANCE', 'HR', 'PROJECTS', 'INVENTORY', 'ADMIN'],
+  'Hospitality': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Education': ['GENERAL', 'FINANCE', 'HR', 'ADMIN'],
+  'General Business': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'ADMIN'],
   // Default if industry not matched
-  'default': ['GENERAL', 'FINANCE', 'OPERATIONS', 'ADMIN']
+  'default': ['GENERAL', 'FINANCE', 'HR', 'ADMIN']
 };
 
 /**
