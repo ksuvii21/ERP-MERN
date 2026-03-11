@@ -22,7 +22,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         { text: 'Inventory', icon: <Inventory />, path: '/app/inventory', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
         { text: 'Purchases', icon: <LocalShipping />, path: '/app/purchases', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER] },
         { text: 'POS & Billing', icon: <PointOfSale />, path: '/app/pos', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
-        { text: 'GST Reports', icon: <Assessment />, path: '/app/gst-reports', roles: [ROLS.SUPER_ADMIN, ROLES.ADMIN, ROLES.FINANCE || 'finance', ROLES.MANAGER] },
+        { text: 'GST Reports', icon: <Assessment />, path: '/app/gst-reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.FINANCE || 'finance', ROLES.MANAGER] },
         { text: 'Reports & MIS', icon: <Summarize />, path: '/app/reports', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE || 'finance'] },
         { text: 'Invoice Design', icon: <DesignServices />, path: '/app/invoice-design', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
         { text: 'Finance', icon: <AccountBalance />, path: '/app/finance', roles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.FINANCE || 'finance'] },
