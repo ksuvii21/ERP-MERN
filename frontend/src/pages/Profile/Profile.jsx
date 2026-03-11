@@ -14,10 +14,9 @@ const Profile = () => {
       try {
         setLoading(true);
         setError('');
-        // The request URL was likely '/api/users/me', which when combined
-        // with an Axios base URL of '/api', results in '/api/api/users/me'.
-        // The fix is to use the correct relative path.
-        const { data } = await API.get('/users/me');
+        // The request URL must be relative to the Axios base URL.
+        // Using a full path like '/api/users/me' would cause a duplicate '/api' segment.
+        const { data } = await API.get('users/me');
         setProfile(data);
       } catch (err) {
         console.error('Failed to fetch profile', err);
