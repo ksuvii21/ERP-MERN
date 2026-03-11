@@ -46,6 +46,9 @@ import BillOfMaterials from './pages/Manufacturing/BillOfMaterials.jsx';
 import ProductionOrders from './pages/Manufacturing/ProductionOrders.jsx';
 import QualityManagement from './pages/Manufacturing/QualityManagement.jsx';
 import ManufacturingProducts from './pages/Manufacturing/Products.jsx';
+import Machines from './pages/Manufacturing/Machines.jsx';
+import RawMaterials from './pages/Manufacturing/RawMaterials.jsx';
+import SupplyChain from './pages/Manufacturing/SupplyChain.jsx';
 
 // Components
 import Layout from './components/Layout.jsx';
@@ -100,6 +103,9 @@ function App() {
             <Route path="manufacturing/boms" element={<BillOfMaterials />} />
             <Route path="manufacturing/production" element={<ProductionOrders />} />
             <Route path="manufacturing/quality" element={<QualityManagement />} />
+            <Route path="manufacturing/machines" element={<Machines />} />
+            <Route path="manufacturing/raw-materials" element={<RawMaterials />} />
+            <Route path="manufacturing/supply-chain" element={<SupplyChain />} />
           </Route>
 
           {/* Fallback */}
