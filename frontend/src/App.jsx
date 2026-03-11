@@ -41,6 +41,12 @@ import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
 import ProfilePage from './pages/General/Profile.jsx';
 
+// Manufacturing Pages
+import BillOfMaterials from './pages/Manufacturing/BillOfMaterials.jsx';
+import ProductionOrders from './pages/Manufacturing/ProductionOrders.jsx';
+import QualityManagement from './pages/Manufacturing/QualityManagement.jsx';
+import ManufacturingProducts from './pages/Manufacturing/Products.jsx';
+
 // Components
 import Layout from './components/Layout.jsx';
 
@@ -88,6 +94,12 @@ function App() {
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
             <Route path="profile" element={<ProfilePage />} />
+
+            {/* Manufacturing Routes */}
+            <Route path="manufacturing/products" element={<ManufacturingProducts />} />
+            <Route path="manufacturing/boms" element={<BillOfMaterials />} />
+            <Route path="manufacturing/production" element={<ProductionOrders />} />
+            <Route path="manufacturing/quality" element={<QualityManagement />} />
           </Route>
 
           {/* Fallback */}
