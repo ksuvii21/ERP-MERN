@@ -18,8 +18,8 @@ const Layout = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await dispatch(logout());
     dispatch(reset());
     navigate('/login');
   };
