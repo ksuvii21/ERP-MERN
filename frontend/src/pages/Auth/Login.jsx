@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
-import { login, reset } from '../../features/auth/authSlice';
+import { login, reset } from '../../redux/slices/authSlice';
 import { Mail, Lock, LogIn, Loader2, Eye, EyeOff, TrendingUp, Home } from 'lucide-react';
 
 const Login = () => {
