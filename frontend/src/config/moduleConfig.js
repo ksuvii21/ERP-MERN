@@ -59,6 +59,11 @@ const ALL_MODULES = {
     { name: 'Pharmacy', path: '/app/pharmacy', icon: Pill, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Billing', path: '/app/billing', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
+  RETAIL: [
+    { name: 'Customers', path: '/app/customers', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+  ],
   WHOLESALE: [
     { name: 'Bulk Ordering', path: '/app/wholesale/bulk-ordering', icon: ShoppingCart, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Warehouse Mgmt', path: '/app/wholesale/warehouse', icon: Warehouse, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
@@ -90,7 +95,7 @@ const ALL_MODULES = {
 
 const INDUSTRY_CONFIG = {
   'Manufacturing': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
-  'Retail': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Retail': ['GENERAL', 'RETAIL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Wholesale': ['GENERAL', 'WHOLESALE', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
   'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
