@@ -71,6 +71,12 @@ import Courses from './pages/Education/Courses.jsx';
 import Exams from './pages/Education/Exams.jsx';
 import Attendance from './pages/Education/Attendance.jsx';
 
+// Hospitality Pages
+import Bookings from './pages/Hospitality/Bookings.jsx';
+import Rooms from './pages/Hospitality/Rooms.jsx';
+import Guests from './pages/Hospitality/Guests.jsx';
+import Services from './pages/Hospitality/Services.jsx';
+
 // Components
 import Layout from './components/Layout.jsx';
 
@@ -148,6 +154,12 @@ function App() {
             <Route path="education/courses" element={<Courses />} />
             <Route path="education/exams" element={<Exams />} />
             <Route path="education/attendance" element={<Attendance />} />
+
+            {/* Hospitality Routes */}
+            <Route path="hospitality/bookings" element={<Bookings />} />
+            <Route path="hospitality/rooms" element={<Rooms />} />
+            <Route path="hospitality/guests" element={<Guests />} />
+            <Route path="hospitality/services" element={<Services />} />
           </Route>
 
           {/* Fallback */}
