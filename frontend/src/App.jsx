@@ -41,6 +41,13 @@ import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
 import ProfilePage from './pages/Profile/Profile.jsx';
 
+// Wholesale Pages
+import BulkOrdering from './pages/Wholesale/BulkOrdering.jsx';
+import CreditManagement from './pages/Wholesale/CreditManagement.jsx';
+import Logistics from './pages/Wholesale/Logistics.jsx';
+import WholesaleSuppliers from './pages/Wholesale/Suppliers.jsx';
+import WarehouseManagement from './pages/Wholesale/WarehouseManagement.jsx';
+
 // Construction Pages
 import ConstructionProjects from './pages/Construction/Projects.jsx';
 import Budgets from './pages/Construction/Budgets.jsx';
@@ -104,6 +111,13 @@ function App() {
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
             <Route path="profile" element={<ProfilePage />} />
+
+            {/* Wholesale Routes */}
+            <Route path="wholesale/bulk-ordering" element={<BulkOrdering />} />
+            <Route path="wholesale/warehouse" element={<WarehouseManagement />} />
+            <Route path="wholesale/logistics" element={<Logistics />} />
+            <Route path="wholesale/suppliers" element={<WholesaleSuppliers />} />
+            <Route path="wholesale/credit" element={<CreditManagement />} />
 
             {/* Construction Routes */}
             <Route path="construction/projects" element={<ConstructionProjects />} />
