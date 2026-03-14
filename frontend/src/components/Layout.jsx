@@ -9,7 +9,7 @@ import {
   UserCircle
 } from 'lucide-react';
 import { logout, reset } from '../redux/slices/authSlice';
-import { getNavItems } from './moduleConfig';
+import { getNavItems } from '../config/moduleConfig';
 
 const Layout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
