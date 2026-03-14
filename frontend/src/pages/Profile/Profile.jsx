@@ -14,8 +14,7 @@ const Profile = () => {
       try {
         setLoading(true);
         setError('');
-        // The path must be relative to the Axios base URL. An incorrect path like 'api/users/me'
-        // would cause the duplicate '/api/api/' segment, leading to a 404 error.
+        // Using 'users/me' correctly appends to the '/api' baseURL defined in your utility
         const { data } = await API.get('users/me');
         setProfile(data);
       } catch (err) {
