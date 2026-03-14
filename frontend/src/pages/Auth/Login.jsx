@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { login, reset } from '../../features/auth/authSlice';
-import { Mail, Lock, LogIn, Loader2, Eye, EyeOff, TrendingUp } from 'lucide-react';
+import { Mail, Lock, LogIn, Loader2, Eye, EyeOff, TrendingUp, Home } from 'lucide-react';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -55,12 +55,24 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      {/* Back to Home Link */}
+      <div className="absolute top-6 left-6">
+        <Link 
+          to="/" 
+          className="flex items-center gap-2 text-slate-500 hover:text-teal-600 transition-colors font-medium"
+        >
+          <Home size={20} />
+          <span>Back to Home</span>
+        </Link>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-slate-200"
       >
+        
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 text-teal-600 mb-2">
             <TrendingUp className="w-8 h-8" />

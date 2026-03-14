@@ -16,7 +16,8 @@ import {
   Loader2,
   TrendingUp,
   Eye,
-  EyeOff
+  EyeOff,
+  Home
 } from 'lucide-react';
 
 const CreateCompany = () => {
@@ -88,6 +89,17 @@ const CreateCompany = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 py-12">
+      {/* Back to Home Link */}
+      <div className="absolute top-6 left-6">
+        <Link 
+          to="/" 
+          className="flex items-center gap-2 text-slate-500 hover:text-teal-600 transition-colors font-medium"
+        >
+          <Home size={20} />
+          <span>Back to Home</span>
+        </Link>
+      </div>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
