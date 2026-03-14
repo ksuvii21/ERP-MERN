@@ -64,6 +64,13 @@ import Machines from './pages/Manufacturing/Machines.jsx';
 import RawMaterials from './pages/Manufacturing/RawMaterials.jsx';
 import SupplyChain from './pages/Manufacturing/SupplyChain.jsx';
 
+// Education Pages
+import Students from './pages/Education/Students.jsx';
+import Teachers from './pages/Education/Teachers.jsx';
+import Courses from './pages/Education/Courses.jsx';
+import Exams from './pages/Education/Exams.jsx';
+import Attendance from './pages/Education/Attendance.jsx';
+
 // Components
 import Layout from './components/Layout.jsx';
 
@@ -134,6 +141,13 @@ function App() {
             <Route path="manufacturing/machines" element={<Machines />} />
             <Route path="manufacturing/raw-materials" element={<RawMaterials />} />
             <Route path="manufacturing/supply-chain" element={<SupplyChain />} />
+
+            {/* Education Routes */}
+            <Route path="education/students" element={<Students />} />
+            <Route path="education/teachers" element={<Teachers />} />
+            <Route path="education/courses" element={<Courses />} />
+            <Route path="education/exams" element={<Exams />} />
+            <Route path="education/attendance" element={<Attendance />} />
           </Route>
 
           {/* Fallback */}
