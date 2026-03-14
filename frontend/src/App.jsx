@@ -39,7 +39,14 @@ import Appointments from './pages/Healthcare/Appointments.jsx';
 import Billing from './pages/Business/Billing.jsx';
 import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
-import ProfilePage from './pages/General/Profile.jsx';
+import ProfilePage from './pages/Profile/Profile.jsx';
+
+// Construction Pages
+import ConstructionProjects from './pages/Construction/Projects.jsx';
+import Budgets from './pages/Construction/Budgets.jsx';
+import Contracts from './pages/Construction/Contracts.jsx';
+import Equipment from './pages/Construction/Equipment.jsx';
+import Workers from './pages/Construction/Workers.jsx';
 
 // Manufacturing Pages
 import BillOfMaterials from './pages/Manufacturing/BillOfMaterials.jsx';
@@ -97,6 +104,13 @@ function App() {
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
             <Route path="profile" element={<ProfilePage />} />
+
+            {/* Construction Routes */}
+            <Route path="construction/projects" element={<ConstructionProjects />} />
+            <Route path="construction/budgets" element={<Budgets />} />
+            <Route path="construction/contracts" element={<Contracts />} />
+            <Route path="construction/equipment" element={<Equipment />} />
+            <Route path="construction/workers" element={<Workers />} />
 
             {/* Manufacturing Routes */}
             <Route path="manufacturing/products" element={<ManufacturingProducts />} />
