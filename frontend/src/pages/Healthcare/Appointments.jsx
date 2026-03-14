@@ -19,7 +19,7 @@ const Appointments = () => {
     const fetchData = async () => {
       try {
         const [aptRes, patRes, docRes] = await Promise.all([
-          api.get('/appointments'), api.get('/patients'), api.get('/doctors')
+          api.get('appointments'), api.get('patients'), api.get('doctors')
         ]);
         setAppointments(aptRes.data);
         setPatients(patRes.data);
