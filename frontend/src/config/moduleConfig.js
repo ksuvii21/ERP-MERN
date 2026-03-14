@@ -1,114 +1,110 @@
-import { 
-  LayoutDashboard, 
-  ShoppingCart, 
-  Users, 
-  FileText, 
-  Activity, // Healthcare
-  Calendar, // Healthcare
-  ShoppingBag, // Retail
-  Truck, // Wholesale
-  Hammer, // Construction
+import {
+  LayoutDashboard,
+  DollarSign,
+  Users,
+  Package,
+  ClipboardList,
+  Factory,
+  ShieldCheck,
+  Cpu,
+  Component,
+  Share2,
+  Settings,
+  ShoppingCart,
+  Store,
+  BarChart2,
+  Receipt,
   Briefcase,
-  Factory,      // Manufacturing
-  ClipboardList,// Orders
-  Pill,         // Pharmacy
-  Stethoscope,  // Doctors
-  CreditCard,   // Billing/Fees
-  GraduationCap,// Students
-  BookOpen,     // Courses
-  UserCheck,    // Attendance
-  BarChart3,    // Reports
-  Utensils,     // Hospitality
-  BedDouble     // Hospitality
+  Landmark,
+  FileText,
+  Paintbrush,
+  HardHat,
+  Truck,
+  Stethoscope,
+  Calendar,
+  Pill,
 } from 'lucide-react';
+import { ROLES } from './roles';
 
-// Define modules available for each industry
-export const MODULES = {
-  // Modules available to everyone regardless of industry
-  Common: [
-    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'hr', 'employee', 'finance'] },
-    { name: 'Employees', path: '/app/hr/employees', icon: Users, roles: ['admin', 'hr'] },
-    { name: 'Finance', path: '/app/finance', icon: FileText, roles: ['admin', 'manager', 'finance'] },
-    { name: 'User Management', path: '/app/users', icon: Users, roles: ['admin', 'manager', 'hr'] },
-    { name: 'Reports', path: '/app/reports', icon: BarChart3, roles: ['admin', 'manager'] },
+const ALL_MODULES = {
+  GENERAL: [
+    { name: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Reports & MIS', path: '/app/reports', icon: BarChart2, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
-  
-  // Industry Specific Modules
-  Healthcare: [
-    { name: 'Patients', path: '/app/patients', icon: Users, roles: ['admin', 'doctor', 'nurse'] },
-    { name: 'Doctors', path: '/app/doctors', icon: Stethoscope, roles: ['admin', 'manager'] },
-    { name: 'Appointments', path: '/app/appointments', icon: Calendar, roles: ['admin', 'doctor', 'receptionist'] },
-    { name: 'Billing', path: '/app/billing', icon: CreditCard, roles: ['admin', 'finance'] },
-    { name: 'Pharmacy', path: '/app/pharmacy', icon: Pill, roles: ['admin', 'pharmacist'] },
-    { name: 'Medical Records', path: '/app/records', icon: Activity, roles: ['admin', 'doctor'] },
+  FINANCE: [
+    { name: 'Finance', path: '/app/finance', icon: Landmark, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Sales', path: '/app/sales', icon: DollarSign, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'POS & Billing', path: '/app/pos', icon: Store, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Purchases', path: '/app/purchases', icon: ShoppingCart, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'GST Reports', path: '/app/gst-reports', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Invoice Design', path: '/app/invoice-design', icon: Paintbrush, roles: [ROLES.ADMIN] },
   ],
-  
-  Retail: [
-    { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
-    { name: 'Sales', path: '/app/sales', icon: ShoppingBag, roles: ['admin', 'manager', 'sales'] },
-    { name: 'Customers', path: '/app/customers', icon: Users, roles: ['admin', 'manager', 'sales'] },
-    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
-    { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
+  HR: [
+    { name: 'Employees', path: '/app/hr/employees', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Payroll', path: '/app/hr/payroll', icon: Receipt, roles: [ROLES.ADMIN] },
   ],
-
-  Wholesale: [
-    { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
-    { name: 'Shipments', path: '/app/shipments', icon: Truck, roles: ['admin', 'manager'] },
-    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
-    { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
-    { name: 'Warehouse', path: '/app/warehouse', icon: Factory, roles: ['admin', 'manager'] },
+  INVENTORY: [
+    { name: 'Inventory', path: '/app/inventory', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Stock Management', path: '/app/stock', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
-
-  Manufacturing: [
-    { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager'] },
-    { name: 'Production', path: '/app/production', icon: Factory, roles: ['admin', 'manager', 'engineer'] },
-    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
-    { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
+  PROJECTS: [
+    { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
-
-  Education: [
-    { name: 'Students', path: '/app/students', icon: GraduationCap, roles: ['admin', 'teacher'] },
-    { name: 'Teachers', path: '/app/teachers', icon: Users, roles: ['admin', 'hr'] },
-    { name: 'Courses', path: '/app/courses', icon: BookOpen, roles: ['admin', 'teacher'] },
-    { name: 'Attendance', path: '/app/attendance', icon: UserCheck, roles: ['admin', 'teacher'] },
-    { name: 'Fees', path: '/app/fees', icon: CreditCard, roles: ['admin', 'finance'] },
+  HEALTHCARE: [
+    { name: 'Patients', path: '/app/patients', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Doctors', path: '/app/doctors', icon: Stethoscope, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Appointments', path: '/app/appointments', icon: Calendar, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Medical Records', path: '/app/records', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Pharmacy', path: '/app/pharmacy', icon: Pill, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Billing', path: '/app/billing', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
-
-  Construction: [
-    { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: ['admin', 'manager'] },
-    { name: 'Site Safety', path: '/app/safety', icon: Hammer, roles: ['admin', 'manager', 'safety_officer'] },
-    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
+  CONSTRUCTION: [
+    { name: 'Projects', path: '/app/construction/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Budgets', path: '/app/construction/budgets', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Contracts', path: '/app/construction/contracts', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Equipment', path: '/app/construction/equipment', icon: Truck, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Workers', path: '/app/construction/workers', icon: HardHat, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
-  
-  'General Business': [
-    { name: 'Inventory', path: '/app/inventory', icon: ShoppingCart, roles: ['admin', 'manager', 'employee'] },
-    { name: 'Sales', path: '/app/sales', icon: ShoppingBag, roles: ['admin', 'manager', 'sales'] },    
-    { name: 'Customers', path: '/app/customers', icon: Users, roles: ['admin', 'manager', 'sales'] },        
-    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
-    { name: 'Orders', path: '/app/orders', icon: ClipboardList, roles: ['admin', 'manager', 'sales'] },
+  MANUFACTURING: [
+    { name: 'Products', path: '/app/manufacturing/products', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Bill of Materials', path: '/app/manufacturing/boms', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Production', path: '/app/manufacturing/production', icon: Factory, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Quality', path: '/app/manufacturing/quality', icon: ShieldCheck, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Machines', path: '/app/manufacturing/machines', icon: Cpu, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Raw Materials', path: '/app/manufacturing/raw-materials', icon: Component, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
+    { name: 'Supply Chain', path: '/app/manufacturing/supply-chain', icon: Share2, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
   ],
-
-  Hospitality: [
-    { name: 'Reservations', path: '/app/reservations', icon: Calendar, roles: ['admin', 'manager', 'receptionist'] },
-    { name: 'Rooms', path: '/app/rooms', icon: Briefcase, roles: ['admin', 'manager'] },
-    { name: 'Restaurant', path: '/app/restaurant', icon: Utensils, roles: ['admin', 'manager'] },
-    { name: 'Suppliers', path: '/app/suppliers', icon: Truck, roles: ['admin', 'manager'] },
-  ],
+  ADMIN: [
+    { name: 'Settings', path: '/app/settings', icon: Settings, roles: [ROLES.ADMIN] },
+    { name: 'Users', path: '/app/users', icon: Users, roles: [ROLES.ADMIN] },
+  ]
 };
 
-/**
- * Generates the navigation list based on Industry and User Role
- */
-export const getNavItems = (industry, role) => {
-  // 1. Get Common Modules authorized for this role
-  const commonItems = MODULES.Common.filter(item => item.roles.includes(role));
+const INDUSTRY_CONFIG = {
+  'Manufacturing': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
+  'Retail': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Wholesale': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
+  'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Hospitality': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Education': ['GENERAL', 'FINANCE', 'HR', 'ADMIN'],
+  'General Business': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'ADMIN'],
+  'default': ['GENERAL', 'FINANCE', 'HR', 'ADMIN']
+};
 
-  // 2. Get Industry Specific Modules authorized for this role
-  // Default to empty array if industry is not defined or not found
-  const industryKey = industry || 'General Business';
-  const industryModules = MODULES[industryKey] || [];
-  const industryItems = industryModules.filter(item => item.roles.includes(role));
+export const getNavItems = (industry, userRole) => {
+  if (!industry || !userRole) return { General: ALL_MODULES.GENERAL };
 
-  // 3. Merge and return
-  return [...commonItems, ...industryItems];
+  const industryModules = INDUSTRY_CONFIG[industry] || INDUSTRY_CONFIG.default;
+  const groupedNavItems = {};
+
+  industryModules.forEach(groupName => {
+    const groupItems = ALL_MODULES[groupName].filter(item => item.roles.includes(userRole));
+    if (groupItems.length > 0) {
+      const displayName = groupName.charAt(0) + groupName.slice(1).toLowerCase();
+      groupedNavItems[displayName] = groupItems;
+    }
+  });
+
+  return groupedNavItems;
 };
