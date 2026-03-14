@@ -23,7 +23,10 @@ import {
   Stethoscope,
   Calendar,
   Pill,
-  Warehouse, 
+  Warehouse,
+  GraduationCap,
+  BookOpen,
+  UserCheck,
 } from 'lucide-react';
 import { ROLES } from './roles';
 
@@ -87,6 +90,13 @@ const ALL_MODULES = {
     { name: 'Raw Materials', path: '/app/manufacturing/raw-materials', icon: Component, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
     { name: 'Supply Chain', path: '/app/manufacturing/supply-chain', icon: Share2, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
   ],
+  EDUCATION: [
+    { name: 'Students', path: '/app/education/students', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Teachers', path: '/app/education/teachers', icon: UserCheck, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Courses', path: '/app/education/courses', icon: BookOpen, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Exams', path: '/app/education/exams', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Attendance', path: '/app/education/attendance', icon: Calendar, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+  ],
   ADMIN: [
     { name: 'Settings', path: '/app/settings', icon: Settings, roles: [ROLES.ADMIN] },
     { name: 'Users', path: '/app/users', icon: Users, roles: [ROLES.ADMIN] },
@@ -100,7 +110,7 @@ const INDUSTRY_CONFIG = {
   'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
   'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Hospitality': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Education': ['GENERAL', 'FINANCE', 'HR', 'ADMIN'],
+  'Education': ['GENERAL', 'EDUCATION', 'FINANCE', 'HR', 'ADMIN'],
   'General Business': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'ADMIN'],
   'default': ['GENERAL', 'FINANCE', 'HR', 'ADMIN']
 };
