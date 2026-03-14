@@ -9,7 +9,7 @@ const Pharmacy = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const res = await api.get('/pharmacy');
+        const res = await api.get('pharmacy');
         setInventory(res.data);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
