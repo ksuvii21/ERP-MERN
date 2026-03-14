@@ -45,6 +45,9 @@ app.use('/api/production', require('./routes/productionRoutes'));
 app.use('/api/quality', require('./routes/qualityRoutes'));
 app.use('/api/machines', require('./routes/machineRoutes'));
 
+// Register Healthcare Routes
+app.use('/api', require('./routes/healthcareRoutes'));
+
 // Error Handler Middleware (Must be after routes)
 app.use(errorHandler);
 
