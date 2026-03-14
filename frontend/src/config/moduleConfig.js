@@ -26,6 +26,9 @@ import {
   Warehouse,
   GraduationCap,
   BookOpen,
+  Hotel,
+  BedDouble,
+  Utensils,
   UserCheck,
 } from 'lucide-react';
 import { ROLES } from './roles';
@@ -97,6 +100,13 @@ const ALL_MODULES = {
     { name: 'Exams', path: '/app/education/exams', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Attendance', path: '/app/education/attendance', icon: Calendar, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
+  HOSPITALITY: [
+    { name: 'Billing', path: '/app/billing', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Bookings', path: '/app/hospitality/bookings', icon: Calendar, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Rooms', path: '/app/hospitality/rooms', icon: BedDouble, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Guests', path: '/app/hospitality/guests', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Services', path: '/app/hospitality/services', icon: Utensils, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+  ],
   ADMIN: [
     { name: 'Settings', path: '/app/settings', icon: Settings, roles: [ROLES.ADMIN] },
     { name: 'Users', path: '/app/users', icon: Users, roles: [ROLES.ADMIN] },
@@ -109,7 +119,7 @@ const INDUSTRY_CONFIG = {
   'Wholesale': ['GENERAL', 'WHOLESALE', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
   'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Hospitality': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Hospitality': ['GENERAL', 'HOSPITALITY', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Education': ['GENERAL', 'EDUCATION', 'FINANCE', 'HR', 'ADMIN'],
   'General Business': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'ADMIN'],
   'default': ['GENERAL', 'FINANCE', 'HR', 'ADMIN']
