@@ -77,6 +77,12 @@ import Rooms from './pages/Hospitality/Rooms.jsx';
 import Guests from './pages/Hospitality/Guests.jsx';
 import Services from './pages/Hospitality/Services.jsx';
 
+// Business Pages
+import Accounting from './pages/Business/Accounting.jsx';
+import CRM from './pages/Business/CRM.jsx';
+import Expenses from './pages/Business/Expenses.jsx';
+import ProjectManagement from './pages/Business/ProjectManagement.jsx';
+
 // Components
 import Layout from './components/Layout.jsx';
 
@@ -160,6 +166,12 @@ function App() {
             <Route path="hospitality/rooms" element={<Rooms />} />
             <Route path="hospitality/guests" element={<Guests />} />
             <Route path="hospitality/services" element={<Services />} />
+
+            {/* Business Routes */}
+            <Route path="business/accounting" element={<Accounting />} />
+            <Route path="business/crm" element={<CRM />} />
+            <Route path="business/expenses" element={<Expenses />} />
+            <Route path="business/projects" element={<ProjectManagement />} />
           </Route>
 
           {/* Fallback */}
