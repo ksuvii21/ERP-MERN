@@ -9,7 +9,7 @@ const Billing = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const res = await api.get('/billing/invoices');
+        const res = await api.get('billing/invoices');
         setInvoices(res.data);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
