@@ -9,7 +9,7 @@ const MedicalRecords = () => {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const res = await api.get('/records');
+        const res = await api.get('records');
         setRecords(res.data);
       } catch (err) {
         console.error('Records fetch failed');
