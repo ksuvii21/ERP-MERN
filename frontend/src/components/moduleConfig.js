@@ -18,6 +18,9 @@ import {
   Landmark,
   FileText,
   Paintbrush,
+  Stethoscope,
+  Calendar,
+  Pill,
 } from 'lucide-react';
 import { ROLES } from '../config/roles';
 
@@ -45,6 +48,14 @@ const ALL_MODULES = {
   PROJECTS: [
     { name: 'Projects', path: '/app/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
+  HEALTHCARE: [
+    { name: 'Patients', path: '/app/patients', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Doctors', path: '/app/doctors', icon: Stethoscope, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Appointments', path: '/app/appointments', icon: Calendar, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Medical Records', path: '/app/records', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Pharmacy', path: '/app/pharmacy', icon: Pill, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Billing', path: '/app/billing', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+  ],
   MANUFACTURING: [
     { name: 'Products', path: '/app/manufacturing/products', icon: Package, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
     { name: 'Bill of Materials', path: '/app/manufacturing/boms', icon: ClipboardList, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.MANUFACTURING] },
@@ -64,7 +75,7 @@ const INDUSTRY_CONFIG = {
   'Manufacturing': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
   'Retail': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Wholesale': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Healthcare': ['GENERAL', 'FINANCE', 'HR', 'ADMIN'], // TODO: Add healthcare-specific modules
+  'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
   'Construction': ['GENERAL', 'FINANCE', 'HR', 'PROJECTS', 'INVENTORY', 'ADMIN'],
   'Hospitality': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Education': ['GENERAL', 'FINANCE', 'HR', 'ADMIN'],
