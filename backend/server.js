@@ -48,6 +48,9 @@ app.use('/api/machines', require('./routes/machineRoutes'));
 // Register Healthcare Routes
 app.use('/api', require('./routes/healthcareRoutes'));
 
+// Register Construction Routes
+app.use('/api/construction', require('./routes/constructionRoutes'));
+
 // Error Handler Middleware (Must be after routes)
 app.use(errorHandler);
 
