@@ -3,6 +3,7 @@ import {
   DollarSign,
   Users,
   Package,
+  Calculator,
   ClipboardList,
   Factory,
   ShieldCheck,
@@ -107,6 +108,12 @@ const ALL_MODULES = {
     { name: 'Guests', path: '/app/hospitality/guests', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Services', path: '/app/hospitality/services', icon: Utensils, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
+  BUSINESS: [
+    { name: 'Accounting', path: '/app/business/accounting', icon: Calculator, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'CRM', path: '/app/business/crm', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Expenses', path: '/app/business/expenses', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Project Management', path: '/app/business/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+  ],
   ADMIN: [
     { name: 'Settings', path: '/app/settings', icon: Settings, roles: [ROLES.ADMIN] },
     { name: 'Users', path: '/app/users', icon: Users, roles: [ROLES.ADMIN] },
@@ -121,7 +128,7 @@ const INDUSTRY_CONFIG = {
   'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Hospitality': ['GENERAL', 'HOSPITALITY', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Education': ['GENERAL', 'EDUCATION', 'FINANCE', 'HR', 'ADMIN'],
-  'General Business': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'ADMIN'],
+  'General Business': ['GENERAL', 'BUSINESS', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'default': ['GENERAL', 'FINANCE', 'HR', 'ADMIN']
 };
 
