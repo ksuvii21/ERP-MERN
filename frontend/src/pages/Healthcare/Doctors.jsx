@@ -22,7 +22,7 @@ const Doctors = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await api.get('/doctors');
+        const res = await api.get('doctors');
         setDoctors(res.data);
       } catch (err) {
         setError('Failed to load doctors list.');
