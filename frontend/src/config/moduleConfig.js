@@ -23,6 +23,7 @@ import {
   Stethoscope,
   Calendar,
   Pill,
+  Warehouse, 
 } from 'lucide-react';
 import { ROLES } from './roles';
 
@@ -58,6 +59,13 @@ const ALL_MODULES = {
     { name: 'Pharmacy', path: '/app/pharmacy', icon: Pill, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Billing', path: '/app/billing', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
   ],
+  WHOLESALE: [
+    { name: 'Bulk Ordering', path: '/app/wholesale/bulk-ordering', icon: ShoppingCart, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Warehouse Mgmt', path: '/app/wholesale/warehouse', icon: Warehouse, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Logistics', path: '/app/wholesale/logistics', icon: Truck, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
+    { name: 'Suppliers', path: '/app/wholesale/suppliers', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER] }, // Users icon is fine for Suppliers
+    { name: 'Credit Mgmt', path: '/app/wholesale/credit', icon: DollarSign, roles: [ROLES.ADMIN, ROLES.MANAGER] }, // Changed to DollarSign
+  ],
   CONSTRUCTION: [
     { name: 'Projects', path: '/app/construction/projects', icon: Briefcase, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Budgets', path: '/app/construction/budgets', icon: Receipt, roles: [ROLES.ADMIN, ROLES.MANAGER] },
@@ -83,7 +91,7 @@ const ALL_MODULES = {
 const INDUSTRY_CONFIG = {
   'Manufacturing': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
   'Retail': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Wholesale': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
+  'Wholesale': ['GENERAL', 'WHOLESALE', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
   'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
   'Hospitality': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
