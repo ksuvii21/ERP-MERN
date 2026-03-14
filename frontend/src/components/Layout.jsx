@@ -110,7 +110,11 @@ const Layout = () => {
             {Object.values(groupedNavItems).flat().find(i => location.pathname.startsWith(i.path))?.name || 'Dashboard'}
           </h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">Welcome, {user?.name || 'User'}</span>
+          <div className="text-right border-r pr-4 border-gray-200 hidden sm:block">
+            <p className="text-sm font-bold text-teal-700 leading-tight">{user?.company?.name || 'Organization'}</p>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">{user?.company?.industryType || 'General'}</p>
+          </div>
+          <span className="text-sm text-gray-600 font-medium">Welcome, {user?.name || 'User'}</span>
             <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center text-teal-700 font-bold">
               {user?.name?.charAt(0) || 'U'}
             </div>
