@@ -54,6 +54,9 @@ app.use('/api/construction', require('./routes/constructionRoutes'));
 // Register Wholesale Routes
 app.use('/api/wholesale', require('./routes/wholesaleRoutes'));
 
+// Register Education Routes
+app.use('/api/education', require('./routes/educationRoutes'));
+
 // Error Handler Middleware (Must be after routes)
 app.use(errorHandler);
 
