@@ -77,6 +77,21 @@ def predict_attrition(data: AttritionInput):
         "risk_level": "High" if risk_score > 70 else "Medium" if risk_score > 30 else "Low"
     }
 
+@app.post("/predict/attrition/batch")
+def predict_attrition_batch(data: List[AttritionInput]):
+    results = []
+    for employee in data:
+        risk_score = 0
+        if employee.satisfaction_level < 0.5: risk_score += 40
+        if employee.average_monthly_hours > 250: risk_score += 30
+        if employee.time_spend_company > 4 and employee.promotion_last_5years == 0: risk_score += 20
+        
+        results.append({
+            "risk_score": min(risk_score, 100),
+            "risk_level": "High" if risk_score > 70 else "Medium" if risk_score > 30 else "Low"
+        })
+    return results
+
 @app.post("/analyze/anomalies")
 def detect_anomalies(transactions: List[Transaction]):
     # Simulation: Z-Score Anomaly Detection
