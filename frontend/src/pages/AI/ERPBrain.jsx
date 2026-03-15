@@ -23,14 +23,35 @@ const ERPBrain = ({ onClose }) => {
     
     // Intent: Attrition Prediction (Random Forest)
     if (lowerQ.includes('resign') || lowerQ.includes('attrition') || lowerQ.includes('quit')) {
-      return {
-        type: 'attrition',
-        content: 'I analyzed the workforce data using the Random Forest model. Here are employees with high attrition risk:',
-        data: [
-          { name: 'Sarah Jenkins', role: 'Senior Dev', risk: 85, reason: 'Stagnant Salary' },
-          { name: 'Mike Ross', role: 'Sales Lead', risk: 72, reason: 'Frequent Short Leaves' }
-        ]
-      };
+      try {
+        // Mock Data: In a real app, you would fetch these from your Node.js database
+        const employees = [
+          { name: 'Sarah Jenkins', role: 'Senior Dev', data: { satisfaction_level: 0.4, last_evaluation: 0.9, number_project: 6, average_monthly_hours: 260, time_spend_company: 5, work_accident: 0, promotion_last_5years: 0, salary_level: 1 }, reason: 'Overworked' },
+          { name: 'Mike Ross', role: 'Sales Lead', data: { satisfaction_level: 0.7, last_evaluation: 0.8, number_project: 4, average_monthly_hours: 180, time_spend_company: 3, work_accident: 0, promotion_last_5years: 0, salary_level: 2 }, reason: 'Normal' },
+          { name: 'Jessica Pearson', role: 'Director', data: { satisfaction_level: 0.35, last_evaluation: 0.95, number_project: 7, average_monthly_hours: 290, time_spend_company: 6, work_accident: 0, promotion_last_5years: 0, salary_level: 2 }, reason: 'Burnout Risk' }
+        ];
+
+        // Process all employees against Python AI Engine
+        const analysis = await Promise.all(employees.map(async (emp) => {
+          const res = await fetch('http://localhost:8000/predict/attrition', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(emp.data)
+          });
+          const result = await res.json();
+          return { ...emp, risk: result.risk_score, risk_level: result.risk_level };
+        }));
+
+        const highRisk = analysis.filter(a => a.risk > 30).map(a => ({ name: a.name, role: a.role, risk: a.risk, reason: `${a.reason} (${a.risk_level})` }));
+
+        return {
+          type: 'attrition',
+          content: `I analyzed ${employees.length} employees using the Python Inference Engine. Found ${highRisk.length} potential risks.`,
+          data: highRisk
+        };
+      } catch (err) {
+        return { type: 'text', content: '⚠️ Error connecting to AI Service. Ensure Python backend is running on port 8000.' };
+      }
     }
     
     // Intent: Expense Anomaly (Alert Engine)
