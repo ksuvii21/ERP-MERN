@@ -86,6 +86,7 @@ import ProjectManagement from './pages/Business/ProjectManagement.jsx';
 // Components
 import Layout from './components/Layout.jsx';
 import SystemLogs from './pages/Admin/SystemLogs';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 function App() {
   return (
