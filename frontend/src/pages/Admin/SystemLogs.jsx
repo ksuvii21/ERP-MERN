@@ -5,7 +5,7 @@ import {
   Chip, CircularProgress, Avatar, Pagination, Grid
 } from '@mui/material';
 import { Search, History } from '@mui/icons-material';
-import { Security } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -63,7 +63,7 @@ const SystemLogs = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Security size={40} color="#0ea5e9" />
+          <ShieldCheck size={40} color="#0ea5e9" />
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>System Audit Logs</Typography>
             <Typography color="textSecondary">Track user activities and security events across the system.</Typography>
