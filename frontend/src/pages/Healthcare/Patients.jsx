@@ -77,6 +77,7 @@ const PatientProfileView = ({ patient, onClose }) => {
   const [billing, setBilling] = useState({ invoices: [], loading: true });
   const [privacySettings, setPrivacySettings] = useState({ portalSync: false, dataMasking: false });
   const [auditLog, setAuditLog] = useState({ logs: [], loading: true });
+  const [auditSearch, setAuditSearch] = useState('');
   const [summaryDetails, setSummaryDetails] = useState({
     diagnosis: 'Condition Stable',
     instructions: 'Patient advised to take complete rest for 3 days.\nFollow-up appointment scheduled after one week.\nContinue prescribed medication as advised.'
@@ -294,9 +295,24 @@ const PatientProfileView = ({ patient, onClose }) => {
                   />
                   <Divider />
                   <Typography variant="subtitle1" sx={{ fontWeight: 700, mt: 3 }}>Audit Trail</Typography>
+                  
+                  <TextField
+                    size="small"
+                    placeholder="Search logs..."
+                    fullWidth
+                    value={auditSearch}
+                    onChange={(e) => setAuditSearch(e.target.value)}
+                    sx={{ mb: 2, mt: 1 }}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>
+                    }}
+                  />
+
                   {auditLog.loading ? <CircularProgress size={24} /> : (
                     <List dense sx={{ maxHeight: 300, overflow: 'auto' }}>
-                      {auditLog.logs.map(log => (
+                      {auditLog.logs
+                        .filter(log => log.action.toLowerCase().includes(auditSearch.toLowerCase()) || log.userName.toLowerCase().includes(auditSearch.toLowerCase()))
+                        .map(log => (
                         <ListItem key={log._id}>
                           <ListItemIcon sx={{ minWidth: 36 }}>
                             <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem', bgcolor: themeColors.secondary }}>

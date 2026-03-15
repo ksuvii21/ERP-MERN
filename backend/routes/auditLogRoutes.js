@@ -3,6 +3,35 @@ const router = express.Router();
 const AuditLog = require('../models/AuditLog');
 const auth = require('../middleware/auth');
 
+// @desc    Get all audit logs for the company with search
+// @route   GET /api/audit-logs
+// @access  Private (Admin/Manager)
+router.get('/', auth, async (req, res) => {
+  try {
+    const { search, limit = 100 } = req.query;
+    
+    let query = { company: req.user.company };
+
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      query.$or = [
+        { userName: searchRegex },
+        { action: searchRegex },
+        { entity: searchRegex }
+      ];
+    }
+
+    const logs = await AuditLog.find(query)
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit));
+
+    res.json(logs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
 // @desc    Get audit logs for a specific patient
 // @route   GET /api/audit-logs/patient/:patientId
 // @access  Private
