@@ -1,231 +1,188 @@
-import React, { useState } from 'react';
-import { Box, Typography, Paper, Grid, Tabs, Tab, Button, Switch, FormControlLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, MenuItem, Chip, Checkbox, FormGroup, Divider } from '@mui/material';
-import { Assessment, AutoMode, Download, Add, Summarize, TableChart, PictureAsPdf, GridOn } from '@mui/icons-material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Box, Grid, Paper, Typography, Button, CircularProgress, Alert, Chip, Divider 
+} from '@mui/material';
+import { 
+  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area 
+} from 'recharts';
+import { Download, RefreshCw, Cpu, TrendingUp, AlertTriangle } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import API from '../../utils/api';
 
 const Reports = () => {
-  const [tabValue, setTabValue] = useState(0);
+  const reportRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [financialData, setFinancialData] = useState([]);
+  const [forecastData, setForecastData] = useState([]);
+  const [aiStatus, setAiStatus] = useState({ online: false, confidence: 0 });
+  const [kpis, setKpis] = useState({ totalRevenue: 0, avgMonthly: 0, pending: 0 });
 
-  // Mock Data for MIS
-  const misData = [
-    { month: 'Jan', revenue: 4000, expenses: 2400, profit: 1600 },
-    { month: 'Feb', revenue: 3000, expenses: 1398, profit: 1602 },
-    { month: 'Mar', revenue: 2000, expenses: 9800, profit: -7800 },
-    { month: 'Apr', revenue: 2780, expenses: 3908, profit: -1128 },
-    { month: 'May', revenue: 1890, expenses: 4800, profit: -2910 },
-    { month: 'Jun', revenue: 2390, expenses: 3800, profit: -1410 },
-  ];
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // 1. Fetch Real Financial Data from Backend
+      const { data: stats } = await API.get('billing/stats');
+      
+      // Transform for Charts (Sort by Month)
+      const formattedData = stats.map(item => ({
+        name: item.month, // e.g., "Jan"
+        revenue: item.totalRevenue,
+        pending: item.totalPending,
+        monthIndex: item._id
+      })).sort((a, b) => a.monthIndex - b.monthIndex);
 
-  // Mock Data for Automation Rules
-  const [automations, setAutomations] = useState([
-    { id: 1, name: 'Auto-Reorder Inventory', trigger: 'Stock < Min Level', action: 'Create PO', active: true },
-    { id: 2, name: 'Weekly Sales Report', trigger: 'Every Monday 9AM', action: 'Email to Admin', active: true },
-    { id: 3, name: 'Low Balance Alert', trigger: 'Cash < $1000', action: 'SMS Finance Mgr', active: false },
-    { id: 4, name: 'Auto-Approve Leave', trigger: 'Duration <= 1 Day', action: 'Approve', active: true },
-  ]);
+      setFinancialData(formattedData);
 
-  const toggleAutomation = (id) => {
-    setAutomations(automations.map(a => a.id === id ? { ...a, active: !a.active } : a));
+      // Calculate KPIs
+      const totalRev = formattedData.reduce((acc, curr) => acc + curr.revenue, 0);
+      const totalPen = formattedData.reduce((acc, curr) => acc + curr.pending, 0);
+      setKpis({
+        totalRevenue: totalRev,
+        avgMonthly: formattedData.length ? Math.round(totalRev / formattedData.length) : 0,
+        pending: totalPen
+      });
+
+      // 2. Fetch AI Forecast (Send history to Python)
+      if (formattedData.length > 0) {
+        const history = formattedData.map(d => d.revenue);
+        try {
+          const aiRes = await fetch('http://localhost:8000/predict/sales', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history, months_to_predict: 1 })
+          });
+          
+          if (aiRes.ok) {
+            const aiResult = await aiRes.json();
+            
+            // Create forecast dataset (Last actual + Predicted)
+            const lastMonth = formattedData[formattedData.length - 1];
+            const forecastPoint = {
+              name: 'Next Month (AI)',
+              revenue: aiResult.prediction,
+              isForecast: true
+            };
+            
+            setForecastData([...formattedData, forecastPoint]);
+            setAiStatus({ online: true, confidence: aiResult.confidence * 100 });
+          }
+        } catch (err) {
+          console.warn("AI Service offline", err);
+          setAiStatus({ online: false, confidence: 0 });
+        }
+      }
+
+    } catch (error) {
+      console.error("Error fetching report data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Report Builder State
-  const [builderConfig, setBuilderConfig] = useState({
-    module: 'Sales',
-    startDate: '2026-02-01',
-    endDate: '2026-02-28',
-    selectedColumns: ['Date', 'Invoice No', 'Customer', 'Amount', 'Status']
-  });
+  const handleExportPDF = async () => {
+    const element = reportRef.current;
+    if (!element) return;
 
-  const availableColumns = {
-    Sales: ['Date', 'Invoice No', 'Customer', 'Amount', 'Tax', 'Status', 'Salesperson'],
-    Inventory: ['Product Name', 'SKU', 'Category', 'Stock Level', 'Unit Price', 'Total Value', 'Location'],
-    Outstanding: ['Customer Name', 'Pending Amount', 'Due Date', 'Days Overdue', 'Last Payment Date']
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true // Handles external images if any
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`ERP_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error("PDF Export failed:", error);
+    }
   };
 
-  const [reportData, setReportData] = useState([]);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const handleColumnToggle = (col) => {
-    setBuilderConfig(prev => ({
-        ...prev,
-        selectedColumns: prev.selectedColumns.includes(col) 
-            ? prev.selectedColumns.filter(c => c !== col)
-            : [...prev.selectedColumns, col]
-    }));
-  };
-
-  const handleGenerate = () => {
-    // Simulate API Call based on builderConfig
-    const mockData = [
-        { Date: '2026-02-01', 'Invoice No': 'INV-1001', Customer: 'Acme Corp', Amount: 1200, Status: 'Paid', 'Product Name': 'Laptop', 'Stock Level': 50 },
-        { Date: '2026-02-05', 'Invoice No': 'INV-1002', Customer: 'Globex Inc', Amount: 3400, Status: 'Pending', 'Product Name': 'Mouse', 'Stock Level': 200 },
-        { Date: '2026-02-10', 'Invoice No': 'INV-1003', Customer: 'Stark Ind', Amount: 8500, Status: 'Overdue', 'Product Name': 'Monitor', 'Stock Level': 15 },
-    ];
-    setReportData(mockData);
-  };
-
-  const handleExport = (format) => {
-    alert(`Exporting ${builderConfig.module} report as ${format}...`);
-  };
+  if (loading) return <Box p={4} display="flex" justifyContent="center"><CircularProgress /></Box>;
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>Reports, MIS & Automation</Typography>
-      
-      <Paper sx={{ mb: 3 }}>
-        <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} variant="fullWidth">
-          <Tab icon={<Assessment />} label="MIS Dashboard" />
-          <Tab icon={<TableChart />} label="Dynamic Report Builder" />
-          <Tab icon={<AutoMode />} label="Automation Center" />
-        </Tabs>
+    <Box ref={reportRef} sx={{ flexGrow: 1, p: 3, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+        <Box>
+            <Typography variant="h4" fontWeight={700} color="#1e293b">Reports & MIS</Typography>
+            <Typography variant="body2" color="textSecondary">Real-time financial analytics and AI forecasting</Typography>
+        </Box>
+        <Box display="flex" gap={2}>
+            <Button variant="outlined" startIcon={<RefreshCw size={18} />} onClick={fetchData}>Refresh</Button>
+            <Button variant="contained" startIcon={<Download size={18} />} onClick={handleExportPDF}>Export PDF</Button>
+        </Box>
+      </Box>
+
+      {/* AI Automation Status Banner */}
+      <Paper sx={{ p: 2, mb: 4, display: 'flex', alignItems: 'center', gap: 2, bgcolor: '#f0f9ff', border: '1px solid #bae6fd' }}>
+        <Cpu size={24} color={aiStatus.online ? "#0284c7" : "#94a3b8"} />
+        <Box flex={1}>
+            <Typography variant="subtitle2" fontWeight={700}>AI Intelligence Engine</Typography>
+            <Typography variant="caption" color="textSecondary">
+                {aiStatus.online 
+                    ? `System Online • Predictive Model Confidence: ${aiStatus.confidence.toFixed(1)}%` 
+                    : "AI Service Unavailable (Check Python Backend)"}
+            </Typography>
+        </Box>
+        {aiStatus.online && <Chip label="Active" color="primary" size="small" />}
       </Paper>
 
-      {/* Tab 0: MIS Dashboard */}
-      {tabValue === 0 && (
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+      <Grid container spacing={3}>
+        {/* Main Financial Chart */}
+        <Grid item xs={12} md={8}>
             <Paper sx={{ p: 3, height: 400 }}>
-              <Typography variant="h6" gutterBottom>Financial Performance (MIS)</Typography>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={misData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="revenue" fill="#3b82f6" name="Revenue" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="profit" fill="#10b981" name="Profit" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+                <Typography variant="h6" fontWeight={600} mb={2}>Revenue & Pending Collections</Typography>
+                <ResponsiveContainer width="100%" height="90%">
+                    <BarChart data={financialData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="revenue" fill="#3b82f6" name="Revenue Received" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="pending" fill="#f59e0b" name="Pending Invoices" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
             </Paper>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 3, height: 400 }}>
-              <Typography variant="h6" gutterBottom>Key Insights</Typography>
-              <Box mt={2} p={2} bgcolor="#f0f9ff" borderRadius={2}>
-                <Typography variant="subtitle2" color="text.secondary">Revenue Growth</Typography>
-                <Typography variant="h4" color="primary" fontWeight="bold">+12.5%</Typography>
-                <Typography variant="caption">Compared to last quarter</Typography>
-              </Box>
-              <Box mt={2} p={2} bgcolor="#f0fdf4" borderRadius={2}>
-                <Typography variant="subtitle2" color="text.secondary">Operational Efficiency</Typography>
-                <Typography variant="h4" color="success.main" fontWeight="bold">94%</Typography>
-                <Typography variant="caption">Tasks completed on time</Typography>
-              </Box>
-              <Box mt={3}>
-                <Button variant="outlined" fullWidth startIcon={<Download />}>Download Executive Summary</Button>
-              </Box>
-            </Paper>
-          </Grid>
         </Grid>
-      )}
 
-      {/* Tab 1: Custom Reports */}
-      {tabValue === 1 && (
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom display="flex" alignItems="center" gap={1}>
-            <Summarize /> Dynamic Report Builder
-          </Typography>
-          <Divider sx={{ mb: 3 }} />
-
-          <Grid container spacing={3} mb={3}>
-            <Grid item xs={12} md={3}>
-              <TextField select fullWidth label="Select Module" value={builderConfig.module} onChange={(e) => setBuilderConfig({...builderConfig, module: e.target.value})}>
-                <MenuItem value="Sales">Sales Analysis</MenuItem>
-                <MenuItem value="Inventory">Stock Reports</MenuItem>
-                <MenuItem value="Outstanding">Outstanding Reports</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField type="date" fullWidth label="Start Date" InputLabelProps={{ shrink: true }} value={builderConfig.startDate} onChange={(e) => setBuilderConfig({...builderConfig, startDate: e.target.value})} />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField type="date" fullWidth label="End Date" InputLabelProps={{ shrink: true }} value={builderConfig.endDate} onChange={(e) => setBuilderConfig({...builderConfig, endDate: e.target.value})} />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Button variant="contained" fullWidth size="large" startIcon={<GridOn />} onClick={handleGenerate}>Generate Report</Button>
-            </Grid>
-          </Grid>
-
-          <Box mb={3} p={2} bgcolor="#f8fafc" borderRadius={2} border="1px solid #e2e8f0">
-            <Typography variant="subtitle2" gutterBottom>Select Columns:</Typography>
-            <FormGroup row>
-                {availableColumns[builderConfig.module].map(col => (
-                    <FormControlLabel 
-                        key={col}
-                        control={<Checkbox checked={builderConfig.selectedColumns.includes(col)} onChange={() => handleColumnToggle(col)} size="small" />}
-                        label={col}
-                    />
-                ))}
-            </FormGroup>
-          </Box>
-          
-          {reportData.length > 0 && (
-            <>
-                <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
-                    <Button variant="outlined" startIcon={<TableChart />} onClick={() => handleExport('CSV')}>Export CSV</Button>
-                    <Button variant="outlined" color="error" startIcon={<PictureAsPdf />} onClick={() => handleExport('PDF')}>Export PDF</Button>
+        {/* KPI Column */}
+        <Grid item xs={12} md={4}>
+            <Paper sx={{ p: 3, height: 185, mb: 3, bgcolor: '#10b981', color: 'white' }}>
+                <Typography variant="overline" sx={{ opacity: 0.8 }}>Total Revenue (YTD)</Typography>
+                <Typography variant="h3" fontWeight={700}>${kpis.totalRevenue.toLocaleString()}</Typography>
+                <Box display="flex" alignItems="center" gap={1} mt={1}>
+                    <TrendingUp size={16} /> <Typography variant="body2">+12% vs last year</Typography>
                 </Box>
-                <TableContainer sx={{ border: '1px solid #e2e8f0', borderRadius: 2, maxHeight: 400 }}>
-                    <Table stickyHeader size="small">
-                    <TableHead>
-                        <TableRow>
-                        {builderConfig.selectedColumns.map(col => (
-                            <TableCell key={col} sx={{ bgcolor: '#f1f5f9', fontWeight: 'bold' }}>{col}</TableCell>
-                        ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {reportData.map((row, idx) => (
-                        <TableRow key={idx} hover>
-                            {builderConfig.selectedColumns.map(col => (
-                                <TableCell key={col}>{row[col] !== undefined ? row[col] : '-'}</TableCell>
-                            ))}
-                        </TableRow>
-                        ))}
-                    </TableBody>
-                    </Table>
-                </TableContainer>
-            </>
-          )}
-        </Paper>
-      )}
-
-      {/* Tab 2: Automation Center */}
-      {tabValue === 2 && (
-        <Paper sx={{ p: 3 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h6">Active Automation Rules</Typography>
-            <Button variant="contained" startIcon={<Add />}>Create New Rule</Button>
-          </Box>
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ bgcolor: '#f8fafc' }}>
-                <TableRow>
-                  <TableCell>Rule Name</TableCell>
-                  <TableCell>Trigger Condition</TableCell>
-                  <TableCell>Action</TableCell>
-                  <TableCell>Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {automations.map((rule) => (
-                  <TableRow key={rule.id}>
-                    <TableCell fontWeight="bold">{rule.name}</TableCell>
-                    <TableCell>{rule.trigger}</TableCell>
-                    <TableCell>{rule.action}</TableCell>
-                    <TableCell>
-                      <FormControlLabel
-                        control={<Switch checked={rule.active} onChange={() => toggleAutomation(rule.id)} color="primary" />}
-                        label={rule.active ? "Active" : "Paused"}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      )}
+            </Paper>
+             <Paper sx={{ p: 3, height: 185, bgcolor: '#fff' }}>
+                <Typography variant="overline" color="textSecondary">AI Sales Forecast (Next Month)</Typography>
+                <Box height={120}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={forecastData}>
+                            <defs>
+                                <linearGradient id="colorForecast" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                                </linearGradient>
+                            </defs>
+                            <Tooltip />
+                            <Area type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={3} fill="url(#colorForecast)" />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </Box>
+            </Paper>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
