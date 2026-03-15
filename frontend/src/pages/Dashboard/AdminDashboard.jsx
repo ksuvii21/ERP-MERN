@@ -1,319 +1,149 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { 
-  Grid, Paper, Typography, Box, CircularProgress, Button,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Avatar
+  Box, Grid, Paper, Typography, Card, CardContent, Divider, 
+  List, ListItem, ListItemText, ListItemAvatar, Avatar, Chip, IconButton
 } from '@mui/material';
-import api from '../../utils/api';
-import ChartCard from '../../components/ChartCard';
-import AlertsCard from '../../components/AlertsCard';
-import KPICard from '../../components/KPICard';
-import { AttachMoney, Inventory, ShoppingCart, People, PersonAdd, LocalHospital, EventAvailable, Assignment, Schedule, TrendingUp } from '@mui/icons-material';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
+import { 
+  TrendingUp, Users, Server, AlertTriangle, MoreVertical, CheckCircle 
+} from 'lucide-react'; // Using lucide-react for cleaner, modern icons like Odoo
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import API from '../../utils/api';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
+const KPICard = ({ title, value, trend, icon: Icon, color }) => (
+  <Card sx={{ height: '100%', position: 'relative', overflow: 'visible' }}>
+    <CardContent>
+      <Box display="flex" justifyContent="space-between" alignItems="start">
+        <Box>
+          <Typography variant="subtitle2" color="textSecondary" fontWeight={600}>{title}</Typography>
+          <Typography variant="h4" fontWeight={700} sx={{ my: 1 }}>{value}</Typography>
+          {trend && (
+            <Chip 
+              label={trend} 
+              size="small" 
+              color={trend.includes('+') ? 'success' : 'error'} 
+              sx={{ height: 20, fontSize: '0.75rem' }} 
+            />
+          )}
+        </Box>
+        <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: `${color}.50`, color: `${color}.main` }}>
+          <Icon size={24} />
+        </Box>
+      </Box>
+    </CardContent>
+  </Card>
 );
 
-
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
-  const [stats, setStats] = useState({
-    sales: 0,
-    products: 0,
-    users: 0,
-    purchases: 0,
-    pendingTasks: 12, // Mock data
-    inventoryStatus: 'Good' // Mock data
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [stats, setStats] = useState({ users: 0, revenue: 0, alerts: 0, serverHealth: '98%' });
+
+  // Mock Data mimicking an ERP DB response
+  const revenueData = [
+    { name: 'Mon', uv: 4000 }, { name: 'Tue', uv: 3000 },
+    { name: 'Wed', uv: 2000 }, { name: 'Thu', uv: 2780 },
+    { name: 'Fri', uv: 1890 }, { name: 'Sat', uv: 2390 }, { name: 'Sun', uv: 3490 },
+  ];
   
-  // Mock alerts for Admin
-  const systemAlerts = [
-    { message: 'High server load detected (92%).', type: 'error' },
-    { message: '3 failed login attempts from unknown IP.', type: 'warning' },
-    { message: 'System maintenance scheduled for Sunday.', type: 'warning' },
+  const storageData = [
+    { name: 'Used', value: 75 }, { name: 'Free', value: 25 }
   ];
-
-  // Chart Data
-  const revenueData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Revenue',
-        data: [12000, 19000, 3000, 5000, 2000, 3000],
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      },
-      {
-        label: 'Expenses',
-        data: [2000, 3000, 2000, 3000, 1000, 2000],
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-    ],
-  };
-
-  const categoryData = {
-    labels: ['Electronics', 'Furniture', 'Clothing', 'Accessories'],
-    datasets: [
-      {
-        label: '# of Products',
-        data: [12, 19, 3, 5],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Mock Data for Attendance Chart
-  const attendanceData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-    datasets: [
-      {
-        label: 'Present',
-        data: [42, 45, 44, 46, 43],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      },
-      {
-        label: 'Absent',
-        data: [3, 0, 1, 0, 2],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-      },
-    ],
-  };
-
-  // Mock Data for Tables
-  const recentOrders = [
-    { id: 'ORD-7782', customer: 'Acme Corp', amount: '$1,200.50', status: 'Completed', date: '2024-03-10' },
-    { id: 'ORD-7783', customer: 'Global Tech', amount: '$850.00', status: 'Pending', date: '2024-03-11' },
-    { id: 'ORD-7784', customer: 'Local Shop', amount: '$320.25', status: 'Shipped', date: '2024-03-11' },
-  ];
-
-  const recentActivities = [
-    { user: 'Admin User', action: 'Updated inventory', time: '2 hours ago' },
-    { user: 'John Doe', action: 'Created new invoice', time: '4 hours ago' },
-    { user: 'Jane Smith', action: 'Registered new client', time: '1 day ago' },
-  ];
+  const COLORS = ['#3b82f6', '#e2e8f0'];
 
   useEffect(() => {
-    // Debugging: Check what industry is detected from localStorage
-    console.log('Detected Industry:', user?.company?.industryType);
-
-    const fetchStats = async () => {
-  try {
-    const [usersRes, salesRes, productsRes, purchasesRes] = await Promise.all([
-      api.get('/users'), // Common for all
-      // Only fetch these if industry is Retail/Wholesale/General
-      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType) ? api.get('/sales') : Promise.resolve({ data: [] }),
-      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType) ? api.get('/products') : Promise.resolve({ data: [] }),
-      ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType) ? api.get('/purchases') : Promise.resolve({ data: [] }),
-      
-      // Add Healthcare specific fetches here in the future
-      // user?.company?.industryType === 'Healthcare' ? api.get('/patients') : Promise.resolve({ data: [] })
-    ]);
-
-        setStats({
-          sales: salesRes.data?.length || 0,
-          products: productsRes.data?.length || 0,
-          users: usersRes.data.length,
-          purchases: purchasesRes.data?.length || 0,
-          pendingTasks: 8, // You can fetch this from an API later
-          inventoryStatus: productsRes.data?.length > 0 ? 'Active' : 'Empty'
-        });
-      } catch (error) {
-        console.error('Error fetching dashboard data', error);
-        if (error.response && error.response.status === 401) {
-          setError('Session expired. Please login again.');
-        } else {
-          setError('Failed to connect to the server. Please ensure the backend is running.');
-        }
-      } finally {
-        setLoading(false);
-      }
+    // Simulate API call
+    const fetchData = async () => {
+        // In real scenario: const res = await API.get('/admin/stats');
+        setStats({ users: 142, revenue: 125000, alerts: 3, serverHealth: 'Good' });
     };
-
-    fetchStats();
+    fetchData();
   }, []);
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Admin Dashboard
-        </Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<PersonAdd />} 
-          onClick={() => navigate('/app/users')}
-        >
-          Invite User
-        </Button>
+    <Box sx={{ flexGrow: 1, p: 3, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h5" fontWeight={700} color="#1e293b">System Overview</Typography>
+        <Typography variant="body2" color="textSecondary">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
       </Box>
 
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>
-      ) : error ? (
-        <Box sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h5" color="error" gutterBottom>
-            Connection Error
-          </Typography>
-          <Typography variant="body1">
-            {error}
-          </Typography>
-        </Box>
-      ) : (
-      <>
-      <Grid container spacing={3}>
-        {/* Common KPI for everyone */}
-        <Grid item xs={12} md={3}>
-          <KPICard title="Total Employees" value={stats.users} icon={<People />} color="linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%)" />
+      {/* KPI Row */}
+      <Grid container spacing={3} mb={3}>
+        <Grid item xs={12} sm={6} md={3}>
+          <KPICard title="Total Users" value={stats.users} trend="+12% this week" icon={Users} color="primary" />
         </Grid>
-
-        {/* Retail / Wholesale / General KPIs */}
-        {(!user?.company?.industryType || ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType)) && (
-        <>
-        <Grid item xs={12} md={3}>
-          <KPICard title="Monthly Sales" value={stats.sales} icon={<AttachMoney />} color="linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)" />
+        <Grid item xs={12} sm={6} md={3}>
+          <KPICard title="Revenue (MTD)" value={`$${(stats.revenue/1000).toFixed(1)}k`} trend="+5.4%" icon={TrendingUp} color="success" />
         </Grid>
-        <Grid item xs={12} md={3}>
-          <KPICard title="Pending Tasks" value={stats.pendingTasks} icon={<Assignment />} color="linear-gradient(135deg, #ed6c02 0%, #e65100 100%)" />
+        <Grid item xs={12} sm={6} md={3}>
+          <KPICard title="System Alerts" value={stats.alerts} trend="Needs Action" icon={AlertTriangle} color="warning" />
         </Grid>
-        <Grid item xs={12} md={3}>
-          <KPICard title="Inventory Status" value={stats.products} icon={<Inventory />} color="linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)" />
+        <Grid item xs={12} sm={6} md={3}>
+          <KPICard title="Server Health" value={stats.serverHealth} icon={Server} color="info" />
         </Grid>
-        </>
-        )}
-
-        {/* Healthcare KPIs Example */}
-        {user?.company?.industryType === 'Healthcare' && (
-        <>
-          <Grid item xs={12} md={3}>
-            <KPICard title="Active Patients" value={124} icon={<LocalHospital />} color="linear-gradient(135deg, #e91e63 0%, #c2185b 100%)" />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <KPICard title="Appointments" value={15} icon={<EventAvailable />} color="linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)" />
-          </Grid>
-        </>
-        )}
       </Grid>
 
-      {/* Charts Section */}
-      <Box sx={{ mt: 4 }}>
-        <Grid container spacing={3}>
-          {/* Only show Sales charts for relevant industries */}
-          {(!user?.company?.industryType || ['Retail', 'Wholesale', 'General Business'].includes(user?.company?.industryType)) && (
-          <>
-          <Grid item xs={12} md={8}>
-            <ChartCard title="Revenue Trends (2024)">
-              <Bar options={{ responsive: true, maintainAspectRatio: false }} data={revenueData} />
-            </ChartCard>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <ChartCard title="Employee Attendance">
-              <Bar options={{ responsive: true, maintainAspectRatio: false }} data={attendanceData} />
-            </ChartCard>
-          </Grid>
-          </>
-          )}
+      {/* Main Content Grid */}
+      <Grid container spacing={3}>
+        {/* Revenue Chart */}
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3, height: 400, borderRadius: 2, boxShadow: '0px 4px 20px rgba(0,0,0,0.05)' }}>
+            <Box display="flex" justifyContent="space-between" mb={2}>
+              <Typography variant="h6" fontWeight={600}>Revenue Analytics</Typography>
+              <IconButton size="small"><MoreVertical /></IconButton>
+            </Box>
+            <ResponsiveContainer width="100%" height="90%">
+              <AreaChart data={revenueData}>
+                <defs>
+                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Area type="monotone" dataKey="uv" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorUv)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </Paper>
         </Grid>
-      </Box>
 
-      {/* Tables Section */}
-      <Box sx={{ mt: 4 }}>
-        <Grid container spacing={3}>
-          {/* Recent Orders Table */}
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-              <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                Recent Orders
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Order ID</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Customer</TableCell>
-                      <TableCell>Amount</TableCell>
-                      <TableCell align="right">Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {recentOrders.map((row) => (
-                      <TableRow key={row.id}>
-                        <TableCell>{row.id}</TableCell>
-                        <TableCell>{row.date}</TableCell>
-                        <TableCell>{row.customer}</TableCell>
-                        <TableCell>{row.amount}</TableCell>
-                        <TableCell align="right">
-                          <Chip 
-                            label={row.status} 
-                            size="small" 
-                            color={row.status === 'Completed' ? 'success' : row.status === 'Pending' ? 'warning' : 'primary'} 
-                            variant="outlined"
-                          />
-                        </TableCell>
-                      </TableRow>
+        {/* System Health / Storage */}
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: 400, borderRadius: 2, boxShadow: '0px 4px 20px rgba(0,0,0,0.05)' }}>
+            <Typography variant="h6" fontWeight={600} mb={2}>Storage Usage</Typography>
+            <Box height={250} position="relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={storageData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {storageData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-                <Button color="primary" href="#" onClick={(e) => e.preventDefault()}>
-                  View more orders
-                </Button>
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <Box position="absolute" top="50%" left="50%" sx={{ transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                <Typography variant="h4" fontWeight={700}>75%</Typography>
+                <Typography variant="caption" color="textSecondary">Used</Typography>
               </Box>
-            </Paper>
-          </Grid>
-
-          {/* Recent Activities / Alerts */}
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-              <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                Recent Activities
-              </Typography>
-              <Box sx={{ flexGrow: 1 }}>
-                {recentActivities.map((activity, index) => (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2, pb: 2, borderBottom: index !== recentActivities.length - 1 ? '1px solid #eee' : 'none' }}>
-                    <Avatar sx={{ bgcolor: 'teal', width: 32, height: 32, mr: 2, fontSize: '0.875rem' }}>
-                      {activity.user.charAt(0)}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="subtitle2">{activity.user}</Typography>
-                      <Typography variant="body2" color="textSecondary">{activity.action}</Typography>
-                      <Typography variant="caption" color="textSecondary">{activity.time}</Typography>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-            </Paper>
-          </Grid>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Box display="flex" justifyContent="space-between">
+                <Typography variant="body2">Database</Typography>
+                <Typography variant="body2" fontWeight="bold">12.4 GB / 20 GB</Typography>
+            </Box>
+          </Paper>
         </Grid>
-      </Box>
-      </>
-      )}
+
+        {/* Recent Audit Log */}
+        <Grid item xs={12}>
+            <Paper sx={{ borderRadius: 2 }}>
+                <Box p={2} borderBottom="1px solid #f1f5f9"><Typography variant="h6" fontWeight={600}>System Audit Logs</Typography></Box>
+                {/* A table would go here, omitting for brevity */}
+                <Box p={3} textAlign="center" color="text.secondary">Viewing logs requires advanced permissions.</Box>
+            </Paper>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
