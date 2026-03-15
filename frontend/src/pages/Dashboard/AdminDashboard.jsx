@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { 
   TrendingUp, Users, Server, AlertTriangle, MoreVertical, CheckCircle 
-} from 'lucide-react'; // Using lucide-react for cleaner, modern icons like Odoo
+} from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import API from '../../utils/api';
 
