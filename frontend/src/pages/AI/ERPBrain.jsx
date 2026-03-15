@@ -18,7 +18,7 @@ const ERPBrain = ({ onClose }) => {
   useEffect(scrollToBottom, [messages]);
 
   // Simulated AI Engine (Intent Recognition & Data Fetching)
-  const processQuery = (query) => {
+  const processQuery = async (query) => {
     const lowerQ = query.toLowerCase();
     
     // Intent: Attrition Prediction (Random Forest)
@@ -44,14 +44,29 @@ const ERPBrain = ({ onClose }) => {
 
     // Intent: Sales Forecast (Linear Regression / LSTM)
     if (lowerQ.includes('sales') || lowerQ.includes('predict') || lowerQ.includes('forecast')) {
-      return {
-        type: 'forecast',
-        content: 'Based on historical trends (LSTM Model), here is the sales forecast for next month:',
-        data: [
-          { day: 'Week 1', sales: 12000 }, { day: 'Week 2', sales: 19000 },
-          { day: 'Week 3', sales: 15000 }, { day: 'Week 4', sales: 24000 }
-        ]
-      };
+      try {
+        // Mock history data (In a real scenario, fetch this from your Node backend DB first)
+        const history = [12000, 15000, 14000, 18000, 19000, 22000];
+        
+        const response = await fetch('http://localhost:8000/predict/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ history, months_to_predict: 1 })
+        });
+        const result = await response.json();
+        
+        // Combine history with prediction for the chart
+        const chartData = history.map((val, i) => ({ day: `Month ${i+1}`, sales: val }));
+        chartData.push({ day: 'Next Month', sales: result.prediction });
+
+        return {
+          type: 'forecast',
+          content: `Based on your historical data, the AI predicts sales of $${result.prediction} for next month.\nTrend: ${result.trend} (Confidence: ${result.confidence * 100}%)`,
+          data: chartData
+        };
+      } catch (error) {
+        return { type: 'text', content: '⚠️ Error connecting to AI Engine. Ensure the Python service is running on port 8000.' };
+      }
     }
 
     // Intent: Financial Report (LLM Generation)
@@ -65,7 +80,7 @@ const ERPBrain = ({ onClose }) => {
     return { type: 'text', content: "I'm not sure about that yet. Try asking about 'sales predictions', 'attrition risk', or 'expense reports'." };
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
     
     const userMsg = { id: Date.now(), sender: 'user', type: 'text', content: input };
@@ -73,12 +88,14 @@ const ERPBrain = ({ onClose }) => {
     setInput('');
     setLoading(true);
 
-    // Simulate Network/Processing Delay
-    setTimeout(() => {
-      const response = processQuery(userMsg.content);
+    try {
+      const response = await processQuery(userMsg.content);
       setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', ...response }]);
+    } catch (e) {
+      setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', type: 'text', content: 'Something went wrong.' }]);
+    } finally {
       setLoading(false);
-    }, 1200);
+    }
   };
 
   const renderMessageContent = (msg) => {
@@ -164,4 +181,3 @@ const ERPBrain = ({ onClose }) => {
 };
 
 export default ERPBrain;
-
