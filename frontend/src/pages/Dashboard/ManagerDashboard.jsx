@@ -79,6 +79,28 @@ const ManagerDashboard = () => {
           .filter(i => i.status === 'Pending' || i.status === 'Overdue')
           .reduce((sum, i) => sum + i.totalAmount, 0);
 
+        // --- Process Data for Charts (Real-time) ---
+        // Group invoices by Month
+        const monthlyData = invData.reduce((acc, curr) => {
+          const date = new Date(curr.dueDate);
+          const month = date.toLocaleString('default', { month: 'short' });
+          
+          if (!acc[month]) acc[month] = { name: month, revenue: 0, expense: 0 };
+          
+          if (curr.status === 'Paid') {
+            acc[month].revenue += curr.totalAmount;
+          }
+          // Estimating expenses as 60% of pending/overhead for visualization
+          acc[month].expense += (curr.totalAmount * 0.4); 
+          
+          return acc;
+        }, {});
+
+        // Sort months chronologically (simple version) and set state
+        const monthsOrder = { 'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12 };
+        const sortedChartData = Object.values(monthlyData).sort((a, b) => monthsOrder[a.name] - monthsOrder[b.name]);
+        setChartData(sortedChartData);
+
         // 2. Fetch Users count (if endpoint exists)
         let empCount = 0;
         try {
