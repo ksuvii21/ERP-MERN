@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 // @access  Private (Admin/Manager)
 router.get('/', auth, async (req, res) => {
   try {
-    const { search, limit = 100 } = req.query;
+    const { search, limit = 25, page = 1, startDate, endDate } = req.query;
     
     let query = { company: req.user.company };
 
@@ -21,11 +21,27 @@ router.get('/', auth, async (req, res) => {
       ];
     }
 
+    if (startDate && endDate) {
+      query.createdAt = {
+        $gte: new Date(startDate),
+        // Add one day to endDate to include the whole day
+        $lte: new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)),
+      };
+    }
+
     const logs = await AuditLog.find(query)
       .sort({ createdAt: -1 })
-      .limit(parseInt(limit));
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit));
 
-    res.json(logs);
+    const totalLogs = await AuditLog.countDocuments(query);
+
+    res.json({
+      logs,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalLogs / parseInt(limit)),
+      totalLogs,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server Error' });

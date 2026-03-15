@@ -6,7 +6,8 @@ import {
   LogOut,
   Menu,
   X,
-  UserCircle
+  UserCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { logout, reset } from '../redux/slices/authSlice';
 import { getNavItems } from '../config/moduleConfig';
@@ -82,6 +83,31 @@ const Layout = () => {
               </ul>
             </div>
             ))}
+          
+          {/* Admin Section */}
+          {(user?.role === 'admin' || user?.role === 'super_admin') && (
+            <div className="px-2 mb-4">
+              <h3 className={`px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'text-center'}`}>
+                {isSidebarOpen ? 'Admin' : '•'}
+              </h3>
+              <ul className="space-y-1">
+                <li>
+                  <Link 
+                    to="/app/admin/system-logs"
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                      location.pathname.startsWith('/app/admin/system-logs')
+                        ? 'bg-teal-600 text-white' 
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    }`}
+                    title={isSidebarOpen ? '' : 'System Logs'}
+                  >
+                    <ShieldCheck size={20} />
+                    <span className={`${!isSidebarOpen && 'hidden'}`}>System Logs</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </nav>
 
         <div className="p-4 border-t border-slate-800">
