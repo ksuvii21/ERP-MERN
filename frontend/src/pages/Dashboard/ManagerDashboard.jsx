@@ -1,137 +1,172 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Box, Typography, Paper, Button, Chip } from '@mui/material';
-import { Speed, BarChart as BarChartIcon, AttachMoney, Warning } from '@mui/icons-material';
-import KPICard from '../../components/KPICard';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { 
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell
+  Box, Grid, Paper, Typography, Card, CardContent, 
+  CircularProgress, Table, TableBody, TableCell, 
+  TableContainer, TableHead, TableRow, Chip 
+} from '@mui/material';
+import { 
+  AttachMoney, People, ReceiptLong, TrendingDown 
+} from '@mui/icons-material';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
+import API from '../../utils/api';
+
+const StatCard = ({ title, value, icon, color, subtext }) => (
+  <Card sx={{ height: '100%' }}>
+    <CardContent>
+      <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+        <Box>
+          <Typography color="textSecondary" gutterBottom variant="overline">
+            {title}
+          </Typography>
+          <Typography variant="h4" fontWeight="bold">
+            {value}
+          </Typography>
+        </Box>
+        <Box 
+          sx={{ 
+            bgcolor: `${color}.light`, 
+            color: `${color}.main`, 
+            p: 1, 
+            borderRadius: 2,
+            display: 'flex' 
+          }}
+        >
+          {icon}
+        </Box>
+      </Box>
+      <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+        {subtext}
+      </Typography>
+    </CardContent>
+  </Card>
+);
 
 const ManagerDashboard = () => {
-  const [data, setData] = useState(null);
+  const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState({
+    revenue: 0,
+    pending: 0,
+    employees: 0,
+    expenses: 0
+  });
+  const [invoices, setInvoices] = useState([]);
 
-  // Simulate Real API Fetch from ERP Backend
+  // Mock Data for Charts (Replace with real historical aggregation later)
+  const chartData = [
+    { name: 'Jan', revenue: 4000, expense: 2400 },
+    { name: 'Feb', revenue: 3000, expense: 1398 },
+    { name: 'Mar', revenue: 2000, expense: 9800 },
+    { name: 'Apr', revenue: 2780, expense: 3908 },
+    { name: 'May', revenue: 1890, expense: 4800 },
+    { name: 'Jun', revenue: 2390, expense: 3800 },
+  ];
+
   useEffect(() => {
     const fetchDashboardData = async () => {
-      // In reality: await fetch('/api/v1/manager/dashboard')
-      setTimeout(() => {
-        setData({
-          performance: [
-            { name: 'Dev Team', output: 85, target: 90 },
-            { name: 'Design', output: 95, target: 80 },
-            { name: 'QA', output: 70, target: 85 },
-            { name: 'Ops', output: 92, target: 90 },
-          ],
-          trends: [
-            { week: 'W1', productivity: 65 },
-            { week: 'W2', productivity: 78 },
-            { week: 'W3', productivity: 72 },
-            { week: 'W4', productivity: 89 },
-          ],
-          risks: [
-            { id: 1, msg: 'Database Migration: High Risk of Delay', level: 'Critical' },
-            { id: 2, msg: 'Frontend QA: 3 days behind', level: 'Warning' }
-          ]
+      try {
+        // 1. Fetch Invoices from Backend
+        const { data: invData } = await API.get('billing/invoices');
+        
+        const totalRevenue = invData
+          .filter(i => i.status === 'Paid')
+          .reduce((sum, i) => sum + i.totalAmount, 0);
+          
+        const totalPending = invData
+          .filter(i => i.status === 'Pending' || i.status === 'Overdue')
+          .reduce((sum, i) => sum + i.totalAmount, 0);
+
+        // 2. Fetch Users count (if endpoint exists)
+        let empCount = 0;
+        try {
+          const { data: usersData } = await API.get('users');
+          empCount = usersData.length;
+        } catch (e) {
+          console.warn('Could not fetch user count, defaulting to 0');
+        }
+
+        setMetrics({
+          revenue: totalRevenue,
+          pending: totalPending,
+          employees: empCount,
+          expenses: totalRevenue * 0.45 // Mock expense calc for now
         });
+
+        setInvoices(invData.slice(0, 5)); // Recent 5 invoices
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
+
     fetchDashboardData();
   }, []);
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Enterprise Data...</div>;
+  if (loading) return <Box p={4} display="flex" justifyContent="center"><CircularProgress /></Box>;
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4" fontWeight="bold" color="#1e293b">Operations Overview</Typography>
-        <Button variant="contained" color="primary">Download Report</Button>
-      </Box>
+    <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Box mb={4}>
+            <Typography variant="h4" fontWeight="bold" gutterBottom>Manager Dashboard</Typography>
+            <Typography variant="subtitle1" color="textSecondary">Welcome back, {user?.name || 'User'}</Typography>
+        </Box>
 
-      {/* KPI Section */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
-          <KPICard title="Project Velocity" value="4.2 pts/d" icon={<Speed />} trend={12} color="#3b82f6" />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <KPICard title="Resource Load" value="82%" icon={<BarChartIcon />} trend={-5} color="#8b5cf6" />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <KPICard title="Budget Burn" value="$12,400" icon={<AttachMoney />} trend={8} color="#f59e0b" />
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={3}>
-        
-        {/* Productivity Trends (Real Chart) */}
-        <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom>Productivity Trends</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.trends}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="week" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="productivity" stroke="#3b82f6" strokeWidth={3} dot={{ r: 6 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
+        <Grid container spacing={3} mb={4}>
+            <Grid item xs={12} sm={6} md={3}>
+                <StatCard title="Total Revenue" value={`$${metrics.revenue.toLocaleString()}`} icon={<AttachMoney />} color="success" subtext="Paid Invoices" />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+                <StatCard title="Pending Invoices" value={`$${metrics.pending.toLocaleString()}`} icon={<ReceiptLong />} color="warning" subtext="Needs Attention" />
+            </Grid>
+             <Grid item xs={12} sm={6} md={3}>
+                <StatCard title="Total Expenses" value={`$${metrics.expenses.toLocaleString()}`} icon={<TrendingDown />} color="error" subtext="Estimated" />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+                <StatCard title="Active Employees" value={metrics.employees} icon={<People />} color="primary" subtext="Total Staff" />
+            </Grid>
         </Grid>
 
-        {/* Deadline Risks (Enhanced List) */}
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>Deadline Risks</Typography>
-            {data.risks.map(risk => (
-              <Box key={risk.id} sx={{ p: 2, mb: 2, borderRadius: 1, bgcolor: risk.level === 'Critical' ? '#fef2f2' : '#fffbeb', border: 1, borderColor: risk.level === 'Critical' ? '#fee2e2' : '#fef3c7' }}>
-                <Chip label={risk.level} color={risk.level === 'Critical' ? 'error' : 'warning'} size="small" sx={{ mb: 1 }} />
-                <Typography variant="body2" color="text.primary">{risk.msg}</Typography>
-              </Box>
-            ))}
-          </Paper>
+        <Grid container spacing={3}>
+            <Grid item xs={12} md={8}>
+                <Paper sx={{ p: 3, height: '100%' }}>
+                    <Typography variant="h6" gutterBottom fontWeight="bold">Revenue vs Expenses</Typography>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="revenue" fill="#4caf50" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="expense" fill="#ef5350" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <Paper sx={{ p: 0, height: '100%', overflow: 'hidden' }}>
+                    <Box p={2} borderBottom="1px solid #eee"><Typography variant="h6" fontWeight="bold">Recent Invoices</Typography></Box>
+                    <TableContainer>
+                        <Table size="small">
+                            <TableHead><TableRow><TableCell>Client</TableCell><TableCell align="right">Amount</TableCell><TableCell align="right">Status</TableCell></TableRow></TableHead>
+                            <TableBody>
+                                {invoices.map((inv) => (
+                                    <TableRow key={inv._id}>
+                                        <TableCell>{inv.customerName}</TableCell>
+                                        <TableCell align="right">${inv.totalAmount}</TableCell>
+                                        <TableCell align="right"><Chip label={inv.status} size="small" color={inv.status === 'Paid' ? 'success' : 'warning'} variant="outlined" /></TableCell>
+                                    </TableRow>
+                                ))}
+                                {invoices.length === 0 && <TableRow><TableCell colSpan={3} align="center">No recent invoices</TableCell></TableRow>}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
+            </Grid>
         </Grid>
-
-        {/* Team Performance (Real Bar Chart) */}
-        <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom>Team Performance vs. Target</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.performance}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip cursor={{fill: '#f1f5f9'}} />
-                <Legend />
-                <Bar dataKey="output" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-
-        {/* Task Status Distribution */}
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>Task Status</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={[{name: 'Done', value: 45}, {name: 'In Progress', value: 30}, {name: 'Todo', value: 25}]}
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {['#10b981', '#3b82f6', '#cbd5e1'].map((color, index) => <Cell key={index} fill={color} />)}
-                </Pie>
-                <Tooltip />
-                <Legend verticalAlign="bottom" height={36}/>
-              </PieChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-      </Grid>
     </Box>
   );
 };
