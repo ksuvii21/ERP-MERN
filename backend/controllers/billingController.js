@@ -41,4 +41,34 @@ const createInvoice = asyncHandler(async (req, res) => {
   res.status(201).json(invoice);
 });
 
-module.exports = { getInvoices, createInvoice };
+// @desc    Get invoice analytics (Revenue & Monthly trends)
+// @route   GET /api/billing/stats
+// @access  Private
+const getInvoiceStats = asyncHandler(async (req, res) => {
+  const stats = await Invoice.aggregate([
+    { $match: { company: req.company._id } },
+    {
+      $group: {
+        _id: { $month: "$dueDate" }, // Group by month
+        totalRevenue: { 
+          $sum: { $cond: [{ $eq: ["$status", "Paid"] }, "$totalAmount", 0] } 
+        },
+        totalPending: { 
+          $sum: { $cond: [{ $in: ["$status", ["Pending", "Overdue"]] }, "$totalAmount", 0] } 
+        },
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { "_id": 1 } } // Sort by month Jan-Dec
+  ]);
+
+  // Map month numbers to names (optional, can be done on frontend)
+  const enrichedStats = stats.map(s => ({
+    ...s,
+    month: new Date(0, s._id - 1).toLocaleString('default', { month: 'short' })
+  }));
+
+  res.status(200).json(enrichedStats);
+});
+
+module.exports = { getInvoices, createInvoice, getInvoiceStats };
