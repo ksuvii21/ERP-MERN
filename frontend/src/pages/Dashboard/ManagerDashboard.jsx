@@ -56,14 +56,7 @@ const ManagerDashboard = () => {
   const [invoices, setInvoices] = useState([]);
 
   // Mock Data for Charts (Replace with real historical aggregation later)
-  const chartData = [
-    { name: 'Jan', revenue: 4000, expense: 2400 },
-    { name: 'Feb', revenue: 3000, expense: 1398 },
-    { name: 'Mar', revenue: 2000, expense: 9800 },
-    { name: 'Apr', revenue: 2780, expense: 3908 },
-    { name: 'May', revenue: 1890, expense: 4800 },
-    { name: 'Jun', revenue: 2390, expense: 3800 },
-  ];
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -99,7 +92,6 @@ const ManagerDashboard = () => {
         // Sort months chronologically (simple version) and set state
         const monthsOrder = { 'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12 };
         const sortedChartData = Object.values(monthlyData).sort((a, b) => monthsOrder[a.name] - monthsOrder[b.name]);
-        setChartData(sortedChartData);
 
         // 2. Fetch Users count (if endpoint exists)
         let empCount = 0;
