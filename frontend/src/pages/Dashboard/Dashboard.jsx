@@ -1,42 +1,36 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { ROLES } from '../../config/roles';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import AdminDashboard from './AdminDashboard';
-import ManagerDashboard from './ManagerDashboard';
 import EmployeeDashboard from './EmployeeDashboard';
-import HRDashboard from './HRDashboard';
-import FinanceDashboard from './FinanceDashboard';
+import ManagerDashboard from './ManagerDashboard';
 
+/**
+ * A router component that selects the appropriate dashboard based on the user's role.
+ * This ensures that the user sees a view tailored to their responsibilities.
+ */
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
 
-  if (!user) {
-    return <div>Loading...</div>;
+  if (!user || !user.role) {
+    return (
+      <Box p={4} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+        <CircularProgress />
+        <Typography mt={2}>Loading user profile...</Typography>
+      </Box>
+    );
   }
 
-  const renderDashboard = () => {
-    switch (user.role) {
-      case ROLES.SUPER_ADMIN:
-      case ROLES.ADMIN:
-        return <AdminDashboard />;
-      case ROLES.MANAGER:
-        return <ManagerDashboard />;
-      case ROLES.EMPLOYEE:
-        return <EmployeeDashboard />;
-      case ROLES.HR:
-        return <HRDashboard />;
-      case ROLES.FINANCE:
-        return <FinanceDashboard />;
-      default:
-        return <div>Welcome to your Dashboard.</div>;
-    }
-  };
-
-  return (
-    <div>
-      {renderDashboard()}
-    </div>
-  );
+  switch (user.role) {
+    case 'super_admin':
+    case 'admin':
+      return <AdminDashboard />;
+    case 'employee':
+      return <EmployeeDashboard />;
+    case 'manager':
+    default:
+      return <ManagerDashboard />;
+  }
 };
 
 export default Dashboard;
