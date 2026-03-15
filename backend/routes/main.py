@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import pandas as pd
@@ -6,6 +7,15 @@ import numpy as np
 # import joblib # In a real scenario, you would load trained models here
 
 app = FastAPI(title="ERP AI Engine 🧠")
+
+# Allow frontend to communicate with AI service
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Data Models ---
 class SalesInput(BaseModel):
