@@ -10,7 +10,7 @@ router.get('/', protect, async (req, res) => {
   try {
     const { search, limit = 25, page = 1, startDate, endDate } = req.query;
     
-    let query = { company: req.user.company };
+    let query = { company: req.company._id };
 
     if (search) {
       const searchRegex = new RegExp(search, 'i');
@@ -55,7 +55,7 @@ router.get('/patient/:patientId', protect, async (req, res) => {
   try {
     // Ensure the user is authorized to see logs for this company
     const logs = await AuditLog.find({
-      company: req.user.company,
+      company: req.company._id,
       entityId: req.params.patientId,
     }).sort({ createdAt: -1 }).limit(50); // Limit to recent 50 logs
 

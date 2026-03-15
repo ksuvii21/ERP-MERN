@@ -15,7 +15,7 @@ router.get('/search-patients', protect, async (req, res) => {
     }
     const searchRegex = new RegExp(term, 'i');
     const patients = await Patient.find({
-      company: req.user.company,
+      company: req.company._id, // Corrected to use company from auth middleware
       $or: [{ name: searchRegex }, { email: searchRegex }, { contact: searchRegex }]
     }).select('name age gender bloodGroup allergies').limit(10);
     res.json(patients);
@@ -30,7 +30,7 @@ router.get('/search-patients', protect, async (req, res) => {
 router.get('/patient/:patientId', protect, async (req, res) => {
   try {
     const records = await MedicalRecord.find({
-      company: req.user.company,
+      company: req.company._id, // Corrected to use company from auth middleware
       patient: req.params.patientId
     }).sort({ eventDate: -1 }).populate('recordedBy', 'name');
     res.json(records);
@@ -44,7 +44,7 @@ router.get('/patient/:patientId', protect, async (req, res) => {
 // @access  Private
 router.post('/', protect, async (req, res) => {
     try {
-        const newRecord = new MedicalRecord({ ...req.body, company: req.user.company, recordedBy: req.user._id });
+        const newRecord = new MedicalRecord({ ...req.body, company: req.company._id, recordedBy: req.user._id });
         await newRecord.save();
         res.status(201).json(newRecord);
     } catch(err) {

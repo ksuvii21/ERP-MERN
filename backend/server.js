@@ -30,8 +30,7 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/purchases', require('./routes/purchaseRoutes'));
 app.use('/api/employees', require('./routes/employeeRoutes'));
 app.use('/api/sales', require('./routes/salesRoutes'));
-// Add other routes like 'invoices', 'grn', etc. here as you build them
-app.use('/api/invoices', require('./routes/invoiceRoutes'));
+app.use('/api/billing', require('./routes/invoiceRoutes')); // Corrected route for billing/invoices
 app.use('/api/grn', require('./routes/grnRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 
@@ -47,7 +46,9 @@ app.use('/api/quality', require('./routes/qualityRoutes'));
 app.use('/api/machines', require('./routes/machineRoutes'));
 
 // Register Healthcare Routes
-app.use('/api', require('./routes/healthcareRoutes'));
+app.use('/api/patients', require('./routes/patientRoutes'));
+app.use('/api/records', require('./routes/recordRoutes'));
+// Note: You may need to add routes for Doctors and Pharmacy here as well.
 
 // Register Construction Routes
 app.use('/api/construction', require('./routes/constructionRoutes'));

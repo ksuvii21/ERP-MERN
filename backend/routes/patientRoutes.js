@@ -8,8 +8,8 @@ const logAction = require('../utils/auditLogger');
 // Get all patients for the user's company
 router.get('/', protect, async (req, res) => {
   try {
-    // Corrected to use req.user.company which is the ID from the user model
-    const patients = await Patient.find({ company: req.user.company });
+    // Corrected to use req.company from auth middleware
+    const patients = await Patient.find({ company: req.company._id });
     res.json(patients);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -20,8 +20,8 @@ router.get('/', protect, async (req, res) => {
 router.post('/', protect, async (req, res) => {
   const patient = new Patient({
     ...req.body,
-    // Corrected from req.user.companyId to req.user.company
-    company: req.user.company
+    // Corrected to use req.company from auth middleware
+    company: req.company._id
   });
 
   try {
@@ -32,7 +32,7 @@ router.post('/', protect, async (req, res) => {
       userName: req.user.name,
       action: 'CREATE_PATIENT',
       entityId: newPatient._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     res.status(201).json(newPatient);
@@ -53,7 +53,7 @@ router.put('/:id', protect, async (req, res) => {
     }
 
     // Authorization check: ensure the patient belongs to the user's company
-    if (patient.company.toString() !== req.user.company.toString()) {
+    if (patient.company.toString() !== req.company._id.toString()) {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
@@ -64,7 +64,7 @@ router.put('/:id', protect, async (req, res) => {
       userName: req.user.name,
       action: 'UPDATE_PATIENT',
       entityId: updatedPatient._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     res.json(updatedPatient);
@@ -86,7 +86,7 @@ router.put('/:id/privacy', protect, async (req, res) => {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
-    if (patient.company.toString() !== req.user.company.toString()) {
+    if (patient.company.toString() !== req.company._id.toString()) {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
@@ -98,7 +98,7 @@ router.put('/:id/privacy', protect, async (req, res) => {
       userName: req.user.name,
       action: 'UPDATE_PATIENT_PRIVACY',
       entityId: patient._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     res.json(patient.privacySettings);
@@ -119,7 +119,7 @@ router.delete('/:id', protect, async (req, res) => {
     }
 
     // Authorization check
-    if (patient.company.toString() !== req.user.company.toString()) {
+    if (patient.company.toString() !== req.company._id.toString()) {
       return res.status(401).json({ message: 'User not authorized' });
     }
 
@@ -128,7 +128,7 @@ router.delete('/:id', protect, async (req, res) => {
       userName: req.user.name,
       action: 'DELETE_PATIENT',
       entityId: patient._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     await patient.deleteOne();

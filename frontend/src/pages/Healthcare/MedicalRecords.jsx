@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Container, Typography, Paper, CircularProgress, Box, Grid, TextField, Autocomplete,
-  Avatar, Chip, Fab, List, ListItem, ListItemAvatar, ListItemText, Divider, IconButton, Tooltip
+  Avatar, Chip, Fab, List, ListItem, ListItemAvatar, ListItemText, Divider, IconButton, Tooltip, Button
 } from '@mui/material';
 import {
   Search, EventNote, Science, LocalPharmacy, Healing, MonitorHeart, EditNote, Bloodtype,
@@ -87,26 +87,27 @@ const HealthTimeline = ({ events }) => {
 const VitalsDashboard = ({ records }) => {
   const vitalsData = records
     .filter(r => r.eventType === 'Vitals')
-    .map(r => ({
-      ...r.data,
-      time: new Date(r.eventDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }))
+    .map(r => ({ ...r.data, time: new Date(r.eventDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }))
     .reverse();
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
       <Typography variant="h6" gutterBottom>Vitals Monitoring</Typography>
-      <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={vitalsData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" />
-          <YAxis yAxisId="left" />
-          <YAxis yAxisId="right" orientation="right" />
-          <RechartsTooltip />
-          <Line yAxisId="left" type="monotone" dataKey="heartRate" stroke="#ef4444" name="Heart Rate" />
-          <Line yAxisId="right" type="monotone" dataKey="temp" stroke="#3b82f6" name="Temperature" />
-        </LineChart>
-      </ResponsiveContainer>
+      {vitalsData.length === 0 ? (
+        <Typography color="text.secondary">No vitals recorded for this period.</Typography>
+      ) : (
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={vitalsData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" />
+            <RechartsTooltip />
+            <Line yAxisId="left" type="monotone" dataKey="heartRate" stroke="#ef4444" name="Heart Rate" />
+            <Line yAxisId="right" type="monotone" dataKey="temp" stroke="#3b82f6" name="Temperature" />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
     </Paper>
   );
 };
@@ -114,57 +115,59 @@ const VitalsDashboard = ({ records }) => {
 const LabResults = ({ records }) => {
   const labData = records.filter(r => r.eventType === 'LabResult');
 
-  if (labData.length === 0) return null;
-
-  // Get the most recent result for comparison view
-  const latestResult = labData[0]?.data.results || [];
-
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
       <Typography variant="h6" gutterBottom>Recent Lab Results</Typography>
-      <Grid container spacing={2}>
-        {latestResult.map((result, index) => (
-          <Grid item xs={6} sm={4} key={index}>
-            <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', bgcolor: result.isAbnormal ? '#fffbeB' : 'transparent' }}>
-              <Typography variant="caption" color="text.secondary">{result.name}</Typography>
-              <Typography variant="h5" fontWeight="bold" color={result.isAbnormal ? 'error.main' : 'text.primary'}>
-                {result.value}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">{result.unit}</Typography>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+      {labData.length === 0 ? (
+        <Typography color="text.secondary">No lab results on record.</Typography>
+      ) : (
+        <Grid container spacing={2}>
+          {(labData[0]?.data.results || []).map((result, index) => (
+            <Grid item xs={6} sm={4} key={index}>
+              <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', bgcolor: result.isAbnormal ? '#fffbeB' : 'transparent' }}>
+                <Typography variant="caption" color="text.secondary">{result.name}</Typography>
+                <Typography variant="h5" fontWeight="bold" color={result.isAbnormal ? 'error.main' : 'text.primary'}>
+                  {result.value}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">{result.unit}</Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Paper>
   );
 };
 
 const Prescriptions = ({ records }) => {
   const prescriptions = records.filter(r => r.eventType === 'Prescription');
-  if (prescriptions.length === 0) return null;
 
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
       <Typography variant="h6" gutterBottom>Medication Management</Typography>
-      {prescriptions.map(presc => (
-        <Box key={presc._id} sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" fontWeight="bold">
-            {presc.data.medication} {presc.data.dosage}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Instructions: {presc.data.instructions}
-          </Typography>
-          <Chip
-            label={presc.data.status || 'Active'}
-            color={presc.data.status === 'Past' ? 'default' : 'success'}
-            size="small"
-            sx={{ mt: 1 }}
-          />
-           <Typography variant="caption" display="block" color="text.secondary" mt={0.5}>
-            Prescribed by {presc.recordedBy?.name} on {new Date(presc.eventDate).toLocaleDateString()}
-          </Typography>
-        </Box>
-      ))}
+      {prescriptions.length === 0 ? (
+        <Typography color="text.secondary">No prescriptions on record.</Typography>
+      ) : (
+        prescriptions.map(presc => (
+          <Box key={presc._id} sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" fontWeight="bold">
+              {presc.data.medication} {presc.data.dosage}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Instructions: {presc.data.instructions}
+            </Typography>
+            <Chip
+              label={presc.data.status || 'Active'}
+              color={presc.data.status === 'Past' ? 'default' : 'success'}
+              size="small"
+              sx={{ mt: 1 }}
+            />
+            <Typography variant="caption" display="block" color="text.secondary" mt={0.5}>
+              Prescribed by {presc.recordedBy?.name} on {new Date(presc.eventDate).toLocaleDateString()}
+            </Typography>
+          </Box>
+        ))
+      )}
     </Paper>
   );
 };

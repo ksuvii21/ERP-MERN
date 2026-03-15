@@ -10,7 +10,7 @@ const logAction = require('../utils/auditLogger');
 router.get('/', protect, async (req, res) => {
   try {
     const { start, end } = req.query;
-    let query = { company: req.user.company };
+    let query = { company: req.company._id };
 
     // If date range provided, filter by it. Otherwise default to today (optional, or return all)
     if (start && end) {
@@ -37,7 +37,7 @@ router.post('/', protect, async (req, res) => {
   try {
     const appointment = new Appointment({
       ...req.body,
-      company: req.user.company
+      company: req.company._id
     });
     const savedApp = await appointment.save();
 
@@ -47,7 +47,7 @@ router.post('/', protect, async (req, res) => {
       action: 'CREATE_APPOINTMENT',
       entity: 'Appointment',
       entityId: savedApp._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     res.status(201).json(savedApp);
@@ -68,7 +68,7 @@ router.put('/:id/status', protect, async (req, res) => {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    if (appointment.company.toString() !== req.user.company.toString()) {
+    if (appointment.company.toString() !== req.company._id.toString()) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -81,7 +81,7 @@ router.put('/:id/status', protect, async (req, res) => {
       action: 'UPDATE_APPOINTMENT_STATUS',
       entity: 'Appointment',
       entityId: updatedAppointment._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     res.json(updatedAppointment);
@@ -99,7 +99,7 @@ router.put('/:id/reschedule', protect, async (req, res) => {
     const appointment = await Appointment.findById(req.params.id);
 
     if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    if (appointment.company.toString() !== req.user.company.toString()) return res.status(401).json({ message: 'Not authorized' });
+    if (appointment.company.toString() !== req.company._id.toString()) return res.status(401).json({ message: 'Not authorized' });
 
     appointment.startTime = startTime;
     // appointment.endTime = endTime; // If you store end time
@@ -111,7 +111,7 @@ router.put('/:id/reschedule', protect, async (req, res) => {
       action: 'RESCHEDULE_APPOINTMENT',
       entity: 'Appointment',
       entityId: updatedAppointment._id,
-      companyId: req.user.company,
+      company: req.company._id,
     });
 
     res.json(updatedAppointment);
