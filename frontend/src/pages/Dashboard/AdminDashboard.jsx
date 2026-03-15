@@ -34,25 +34,42 @@ const KPICard = ({ title, value, trend, icon: Icon, color }) => (
 );
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState({ users: 0, revenue: 0, alerts: 0, serverHealth: '98%' });
-
-  // Mock Data mimicking an ERP DB response
-  const revenueData = [
-    { name: 'Mon', uv: 4000 }, { name: 'Tue', uv: 3000 },
-    { name: 'Wed', uv: 2000 }, { name: 'Thu', uv: 2780 },
-    { name: 'Fri', uv: 1890 }, { name: 'Sat', uv: 2390 }, { name: 'Sun', uv: 3490 },
-  ];
+  const [stats, setStats] = useState({ users: 0, revenue: 0, alerts: 0, serverHealth: 'Online' });
+  const [revenueData, setRevenueData] = useState([]);
   
-  const storageData = [
-    { name: 'Used', value: 75 }, { name: 'Free', value: 25 }
-  ];
+  // Mock storage for now as we don't have disk access API
+  const storageData = [{ name: 'Used', value: 75 }, { name: 'Free', value: 25 }];
   const COLORS = ['#3b82f6', '#e2e8f0'];
 
   useEffect(() => {
-    // Simulate API call
     const fetchData = async () => {
-        // In real scenario: const res = await API.get('/admin/stats');
-        setStats({ users: 142, revenue: 125000, alerts: 3, serverHealth: 'Good' });
+      try {
+        // 1. Fetch Users Count
+        const { data: users } = await API.get('users');
+        
+        // 2. Fetch Revenue Stats
+        const { data: invStats } = await API.get('billing/stats');
+        
+        const totalRevenue = invStats.reduce((acc, curr) => acc + curr.totalRevenue, 0);
+        const pendingInvoices = invStats.reduce((acc, curr) => acc + curr.totalPending, 0);
+        
+        // Format Data for Chart (Revenue by Month)
+        const chartData = invStats.map(item => ({
+            name: item.month,
+            uv: item.totalRevenue
+        })).sort((a,b) => a.monthIndex - b.monthIndex); // Ensure backend sends monthIndex or sort logic
+
+        setStats({ 
+            users: users.length, 
+            revenue: totalRevenue, 
+            alerts: pendingInvoices > 0 ? pendingInvoices / 1000 : 0, // Mock alert logic based on pending $$
+            serverHealth: 'Excellent' 
+        });
+        setRevenueData(chartData);
+
+      } catch (error) {
+        console.error("Dashboard fetch error:", error);
+      }
     };
     fetchData();
   }, []);
@@ -73,7 +90,7 @@ const AdminDashboard = () => {
           <KPICard title="Revenue (MTD)" value={`$${(stats.revenue/1000).toFixed(1)}k`} trend="+5.4%" icon={TrendingUp} color="success" />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <KPICard title="System Alerts" value={stats.alerts} trend="Needs Action" icon={AlertTriangle} color="warning" />
+          <KPICard title="Pending Value (k)" value={Math.round(stats.alerts)} trend="Collections" icon={AlertTriangle} color="warning" />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <KPICard title="Server Health" value={stats.serverHealth} icon={Server} color="info" />
