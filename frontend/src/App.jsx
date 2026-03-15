@@ -85,6 +85,7 @@ import ProjectManagement from './pages/Business/ProjectManagement.jsx';
 
 // Components
 import Layout from './components/Layout.jsx';
+import SystemLogs from './pages/Admin/SystemLogs';
 
 function App() {
   return (
@@ -130,6 +131,8 @@ function App() {
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
             <Route path="profile" element={<ProfilePage />} />
+            {/* This route should be protected and likely restricted to admins */}
+            <Route path="admin/system-logs" element={<ProtectedRoute roles={['admin', 'super_admin']}><SystemLogs /></ProtectedRoute>}/>
 
             {/* Wholesale Routes */}
             <Route path="wholesale/bulk-ordering" element={<BulkOrdering />} />

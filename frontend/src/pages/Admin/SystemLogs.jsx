@@ -4,7 +4,8 @@ import {
   TableContainer, TableHead, TableRow, TextField, InputAdornment,
   Chip, CircularProgress, Avatar
 } from '@mui/material';
-import { Search, History, Person, Security } from '@mui/icons-material';
+import { Search, History } from '@mui/icons-material';
+import { Security } from 'lucide-react';
 import api from '../../utils/api';
 
 const SystemLogs = () => {
@@ -25,7 +26,6 @@ const SystemLogs = () => {
       }
     };
 
-    // Debounce search to prevent too many API calls
     const timeoutId = setTimeout(() => {
       fetchLogs();
     }, 500);
@@ -42,29 +42,23 @@ const SystemLogs = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Security fontSize="large" color="primary" /> System Audit Logs
-        </Typography>
-        <Typography color="textSecondary">
-          Track user activities and security events across the system.
-        </Typography>
+      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Security size={40} color="#0ea5e9" />
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>System Audit Logs</Typography>
+          <Typography color="textSecondary">Track user activities and security events across the system.</Typography>
+        </Box>
       </Box>
 
-      <Paper sx={{ p: 2, mb: 3, borderRadius: '12px', display: 'flex', alignItems: 'center' }}>
+      <Paper sx={{ p: 2, mb: 3, borderRadius: '12px' }}>
         <TextField
           fullWidth
-          placeholder="Search logs by user, action, or entity ID..."
+          placeholder="Search logs by user, action, or entity..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search color="action" />
-              </InputAdornment>
-            ),
+            startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
           }}
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
         />
       </Paper>
 
@@ -72,59 +66,39 @@ const SystemLogs = () => {
         <Table>
           <TableHead sx={{ bgcolor: '#f8fafc' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600 }}>USER</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>ACTION</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>ENTITY</TableCell>
-              <TableCell sx={{ fontWeight: 600 }}>TIMESTAMP</TableCell>
+              <TableCell>USER</TableCell>
+              <TableCell>ACTION</TableCell>
+              <TableCell>ENTITY</TableCell>
+              <TableCell>TIMESTAMP</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={4} align="center" sx={{ py: 5 }}>
-                  <CircularProgress />
+              <TableRow><TableCell colSpan={4} align="center" sx={{ py: 5 }}><CircularProgress /></TableCell></TableRow>
+            ) : logs.map((log) => (
+              <TableRow key={log._id} hover>
+                <TableCell>
+                  <Box display="flex" alignItems="center" gap={1.5}>
+                    <Avatar sx={{ width: 30, height: 30, fontSize: '0.8rem' }}>{log.userName?.[0]}</Avatar>
+                    <Typography variant="body2">{log.userName}</Typography>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={log.action.replace(/_/g, ' ')}
+                    color={getActionColor(log.action)}
+                    size="small"
+                    variant="outlined"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="textSecondary">{log.entity}: <span style={{ fontFamily: 'monospace' }}>{log.entityId}</span></Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">{new Date(log.createdAt).toLocaleString()}</Typography>
                 </TableCell>
               </TableRow>
-            ) : logs.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} align="center" sx={{ py: 3, color: 'text.secondary' }}>
-                  No logs found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              logs.map((log) => (
-                <TableRow key={log._id} hover>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1.5}>
-                      <Avatar sx={{ width: 30, height: 30, fontSize: '0.8rem' }}>{log.userName?.[0]}</Avatar>
-                      <Typography variant="body2" fontWeight={500}>{log.userName}</Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={log.action.replace(/_/g, ' ')} 
-                      color={getActionColor(log.action)} 
-                      size="small" 
-                      variant="outlined"
-                      sx={{ fontWeight: 600, fontSize: '0.75rem' }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" color="textSecondary">
-                      {log.entity}: <span style={{ fontFamily: 'monospace' }}>{log.entityId}</span>
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center" gap={1} color="text.secondary">
-                      <History fontSize="small" />
-                      <Typography variant="body2">
-                        {new Date(log.createdAt).toLocaleString()}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
