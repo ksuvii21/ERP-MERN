@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const doctorSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  specialization: { type: String, required: true },
-  contact: { type: String, required: true },
-  company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true },
+  specialty: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  phone: { type: String },
+  company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' } // Multi-tenancy
 }, {
   timestamps: true,
 });
