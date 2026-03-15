@@ -72,7 +72,7 @@ const DischargeSummaryPDF = React.forwardRef(({ patient, summaryDetails }, ref) 
   );
 });
 
-const PatientProfileView = ({ patient, onClose }) => {
+export const PatientProfileView = ({ patient, onClose }) => {
   const [tabValue, setTabValue] = useState(0);
   const [billing, setBilling] = useState({ invoices: [], loading: true });
   const [privacySettings, setPrivacySettings] = useState({ portalSync: false, dataMasking: false });

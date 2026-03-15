@@ -33,6 +33,7 @@ app.use('/api/sales', require('./routes/salesRoutes'));
 // Add other routes like 'invoices', 'grn', etc. here as you build them
 app.use('/api/invoices', require('./routes/invoiceRoutes'));
 app.use('/api/grn', require('./routes/grnRoutes'));
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
 
 // Register Customer, Supplier, and Order Routes
 app.use('/api/customers', require('./routes/customerRoutes'));

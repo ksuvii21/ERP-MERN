@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const AuditLog = require('../models/AuditLog');
-const auth = require('../middleware/auth');
+const { protect } = require('../middleware/authMiddleware');
 
 // @desc    Get all audit logs for the company with search
 // @route   GET /api/audit-logs
 // @access  Private (Admin/Manager)
-router.get('/', auth, async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
     const { search, limit = 25, page = 1, startDate, endDate } = req.query;
     
@@ -51,7 +51,7 @@ router.get('/', auth, async (req, res) => {
 // @desc    Get audit logs for a specific patient
 // @route   GET /api/audit-logs/patient/:patientId
 // @access  Private
-router.get('/patient/:patientId', auth, async (req, res) => {
+router.get('/patient/:patientId', protect, async (req, res) => {
   try {
     // Ensure the user is authorized to see logs for this company
     const logs = await AuditLog.find({
