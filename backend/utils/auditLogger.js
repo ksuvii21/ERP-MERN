@@ -11,7 +11,7 @@ const AuditLog = require('../models/AuditLog');
  */
 const logAction = async (logData) => {
   try {
-    await AuditLog.create({ ...logData, entity: 'Patient' });
+    await AuditLog.create({ entity: 'Unknown', ...logData });
   } catch (error) {
     console.error('Failed to write to audit log:', error);
   }

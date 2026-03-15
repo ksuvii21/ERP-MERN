@@ -2,23 +2,25 @@ const express = require('express');
 const router = express.Router();
 const Appointment = require('../models/Appointment');
 const { protect } = require('../middleware/authMiddleware');
+const logAction = require('../utils/auditLogger');
 
 // @desc    Get all appointments for the company (today)
 // @route   GET /api/appointments
 // @access  Private
 router.get('/', protect, async (req, res) => {
   try {
-    // Optional: Filter by today's date
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const { start, end } = req.query;
+    let query = { company: req.user.company };
 
-    const appointments = await Appointment.find({ 
-      company: req.user.company,
-      startTime: { $gte: startOfDay, $lte: endOfDay }
-    })
+    // If date range provided, filter by it. Otherwise default to today (optional, or return all)
+    if (start && end) {
+      query.startTime = { 
+        $gte: new Date(start), 
+        $lte: new Date(end) 
+      };
+    }
+
+    const appointments = await Appointment.find(query)
     .populate('patient')
     .populate('doctor');
     
@@ -38,6 +40,16 @@ router.post('/', protect, async (req, res) => {
       company: req.user.company
     });
     const savedApp = await appointment.save();
+
+    await logAction({
+      userId: req.user._id,
+      userName: req.user.name,
+      action: 'CREATE_APPOINTMENT',
+      entity: 'Appointment',
+      entityId: savedApp._id,
+      companyId: req.user.company,
+    });
+
     res.status(201).json(savedApp);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -62,6 +74,46 @@ router.put('/:id/status', protect, async (req, res) => {
 
     appointment.status = status;
     const updatedAppointment = await appointment.save();
+
+    await logAction({
+      userId: req.user._id,
+      userName: req.user.name,
+      action: 'UPDATE_APPOINTMENT_STATUS',
+      entity: 'Appointment',
+      entityId: updatedAppointment._id,
+      companyId: req.user.company,
+    });
+
+    res.json(updatedAppointment);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// @desc    Reschedule an appointment (update time)
+// @route   PUT /api/appointments/:id/reschedule
+// @access  Private
+router.put('/:id/reschedule', protect, async (req, res) => {
+  try {
+    const { startTime, endTime } = req.body;
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    if (appointment.company.toString() !== req.user.company.toString()) return res.status(401).json({ message: 'Not authorized' });
+
+    appointment.startTime = startTime;
+    // appointment.endTime = endTime; // If you store end time
+    const updatedAppointment = await appointment.save();
+
+    await logAction({
+      userId: req.user._id,
+      userName: req.user.name,
+      action: 'RESCHEDULE_APPOINTMENT',
+      entity: 'Appointment',
+      entityId: updatedAppointment._id,
+      companyId: req.user.company,
+    });
+
     res.json(updatedAppointment);
   } catch (err) {
     res.status(400).json({ message: err.message });

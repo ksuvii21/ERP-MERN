@@ -18,13 +18,15 @@ const auditLogSchema = new mongoose.Schema({
       'UPDATE_PATIENT',
       'UPDATE_PATIENT_PRIVACY',
       'DELETE_PATIENT',
-      'ACCESS_PATIENT_RECORD'
+      'ACCESS_PATIENT_RECORD',
+      'CREATE_APPOINTMENT',
+      'UPDATE_APPOINTMENT_STATUS',
+      'RESCHEDULE_APPOINTMENT',
     ],
   },
   entity: {
     type: String,
     required: true,
-    default: 'Patient',
   },
   entityId: {
     type: mongoose.Schema.Types.ObjectId,
