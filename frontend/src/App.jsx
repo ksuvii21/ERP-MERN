@@ -16,7 +16,6 @@ import KanbanBoard from './pages/Projects/KanbanBoard.jsx';
 import Inventory from './pages/Inventory/Inventory.jsx';
 import EmployeeManagement from './pages/HR/EmployeeManagement.jsx';
 import Payroll from './pages/HR/Payroll.jsx';
-import FinanceDashboard from './pages/Dashboard/FinanceDashboard.jsx';
 import AIInsightsPage from './pages/AI/AIInsightsPage.jsx';
 import Settings from './pages/General/Settings.jsx';
 import POS from './pages/Finance/POS.jsx';
@@ -38,7 +37,7 @@ import Doctors from './pages/Healthcare/Doctors.jsx';
 import Appointments from './pages/Healthcare/Appointments.jsx';
 import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
-import FinanceAccounting from './pages/FinanceAccounting.jsx';
+import FinanceAccounting from './pages/General/FinanceAccounting.jsx';
 
 // Wholesale Pages
 import BulkOrdering from './pages/Wholesale/BulkOrdering.jsx';
@@ -108,12 +107,6 @@ function App() {
             <Route path="inventory" element={<Inventory />} />
             <Route path="hr/employees" element={<EmployeeManagement />} />
             <Route path="hr/payroll" element={<Payroll />} />
-            <Route 
-              path="finance" 
-              element={
-                <ProtectedRoute roles={['admin', 'manager']}><FinanceDashboard /></ProtectedRoute>
-              } 
-            />
             <Route path="ai-insights" element={<AIInsightsPage />} />
             <Route path="settings" element={<Settings />} />
             <Route path="pos" element={<POS />} />
