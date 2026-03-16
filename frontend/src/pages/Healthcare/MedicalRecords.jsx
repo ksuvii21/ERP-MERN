@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container, Typography, Paper, CircularProgress, Box, Grid, TextField, Autocomplete,
-  Avatar, Chip, Fab, List, ListItem, ListItemAvatar, ListItemText, Divider, IconButton, Tooltip, Button
+  Container, Typography, Paper, CircularProgress, Box, Grid, TextField, Autocomplete, Button,
+  Avatar, Chip, Fab, List, ListItem, ListItemAvatar, ListItemText, Tooltip
 } from '@mui/material';
 import {
   Search, EventNote, Science, LocalPharmacy, Healing, MonitorHeart, EditNote, Bloodtype,
@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import api from '../../utils/api';
+import AddRecordModal from './AddRecordModal';
 
 // --- Sub-components for the EMR Dashboard ---
 
@@ -70,7 +71,7 @@ const HealthTimeline = ({ events }) => {
               secondary={
                 <>
                   <Typography component="span" variant="body2" color="text.primary">
-                    {event.data.summary || event.data.testName || `BP: ${event.data.bp}`}
+                    {event.data.summary || event.data.testName || event.data.medication || `BP: ${event.data.bp}`}
                   </Typography>
                   <br />
                   {new Date(event.eventDate).toLocaleString()} — by {event.recordedBy?.name || 'System'}
@@ -204,12 +205,31 @@ const MedicalRecords = () => {
   const [loading, setLoading] = useState(false); // Fix: Don't show loader on initial render
   const [patientOptions, setPatientOptions] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [allPatients, setAllPatients] = useState([]);
+  const [loadingList, setLoadingList] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // Fetch a list of all patients when the component mounts
+  useEffect(() => {
+    const fetchInitialPatients = async () => {
+      setLoadingList(true);
+      try {
+        const res = await api.get('/patients');
+        setAllPatients(res.data);
+      } catch (err) {
+        console.error('Failed to fetch patient list', err);
+      } finally {
+        setLoadingList(false);
+      }
+    };
+    fetchInitialPatients();
+  }, []);
 
   useEffect(() => {
     if (selectedPatient) {
       fetchRecordsForPatient(selectedPatient._id);
     }
-  }, [selectedPatient]);
+  }, [selectedPatient]); // This effect runs when a patient is selected
 
   const handleSearchChange = async (event, value) => {
     if (value && value.length > 2) {
@@ -236,6 +256,7 @@ const MedicalRecords = () => {
     try {
       await api.post('/records', recordData);
       // Refetch records to show the new entry
+      setModalOpen(false);
       fetchRecordsForPatient(selectedPatient._id);
     } catch (err) {
       console.error("Failed to save record", err);
@@ -274,9 +295,36 @@ const MedicalRecords = () => {
       </Paper>
 
       {!selectedPatient ? (
-        <Box textAlign="center" mt={10}>
-          <Typography variant="h6" color="text.secondary">Please search and select a patient to view their records.</Typography>
-        </Box>
+        <>
+          <Box textAlign="center" mt={5} mb={5}>
+            <Typography variant="h6" color="text.secondary">Search for a patient or select one from the list below.</Typography>
+          </Box>
+
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>Patient Registry</Typography>
+            {loadingList ? (
+              <Box textAlign="center" p={5}><CircularProgress /></Box>
+            ) : (
+              <List>
+                {allPatients.length > 0 ? allPatients.map(patient => (
+                  <ListItem button key={patient._id} onClick={() => setSelectedPatient(patient)} divider>
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: '#e0f2fe', color: '#0ea5e9' }}>{patient.name[0]}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<Typography fontWeight="600">{patient.name}</Typography>}
+                      secondary={`Age: ${patient.age} | Contact: ${patient.contact}`}
+                    />
+                  </ListItem>
+                )) : (
+                  <Typography sx={{ p: 2, textAlign: 'center' }} color="text.secondary">
+                    No patients found. Add a patient from the 'Patients' page to begin.
+                  </Typography>
+                )}
+              </List>
+            )}
+          </Paper>
+        </>
       ) : loading ? (
         <Box textAlign="center" mt={10}><CircularProgress /></Box>
       ) : (
@@ -297,11 +345,21 @@ const MedicalRecords = () => {
             </Grid>
           </Grid>
           <Tooltip title="Add New Record">
-            <Fab color="primary" sx={{ position: 'fixed', bottom: 40, right: 40 }}>
+            <Fab color="primary" sx={{ position: 'fixed', bottom: 40, right: 40 }} onClick={() => setModalOpen(true)}>
               <AddIcon />
             </Fab>
           </Tooltip>
         </>
+      )}
+
+      {selectedPatient && (
+        <AddRecordModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          patient={selectedPatient}
+          onSave={handleSaveRecord}
+          existingPrescriptions={records.filter(r => r.eventType === 'Prescription' && r.data.status === 'Active')}
+        />
       )}
     </Container>
   );
