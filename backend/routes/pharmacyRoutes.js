@@ -96,6 +96,7 @@ router.put('/prescriptions/:id/status', protect, async (req, res) => {
                         return null;
                     }
                     return {
+                        source: 'Pharmacy',
                         description: item.medicine.name,
                         quantity: 1, // Assuming quantity is 1 per prescribed item.
                         price: item.medicine.salePrice,
@@ -106,15 +107,25 @@ router.put('/prescriptions/:id/status', protect, async (req, res) => {
                 if (invoiceItems.length > 0) {
                     const totalAmount = invoiceItems.reduce((sum, item) => sum + item.total, 0);
 
+                    // --- Split-Bill Logic (Example: 80% Insurance Coverage for demo) ---
+                    const insuranceCoverageRatio = 0.80; 
+                    const insurancePayable = totalAmount * insuranceCoverageRatio;
+                    const patientPayable = totalAmount - insurancePayable;
+
                     const newInvoice = new Invoice({
                         company: req.company._id,
                         patient: prescription.patient._id,
                         customerName: prescription.patient.name, // Denormalized for display
                         invoiceDate: new Date(),
+                        invoiceNumber: `PHM-${Date.now()}`, // Generate unique invoice number
                         dueDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Due in 15 days
                         items: invoiceItems,
                         totalAmount: totalAmount,
-                        status: 'Unpaid',
+                        insurancePayable: insurancePayable,
+                        patientPayable: patientPayable,
+                        status: 'Open', // Set to 'Open' to match new workflow
+                        // Create the initial Debit entry in the ledger
+                        ledgerEntries: [{ amount: totalAmount, type: 'Debit', method: 'System Generated' }],
                         notes: `Pharmacy charges for Prescription ID: ${prescription._id}`
                     });
                     await newInvoice.save();
