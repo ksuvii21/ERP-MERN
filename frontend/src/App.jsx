@@ -80,7 +80,7 @@ import Services from './pages/Hospitality/Services.jsx';
 // Business Pages
 import Accounting from './pages/Business/Accounting.jsx';
 import CRM from './pages/Business/CRM.jsx';
-import Billing from './pages/Business/Billing.jsx'; // Corrected path for the main billing component
+import Billing from './pages/Business/Billing.jsx'; 
 import Expenses from './pages/Business/Expenses.jsx';
 import ProjectManagement from './pages/Business/ProjectManagement.jsx';
 
