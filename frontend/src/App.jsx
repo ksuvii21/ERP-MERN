@@ -36,10 +36,10 @@ import Orders from './pages/Retail/Orders.jsx';
 import Patients from './pages/Healthcare/Patients.jsx';
 import Doctors from './pages/Healthcare/Doctors.jsx';
 import Appointments from './pages/Healthcare/Appointments.jsx';
-import Billing from './pages/Business/Billing.jsx';
 import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
 import ProfilePage from './pages/Profile/Profile.jsx';
+import FinanceAccounting from './pages/FinanceAccounting.jsx';
 
 // Wholesale Pages
 import BulkOrdering from './pages/Wholesale/BulkOrdering.jsx';
@@ -80,6 +80,7 @@ import Services from './pages/Hospitality/Services.jsx';
 // Business Pages
 import Accounting from './pages/Business/Accounting.jsx';
 import CRM from './pages/Business/CRM.jsx';
+import Billing from './pages/Business/Billing.jsx'; // Corrected path for the main billing component
 import Expenses from './pages/Business/Expenses.jsx';
 import ProjectManagement from './pages/Business/ProjectManagement.jsx';
 
@@ -131,6 +132,7 @@ function App() {
             <Route path="billing" element={<Billing />} />
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
+            <Route path="accounting" element={<FinanceAccounting />} />
             <Route path="profile" element={<ProfilePage />} />
             {/* This route should be protected and likely restricted to admins */}
             <Route path="admin/system-logs" element={<ProtectedRoute roles={['admin', 'super_admin']}><SystemLogs /></ProtectedRoute>}/>
