@@ -80,7 +80,7 @@ import Services from './pages/Hospitality/Services.jsx';
 // Business Pages
 import Accounting from './pages/Business/Accounting.jsx';
 import CRM from './pages/Business/CRM.jsx';
-import Billing from './pages/Business/Billing.jsx'; 
+import Billing from './pages/Business/Billing.jsx'; // Corrected path for the main billing component
 import Expenses from './pages/Business/Expenses.jsx';
 import ProjectManagement from './pages/Business/ProjectManagement.jsx';
 
@@ -109,7 +109,12 @@ function App() {
             <Route path="inventory" element={<Inventory />} />
             <Route path="hr/employees" element={<EmployeeManagement />} />
             <Route path="hr/payroll" element={<Payroll />} />
-            <Route path="finance" element={<FinanceDashboard />} />
+            <Route 
+              path="finance" 
+              element={
+                <ProtectedRoute roles={['admin', 'manager']}><FinanceDashboard /></ProtectedRoute>
+              } 
+            />
             <Route path="ai-insights" element={<AIInsightsPage />} />
             <Route path="settings" element={<Settings />} />
             <Route path="pos" element={<POS />} />
