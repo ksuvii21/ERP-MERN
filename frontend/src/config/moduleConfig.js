@@ -40,12 +40,15 @@ const ALL_MODULES = {
     { name: 'Reports & MIS', path: '/app/reports', icon: BarChart2, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
   FINANCE: [
-    { name: 'Finance', path: '/app/finance', icon: Landmark, roles: [ROLES.ADMIN, ROLES.MANAGER] },
+    { name: 'Finance Dashboard', path: '/app/finance', icon: Landmark, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Sales', path: '/app/sales', icon: DollarSign, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'POS & Billing', path: '/app/pos', icon: Store, roles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] },
     { name: 'Purchases', path: '/app/purchases', icon: ShoppingCart, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'GST Reports', path: '/app/gst-reports', icon: FileText, roles: [ROLES.ADMIN, ROLES.MANAGER] },
     { name: 'Invoice Design', path: '/app/invoice-design', icon: Paintbrush, roles: [ROLES.ADMIN] },
+  ],
+  ACCOUNTING: [
+    { name: 'Accounting', path: '/app/accounting', icon: BookOpen, roles: [ROLES.ADMIN, ROLES.MANAGER] },
   ],
   HR: [
     { name: 'Employees', path: '/app/hr/employees', icon: Users, roles: [ROLES.ADMIN, ROLES.MANAGER] },
@@ -121,15 +124,15 @@ const ALL_MODULES = {
 };
 
 const INDUSTRY_CONFIG = {
-  'Manufacturing': ['GENERAL', 'FINANCE', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
-  'Retail': ['GENERAL', 'RETAIL', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Wholesale': ['GENERAL', 'WHOLESALE', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'HR', 'ADMIN'],
-  'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Hospitality': ['GENERAL', 'HOSPITALITY', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'Education': ['GENERAL', 'EDUCATION', 'FINANCE', 'HR', 'ADMIN'],
-  'General Business': ['GENERAL', 'BUSINESS', 'FINANCE', 'HR', 'INVENTORY', 'ADMIN'],
-  'default': ['GENERAL', 'FINANCE', 'HR', 'ADMIN']
+  'Manufacturing': ['GENERAL', 'FINANCE', 'ACCOUNTING', 'HR', 'INVENTORY', 'PROJECTS', 'MANUFACTURING', 'ADMIN'],
+  'Retail': ['GENERAL', 'RETAIL', 'FINANCE', 'ACCOUNTING', 'HR', 'INVENTORY', 'ADMIN'],
+  'Wholesale': ['GENERAL', 'WHOLESALE', 'FINANCE', 'ACCOUNTING', 'HR', 'INVENTORY', 'ADMIN'],
+  'Healthcare': ['GENERAL', 'HEALTHCARE', 'FINANCE', 'ACCOUNTING', 'HR', 'ADMIN'],
+  'Construction': ['GENERAL', 'CONSTRUCTION', 'FINANCE', 'ACCOUNTING', 'HR', 'INVENTORY', 'ADMIN'],
+  'Hospitality': ['GENERAL', 'HOSPITALITY', 'FINANCE', 'ACCOUNTING', 'HR', 'INVENTORY', 'ADMIN'],
+  'Education': ['GENERAL', 'EDUCATION', 'FINANCE', 'ACCOUNTING', 'HR', 'ADMIN'],
+  'General Business': ['GENERAL', 'BUSINESS', 'FINANCE', 'ACCOUNTING', 'HR', 'INVENTORY', 'ADMIN'],
+  'default': ['GENERAL', 'FINANCE', 'ACCOUNTING', 'HR', 'ADMIN']
 };
 
 export const getNavItems = (industry, userRole) => {
