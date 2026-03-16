@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
@@ -31,26 +31,28 @@ const Layout = () => {
       console.warn('User data is stale. Logging out to refresh permissions.');
       handleLogout();
     }
+
+    if (user) {
+      console.log(
+        `[Layout Debug] Sidebar rendered for user role: "${user.role}". Check moduleConfig.js to see which items should be visible for this role.`
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, dispatch, navigate]);
 
   // Generate dynamic navigation based on Industry and Role
-  const industry = user?.company?.industryType;
-  const groupedNavItems = getNavItems(industry, user?.role);
-
-  // Debugging: See exactly what the system detects
-  console.log('Layout Debug:', { 
-    industry, 
-    role: user?.role, 
-    companyType: typeof user?.company 
-  });
+  const visibleNavItems = useMemo(() => {
+    if (!user?.company?.industryType || !user?.role) return [];
+    const navItemsByGroup = getNavItems(user.company.industryType, user.role);
+    return Object.values(navItemsByGroup).flat();
+  }, [user]);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <aside className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-slate-900 text-white transition-all duration-300 flex flex-col`}>
         <div className="p-4 flex items-center justify-between border-b border-slate-800">
-          <span className={`font-bold text-xl ${!isSidebarOpen && 'hidden'}`}>ERP System</span>
+          <span className={`font-bold text-xl ${!isSidebarOpen && 'hidden'}`}>Menu</span>
           <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-1 hover:bg-slate-800 rounded">
             {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -58,7 +60,7 @@ const Layout = () => {
         
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-1 px-2">
-            {Object.values(groupedNavItems).flat().map((item) => (
+            {visibleNavItems.map((item) => (
               <li key={item.path}>
                 <Link 
                   to={item.path}
@@ -110,7 +112,7 @@ const Layout = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold text-gray-800">
-            {Object.values(groupedNavItems).flat().find(i => location.pathname.startsWith(i.path))?.name || 'Dashboard'}
+            {visibleNavItems.find(i => location.pathname.startsWith(i.path))?.name || 'Dashboard'}
           </h1>
           <div className="flex items-center gap-4">
           <div className="text-right border-r pr-4 border-gray-200 hidden sm:block">
