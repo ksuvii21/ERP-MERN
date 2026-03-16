@@ -15,6 +15,7 @@ const medicineSchema = new mongoose.Schema({
   supplier: { type: String },
   unit: { type: String, default: 'Tablet' }, // e.g., Tablet, Bottle, Ampule
   reorderLevel: { type: Number, default: 20 },
+  salePrice: { type: Number, required: true, default: 0 },
   safetyBuffer: { type: Number, default: 10 },
   batches: [batchSchema],
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
