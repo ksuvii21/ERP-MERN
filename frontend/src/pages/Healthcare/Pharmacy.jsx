@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container, Typography, Box, Paper, CircularProgress, Tabs, Tab,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Button, Grid
+  Container, Typography, Box, Paper, CircularProgress, Tabs, Tab, Modal,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Button, Grid,
+  TextField, IconButton
 } from '@mui/material';
-import { CheckCircle, HourglassEmpty, LocalPharmacy, Inventory, Warning } from '@mui/icons-material';
+import { CheckCircle, HourglassEmpty, LocalPharmacy, Inventory, Warning, Add, Delete } from '@mui/icons-material';
 import api from '../../utils/api';
 
 // --- Sub-components ---
@@ -151,11 +152,34 @@ const InventoryList = ({ inventory }) => (
   </TableContainer>
 );
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 700,
+  bgcolor: 'background.paper',
+  border: '1px solid #ccc',
+  borderRadius: '12px',
+  boxShadow: 24,
+  p: 4,
+  maxHeight: '90vh',
+  overflowY: 'auto',
+};
+
 const Pharmacy = () => {
   const [tabValue, setTabValue] = useState(0);
   const [loading, setLoading] = useState(true);
   const [dispenseQueue, setDispenseQueue] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newMedicine, setNewMedicine] = useState({
+    name: '',
+    category: '',
+    salePrice: '',
+    reorderLevel: '',
+    batches: [{ batchNumber: '', quantity: '', expiryDate: '' }]
+  });
 
   const fetchData = async () => {
     setLoading(true);
@@ -187,6 +211,94 @@ const Pharmacy = () => {
     }
   };
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setNewMedicine({
+      name: '', category: '', salePrice: '', reorderLevel: '',
+      batches: [{ batchNumber: '', quantity: '', expiryDate: '' }]
+    });
+  };
+
+  const handleMedicineChange = (e) => {
+    setNewMedicine({ ...newMedicine, [e.target.name]: e.target.value });
+  };
+  
+
+  const handleBatchChange = (index, e) => {
+    const updatedBatches = [...newMedicine.batches];
+    updatedBatches[index][e.target.name] = e.target.value;
+    setNewMedicine({ ...newMedicine, batches: updatedBatches });
+  };
+
+  const addBatchField = () => {
+    setNewMedicine({
+      ...newMedicine,
+      batches: [...newMedicine.batches, { batchNumber: '', quantity: '', expiryDate: '' }]
+    });
+  };
+
+  const removeBatchField = (index) => {
+    const updatedBatches = newMedicine.batches.filter((_, i) => i !== index);
+    setNewMedicine({ ...newMedicine, batches: updatedBatches });
+  };
+
+  const handleAddMedicine = async () => {
+    try {
+      if (!newMedicine.name || !newMedicine.category || !newMedicine.salePrice) {
+        alert('Please fill all main medicine required fields (Name, Category, Sale Price).');
+        return;
+      }
+      
+      // Validate batches
+      for (const batch of newMedicine.batches) {
+        if (!batch.batchNumber || !batch.quantity || !batch.expiryDate) {
+          alert('Please fill all required fields for each batch (Batch Number, Quantity, Expiry Date).');
+          return;
+        }
+        if (isNaN(Number(batch.quantity)) || Number(batch.quantity) <= 0) {
+          alert('Batch quantity must be a positive number.');
+          return;
+        }
+        if (new Date(batch.expiryDate) < new Date()) {
+            alert('Expiry date cannot be in the past.');
+            return;
+        }
+      }
+
+      // Prepare payload, converting numeric fields and handling optional ones
+      const payload = {
+        ...newMedicine,
+        salePrice: Number(newMedicine.salePrice),
+        reorderLevel: newMedicine.reorderLevel ? Number(newMedicine.reorderLevel) : undefined, // Convert to number or undefined
+        batches: newMedicine.batches.map(batch => ({
+          ...batch,
+          quantity: Number(batch.quantity),
+        }))
+      };
+
+      await api.post('/pharmacy/inventory', payload); // Send the prepared payload
+      handleModalClose();
+      fetchData();
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.status === 400 && err.response.data) {
+        let errorMessage = 'Validation failed: ';
+        if (err.response.data.message === 'Validation Error' && err.response.data.errors) {
+          const errors = err.response.data.errors;
+          for (const key in errors) {
+            errorMessage += `\n- ${errors[key].message}`;
+          }
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message; // General 400 message from backend
+        }
+        alert(errorMessage);
+      } else {
+        alert('Failed to add medicine. Check console for details.');
+      }
+    }
+  };
+
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Typography variant="h4" sx={{ fontWeight: 800, mb: 3 }}>Pharmacy Control Center</Typography>
@@ -214,6 +326,12 @@ const Pharmacy = () => {
                 <ExpiryHeatmap inventory={inventory} />
               </Grid>
               <Grid item xs={12}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                  <Typography variant="h6">Full Inventory List</Typography>
+                  <Button variant="contained" startIcon={<Add />} onClick={() => setIsModalOpen(true)}>
+                    Add New Medicine
+                  </Button>
+                </Box>
                 <Paper sx={{ p: 2, borderRadius: '12px' }}>
                   <InventoryList inventory={inventory} />
                 </Paper>
@@ -222,6 +340,58 @@ const Pharmacy = () => {
           )}
         </>
       )}
+
+      <Modal open={isModalOpen} onClose={handleModalClose}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" component="h2" mb={3}>Add New Medicine to Inventory</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}><TextField label="Medicine Name" name="name" value={newMedicine.name} onChange={handleMedicineChange} fullWidth required /></Grid>
+            <Grid item xs={12} sm={6}><TextField label="Category" name="category" value={newMedicine.category} onChange={handleMedicineChange} fullWidth required /></Grid>
+            <Grid item xs={12} sm={6}><TextField label="Sale Price" name="salePrice" type="number" value={newMedicine.salePrice} onChange={handleMedicineChange} fullWidth required /></Grid>
+            <Grid item xs={12} sm={6}><TextField label="Reorder Level" name="reorderLevel" type="number" value={newMedicine.reorderLevel} onChange={handleMedicineChange} fullWidth /></Grid>
+          </Grid>
+          <Typography variant="subtitle1" mt={3} mb={2}>Stock Batches</Typography>
+          {newMedicine.batches.map((batch, index) => (
+            <Grid container spacing={2} key={index} alignItems="center" sx={{ mb: 1 }}>
+              <Grid item xs={4}><TextField label="Batch Number" name="batchNumber" value={batch.batchNumber} onChange={(e) => handleBatchChange(index, e)} fullWidth required /></Grid>
+              <Grid item xs={3}><TextField label="Quantity" name="quantity" type="number" value={batch.quantity} onChange={(e) => handleBatchChange(index, e)} fullWidth required /></Grid>
+              <Grid item xs={4}>
+                <TextField
+                  label="Expiry Date"
+                  name="expiryDate"
+                  type="date"
+                  value={batch.expiryDate}
+                  onChange={(e) => handleBatchChange(index, e)}
+                  fullWidth
+                  required
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={1}>
+                <IconButton onClick={() => removeBatchField(index)} color="error" disabled={newMedicine.batches.length <= 1}>
+                  <Delete />
+                </IconButton>
+              </Grid>
+            </Grid>
+          ))}
+          <Button
+            startIcon={<Add />}
+            onClick={addBatchField}
+            sx={{ mt: 1 }}
+          >
+            Add Another Batch
+          </Button>
+
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <Button onClick={handleModalClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleAddMedicine} variant="contained">
+              Save Medicine
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Container>
   );
 };

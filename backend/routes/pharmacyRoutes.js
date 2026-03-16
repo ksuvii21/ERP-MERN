@@ -26,14 +26,41 @@ router.get('/dispense-queue', protect, async (req, res) => {
 // @desc    Get full pharmacy inventory
 // @route   GET /api/pharmacy/inventory
 // @access  Private
-router.get('/inventory', protect, async (req, res) => {
-  try {
-    const inventory = await Medicine.find({ company: req.company._id });
-    res.json(inventory);
-  } catch (err) {
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
+router.route('/inventory')
+  .get(protect, async (req, res) => {
+    try {
+      const inventory = await Medicine.find({ company: req.company._id });
+      res.json(inventory);
+    } catch (err) {
+      res.status(500).json({ message: 'Server Error' });
+    }
+  })
+  // @desc    Add a new medicine to inventory
+  // @route   POST /api/pharmacy/inventory
+  // @access  Private
+  .post(protect, async (req, res) => {
+    try {
+      const { name, category, salePrice } = req.body;
+      if (!name || !category || !salePrice) {
+        return res.status(400).json({ message: 'Name, category, and sale price are required.' });
+      }
+
+      const newMedicine = new Medicine({
+        ...req.body,
+        company: req.company._id,
+      });
+
+      const savedMedicine = await newMedicine.save();
+      res.status(201).json(savedMedicine);
+    } catch (err) {
+      if (err.name === 'ValidationError') {
+        // Provide more specific feedback for validation failures
+        return res.status(400).json({ message: 'Validation Error', errors: err.errors });
+      }
+      console.error("Error adding new medicine to inventory:", err);
+      res.status(500).json({ message: 'An internal server error occurred.' });
+    }
+  });
 
 // @desc    Update prescription status (e.g., approve, dispense)
 // @route   PUT /api/pharmacy/prescriptions/:id/status
