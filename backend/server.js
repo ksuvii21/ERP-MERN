@@ -48,6 +48,7 @@ app.use('/api/machines', require('./routes/machineRoutes'));
 // Register Healthcare Routes
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/records', require('./routes/recordRoutes'));
+app.use('/api/pharmacy', require('./routes/pharmacyRoutes'));
 // Note: You may need to add routes for Doctors and Pharmacy here as well.
 
 // Register Construction Routes
