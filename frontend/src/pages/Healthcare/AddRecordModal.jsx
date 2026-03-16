@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, Tabs, Tab, Box,
-  TextField, Grid, Alert, Autocomplete, MenuItem, FormControlLabel, Switch, Button
+  Dialog, DialogTitle, DialogContent, DialogActions, Button, Tabs, Tab, Box, TextField,
+  Grid, Alert, Autocomplete, MenuItem, FormControlLabel, Switch
 } from '@mui/material';
 import { Science, EditNote, LocalPharmacy, MonitorHeart } from '@mui/icons-material';
 
@@ -152,4 +152,4 @@ const AddRecordModal = ({ open, onClose, patient, onSave, existingPrescriptions 
   );
 };
 
-export default MedicalRecords;
+export default AddRecordModal;
