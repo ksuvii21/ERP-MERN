@@ -38,7 +38,6 @@ import Doctors from './pages/Healthcare/Doctors.jsx';
 import Appointments from './pages/Healthcare/Appointments.jsx';
 import Pharmacy from './pages/Healthcare/Pharmacy.jsx';
 import MedicalRecords from './pages/Healthcare/MedicalRecords.jsx';
-import ProfilePage from './pages/Profile/Profile.jsx';
 import FinanceAccounting from './pages/FinanceAccounting.jsx';
 
 // Wholesale Pages
@@ -138,7 +137,6 @@ function App() {
             <Route path="pharmacy" element={<Pharmacy />} />
             <Route path="records" element={<MedicalRecords />} />
             <Route path="accounting" element={<FinanceAccounting />} />
-            <Route path="profile" element={<ProfilePage />} />
             {/* This route should be protected and likely restricted to admins */}
             <Route path="admin/system-logs" element={<ProtectedRoute roles={['admin', 'super_admin']}><SystemLogs /></ProtectedRoute>}/>
 
