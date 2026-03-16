@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Container, Typography, Box, Paper, CircularProgress, Grid, List, ListItemButton,
   ListItemText, Collapse, Chip, Divider, Button
 } from '@mui/material';
-import { ExpandLess, ExpandMore, ReceiptLong, Category, Payments, AssuredWorkload } from '@mui/icons-material';
+import { ExpandLess, ExpandMore, ReceiptLong, Category, Payments, AssuredWorkload, TextField } from '@mui/icons-material';
 import api from '../../utils/api';
 
 // --- Helper function to group invoice items ---
